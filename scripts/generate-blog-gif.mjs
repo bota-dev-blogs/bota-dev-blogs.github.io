@@ -163,6 +163,15 @@ function runPipeline2(args, inputPath, outDir) {
   if (!args.noRender) {
     run(process.execPath, ["src/render-gif.js", diagramPath, htmlPath, framesDir, gifPath], { cwd: pipelineDir, env: envFor(pipelineDir) });
   }
+  fs.writeFileSync(path.join(outDir, "manifest.json"), `${JSON.stringify({
+    pipeline: "ai-gif-pipeline-2",
+    source: path.basename(inputPath),
+    outputs: {
+      diagram: "diagram.json",
+      preview: "diagram.html",
+      gif: args.noRender ? null : "diagram.gif"
+    }
+  }, null, 2)}\n`);
 }
 
 function main() {

@@ -50,10 +50,12 @@ output/<input-name>/
 
 ## What It Produces
 
-- `plan.json`: LLM article plan
+- `plan.json`: optional LLM article plan
 - `storyboard.json`: structured visual pages
-- `manifest.json`: generated GIF list
+- `manifest.json`: source and output file list
 - `01-*.gif`, `02-*.gif`, ...: blog-ready animated GIFs
+
+`manifest.json` is written for final renders and for intermediate `--plan-only` / `--no-render` runs.
 
 ## Environment
 

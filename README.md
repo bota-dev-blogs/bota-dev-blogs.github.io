@@ -22,6 +22,7 @@ Do not create top-level `blogs/`, `media/`, or `assets/` folders; those are igno
 - `INSTALL.md`: setup, local development, GitHub Pages deployment.
 - `BOTA_DEPLOYMENT.md`: clean copy/paste handoff to `https://bota.dev/blogs/`.
 - `GIF_WORKFLOW.md`: integrated GIF generation workflow.
+- `AGENT-PAPER-TO-BLOG.md`: paper-to-blog workflow with attribution rules.
 - `AI/README.md`: standalone GIF generator usage.
 
 ## Write a Blog
@@ -33,14 +34,16 @@ Add posts in `src/content/blog/` as `.mdx` files. The filename can be the URL sl
 title: "Post title"
 slug: "post-title"
 description: "Short summary for the page and meta tags."
-authors: ["Bota"]
+authors: ["Editorial Team"]
 date: "2026-06-09"
 modifiedDate: "2026-06-09"
 readTime: "6 min read"
+tags:
+  - "Product"
 keywords:
   - "meeting intelligence"
   - "voice capture"
-  - "Bota"
+  - "offline meetings"
 cover:
   src: "/media/post-title/cover.jpg"
   alt: "Cover image description"
@@ -68,6 +71,12 @@ Your article content goes here.
 ```
 
 Put audio, video, image, transcript, and PDF files in `public/media/<post-slug>/`. They become available at `/media/<post-slug>/<filename>`.
+
+For scientific paper posts, add `contentType: "paper"`, visible tags such as `Paper` and `Frontier Paper`, and a `paper:` block with the original title, authors, source URL, venue, year, and code link when available. The layout renders that block as a prominent third-party attribution notice.
+
+See [AGENT-PAPER-TO-BLOG.md](AGENT-PAPER-TO-BLOG.md) for the full paper-to-blog process.
+
+For paper posts and most editorial posts, keep the article voice neutral. Avoid explicit brand mentions inside the body copy unless the post is specifically about the product or company.
 
 ## Generate GIFs
 
@@ -120,7 +129,7 @@ See [BOTA_DEPLOYMENT.md](BOTA_DEPLOYMENT.md) for the copy/paste deployment flow.
 
 The site generates canonical URLs, Open Graph/Twitter card metadata, article JSON-LD, breadcrumbs, RSS, robots, and sitemap output from MDX frontmatter.
 
-Keep each post's `description`, `keywords`, `modifiedDate`, and cover image metadata current.
+Keep each post's `description`, `keywords`, `tags`, `modifiedDate`, and cover image metadata current.
 
 Canonical URLs default to `https://bota-dev-blogs.github.io`. For a production copy under `https://bota.dev/blogs/`, build with:
 
@@ -134,6 +143,8 @@ SITE_URL=https://bota.dev npm run build
 npm install
 npm run dev
 ```
+
+Both `/` and `/blogs/` render the blog index directly. Individual posts live under `/blogs/<slug>/`.
 
 ## Deploy
 

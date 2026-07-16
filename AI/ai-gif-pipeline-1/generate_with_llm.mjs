@@ -144,6 +144,10 @@ async function render(storyboardPath, outputDir) {
   });
 }
 
+async function writeManifest(outputDir, manifest) {
+  await fs.writeFile(path.join(outputDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
+}
+
 async function main() {
   loadEnvFile(path.join(process.cwd(), '.env'));
   const args = parseArgs(process.argv.slice(2));
@@ -179,6 +183,17 @@ async function main() {
   });
   const planPath = path.join(outputDir, 'plan.json');
   await fs.writeFile(planPath, JSON.stringify(plan, null, 2));
+  await writeManifest(outputDir, {
+    pipeline: 'ai-gif-pipeline-1',
+    source: path.basename(inputPath),
+    title: plan.title,
+    outputs: {
+      plan: 'plan.json',
+      storyboard: null,
+      gifs: []
+    },
+    pages: []
+  });
   console.log(`Saved ${planPath}`);
   if (args.planOnly) return;
 
@@ -199,11 +214,33 @@ async function main() {
   });
   const storyboardPath = path.join(outputDir, 'storyboard.json');
   await fs.writeFile(storyboardPath, JSON.stringify(storyboard, null, 2));
+  await writeManifest(outputDir, {
+    pipeline: 'ai-gif-pipeline-1',
+    source: path.basename(inputPath),
+    title: storyboard.title,
+    outputs: {
+      plan: 'plan.json',
+      storyboard: 'storyboard.json',
+      gifs: []
+    },
+    pages: []
+  });
   console.log(`Saved ${storyboardPath}`);
   if (args.noRender) return;
 
   console.log('[3/3] Rendering GIFs locally...');
   await render(storyboardPath, outputDir);
+  const renderedManifestPath = path.join(outputDir, 'manifest.json');
+  const renderedManifest = JSON.parse(await fs.readFile(renderedManifestPath, 'utf8'));
+  await writeManifest(outputDir, {
+    ...renderedManifest,
+    source: path.basename(inputPath),
+    outputs: {
+      plan: 'plan.json',
+      storyboard: 'storyboard.json',
+      gifs: renderedManifest.outputs?.gifs || renderedManifest.pages || []
+    }
+  });
 }
 
 main().catch(error => {

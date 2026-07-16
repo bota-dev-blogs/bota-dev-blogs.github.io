@@ -15,6 +15,9 @@ const {
   date,
   modifiedDate,
   readTime,
+  contentType,
+  tags = [],
+  paper,
   cover,
   media = []
 } = frontmatter;
@@ -23,6 +26,9 @@ const displayDate = formatDisplayDate(date);
 const authorText = Array.isArray(authors) ? authors.join(", ") : authors;
 const authorList = (Array.isArray(authors) ? authors : [authors]).filter(Boolean);
 const keywordList = Array.isArray(keywords) ? keywords : String(keywords).split(",").map((keyword) => keyword.trim()).filter(Boolean);
+const tagList = (Array.isArray(tags) ? tags : String(tags).split(",")).map((tag) => String(tag).trim()).filter(Boolean);
+const articleTagList = Array.from(new Set([...tagList, ...keywordList]));
+const paperAuthors = Array.isArray(paper?.authors) ? paper.authors : paper?.authors ? [paper.authors] : [];
 const pageTitle = `${title} - ${SITE.shortName}`;
 const canonicalUrl = canonical ? absoluteUrl(canonical) : absoluteUrl(`/blogs/${slug}/`);
 const imageUrl = absoluteUrl(cover?.src || SITE.defaultImage);
@@ -53,6 +59,19 @@ const articleJsonLd = {
     }
   },
   keywords: keywordList,
+  articleSection: contentType || "Bota Blog",
+  citation: paper?.url,
+  isBasedOn: paper?.title ? {
+    "@type": "ScholarlyArticle",
+    name: paper.title,
+    url: paper.url,
+    author: paperAuthors.map((name) => ({
+      "@type": "Person",
+      name
+    })),
+    datePublished: paper.year ? String(paper.year) : undefined,
+    publisher: paper.venue
+  } : undefined,
   isPartOf: {
     "@type": "Blog",
     name: SITE.name,
@@ -103,9 +122,9 @@ const breadcrumbJsonLd = {
     <meta property="og:locale" content={SITE.locale}>
     <meta property="article:published_time" content={publishedIso}>
     <meta property="article:modified_time" content={modifiedIso}>
-    <meta property="article:section" content="Bota Blog">
+    <meta property="article:section" content={contentType || "Bota Blog"}>
     {authorList.map((author) => <meta property="article:author" content={author}>)}
-    {keywordList.map((keyword) => <meta property="article:tag" content={keyword}>)}
+    {articleTagList.map((tag) => <meta property="article:tag" content={tag}>)}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content={pageTitle}>
     <meta name="twitter:description" content={description}>
@@ -138,7 +157,45 @@ const breadcrumbJsonLd = {
               <span>{displayDate}</span>
               <span>{readTime}</span>
             </div>
+            {
+              tagList.length > 0 && (
+                <div class="tag-list" aria-label="Article tags">
+                  {tagList.map((tag) => <span>{tag}</span>)}
+                </div>
+              )
+            }
           </section>
+
+          {
+            paper?.title && (
+              <aside class="paper-attribution" aria-label="Original paper attribution">
+                <p class="paper-kicker">Third-party research</p>
+                <h2>{paper.title}</h2>
+                <p>
+                  This Bota article is commentary and explanation of work by the original paper authors.
+                  The paper, code, figures, and copyright belong to their respective authors and publishers.
+                </p>
+                <dl>
+                  {paperAuthors.length > 0 && (
+                    <>
+                      <dt>Authors</dt>
+                      <dd>{paperAuthors.join(", ")}</dd>
+                    </>
+                  )}
+                  {(paper.venue || paper.year) && (
+                    <>
+                      <dt>Source</dt>
+                      <dd>{[paper.venue, paper.year].filter(Boolean).join(", ")}</dd>
+                    </>
+                  )}
+                </dl>
+                <div class="paper-links">
+                  {paper.url && <a href={paper.url}>Read the paper</a>}
+                  {paper.code && <a href={paper.code}>Code and checkpoints</a>}
+                </div>
+              </aside>
+            )
+          }
 
           {
             cover?.src && (

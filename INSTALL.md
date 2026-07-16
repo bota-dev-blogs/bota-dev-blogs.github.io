@@ -36,7 +36,7 @@ Astro will print a local URL, usually:
 http://localhost:4321/
 ```
 
-The root page redirects to `/blogs/`.
+The root page and `/blogs/` both render the blog index directly.
 
 ## Build Locally
 
@@ -73,10 +73,12 @@ authors: ["Author One", "Author Two"]
 date: "2026-06-09"
 modifiedDate: "2026-06-09"
 readTime: "6 min read"
+tags:
+  - "Product"
 keywords:
   - "meeting intelligence"
   - "voice capture"
-  - "Bota"
+  - "offline meetings"
 cover:
   src: "/media/post-title/cover.jpg"
   alt: "Cover image description"
@@ -109,6 +111,27 @@ The final URL is:
 /blogs/post-title/
 ```
 
+For paper posts, also include:
+
+```yaml
+contentType: "paper"
+tags:
+  - "Paper"
+  - "Frontier Paper"
+paper:
+  title: "Original paper title"
+  url: "https://arxiv.org/abs/..."
+  authors:
+    - "Original Author"
+  venue: "arXiv"
+  year: "2023"
+  code: "https://github.com/..."
+```
+
+The `paper:` block renders a visible attribution notice saying the paper is third-party work. Use `AGENT-PAPER-TO-BLOG.md` when converting a paper into a blog post.
+
+For paper posts and most editorial posts, use a neutral editorial voice. Avoid explicit brand mentions in the article body unless the post is specifically about the product or company.
+
 ## SEO Checklist
 
 Every post should include:
@@ -120,6 +143,7 @@ Every post should include:
 - `date`: original publish date
 - `modifiedDate`: latest meaningful content update date
 - `keywords`: focused topic phrases, not a long keyword dump
+- `tags`: visible post categories such as `Paper`, `Frontier Paper`, `Audio AI`, or `Product`
 - `cover.src`, `cover.alt`, `cover.width`, `cover.height`: social preview image metadata
 
 The site automatically generates:

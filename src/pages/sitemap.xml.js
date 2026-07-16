@@ -6,6 +6,12 @@ export async function GET() {
   const newestPostDate = posts[0]?.modifiedDate || posts[0]?.date || new Date().toISOString();
   const pages = [
     {
+      loc: absoluteUrl("/"),
+      lastmod: toIsoDate(newestPostDate),
+      changefreq: "weekly",
+      priority: "1.0"
+    },
+    {
       loc: absoluteUrl("/blogs/"),
       lastmod: toIsoDate(newestPostDate),
       changefreq: "weekly",

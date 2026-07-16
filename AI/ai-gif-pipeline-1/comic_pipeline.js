@@ -170,7 +170,6 @@ function drawPage(ctx, page, pageIndex, total, frame) {
     wrap(ctx,card.body,cardW-32,9).forEach((l,j)=>ctx.fillText(l,x+cardW/2,y+245+j*25));
     ctx.fillStyle=ACCENTS[i%ACCENTS.length];ctx.beginPath();ctx.arc(x+24,y+24,16,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.font='700 15px Arial';ctx.textBaseline='middle';ctx.fillText(String(i+1),x+24,y+25);ctx.restore();
   });
-  ctx.fillStyle='#7a7d8f';ctx.font='500 15px "Comic Sans MS","Segoe UI",sans-serif';ctx.textAlign='center';ctx.fillText('Generated from a structured storyboard • seamless 2-second loop',W/2,940);
 }
 
 function renderGif(page, index, total, outPath) {
@@ -184,7 +183,16 @@ function main() {
   const storyboard=path.extname(abs).toLowerCase()==='.json'?JSON.parse(raw):articleToStoryboard(parseMarkdown(raw));validateStoryboard(storyboard);
   fs.mkdirSync(outDir,{recursive:true});fs.writeFileSync(path.join(outDir,'storyboard.json'),JSON.stringify(storyboard,null,2));
   const outputs=[];storyboard.pages.forEach((page,i)=>{const name=`${String(i+1).padStart(2,'0')}-${slug(page.section)}.gif`;renderGif(page,i,storyboard.pages.length,path.join(outDir,name));outputs.push(name);console.log(`Rendered ${name}`);});
-  fs.writeFileSync(path.join(outDir,'manifest.json'),JSON.stringify({source:path.basename(abs),title:storyboard.title,pages:outputs},null,2));console.log(`Done: ${outputs.length} GIF(s) in ${outDir}`);
+  fs.writeFileSync(path.join(outDir,'manifest.json'),JSON.stringify({
+    pipeline:'ai-gif-pipeline-1',
+    source:path.basename(abs),
+    title:storyboard.title,
+    outputs:{
+      storyboard:'storyboard.json',
+      gifs:outputs
+    },
+    pages:outputs
+  },null,2));console.log(`Done: ${outputs.length} GIF(s) in ${outDir}`);
 }
 
 main();

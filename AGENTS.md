@@ -70,3 +70,5 @@ SITE_URL=https://bota.dev npm run build
 - Generated GIF assets should be under `public/media/gifs/<slug>/`.
 - Posts should reference media as `/media/...`, never as filesystem paths.
 - Every post should have SEO frontmatter: `title`, `slug`, `description`, `authors`, `date`, `modifiedDate`, `keywords`, and `cover` metadata.
+- Paper posts should use `contentType: "paper"`, visible `tags`, and a `paper:` attribution block.
+- Paper posts and most editorial posts should avoid explicit site-brand mentions in the article body.

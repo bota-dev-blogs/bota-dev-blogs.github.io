@@ -1,3 +1,8 @@
 ---
-return Astro.redirect("/blogs/");
+import BlogIndexPage from "../components/BlogIndexPage.astro";
+import { getBlogPosts } from "../lib/posts.js";
+
+const posts = await getBlogPosts();
 ---
+
+<BlogIndexPage posts={posts} path="/" />

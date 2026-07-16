@@ -152,7 +152,16 @@ Before exporting, check each post has:
 - `date`: original publish date.
 - `modifiedDate`: latest meaningful update date.
 - `keywords`: focused topic phrases.
+- `tags`: visible category labels for readers.
 - `cover.src`, `cover.alt`, `cover.width`, `cover.height`: preview image metadata.
+
+For paper posts, also check:
+
+- `contentType: "paper"`.
+- `tags` includes `Paper` or another clear research category.
+- `paper.title`, `paper.url`, and `paper.authors` are filled in.
+- The article makes clear that it is editorial explanation of third-party work, not a claim of authorship.
+- The article body uses neutral editorial language and avoids explicit site-brand mentions unless the post is about the brand itself.
 
 For generated diagram GIF covers, use:
 

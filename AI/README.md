@@ -118,6 +118,20 @@ For the blog, publish only selected assets under:
 public/media/gifs/<post-slug>/
 ```
 
+Integrated output folders should be consistent:
+
+```text
+pipeline-1/manifest.json
+pipeline-1/storyboard.json
+pipeline-1/*.gif
+pipeline-2/manifest.json
+pipeline-2/diagram.json
+pipeline-2/diagram.html
+pipeline-2/diagram.gif
+```
+
+Pipeline 1 may also include `plan.json` when the LLM planner is used.
+
 Do not publish:
 
 ```text

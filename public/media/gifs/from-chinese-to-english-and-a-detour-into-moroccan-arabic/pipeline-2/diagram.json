@@ -1,0 +1,79 @@
+{
+  "title": "AI video language transformation",
+  "subtitle": "Chinese tutorial video to English voice-cloned output",
+  "duration": 6,
+  "fps": 15,
+  "theme": "light",
+  "nodes": [
+    {
+      "id": "source-video",
+      "kind": "input",
+      "label": "Source video",
+      "description": "Chinese tutorial audio + original visuals"
+    },
+    {
+      "id": "transcription",
+      "kind": "method",
+      "label": "Transcription",
+      "description": "faster-whisper extracts timed Chinese segments"
+    },
+    {
+      "id": "translation",
+      "kind": "method",
+      "label": "Translation review",
+      "description": "DeepL translation with terminology cleanup"
+    },
+    {
+      "id": "diarization",
+      "kind": "method",
+      "label": "Speaker diarization",
+      "description": "pyannote separates speakers for voice identity"
+    },
+    {
+      "id": "voice-clone",
+      "kind": "method",
+      "label": "Voice synthesis",
+      "description": "F5-TTS / Voxtral generate English speech"
+    },
+    {
+      "id": "alignment",
+      "kind": "method",
+      "label": "Audio alignment",
+      "description": "Time-stretch and loudness normalize segments"
+    },
+    {
+      "id": "final-video",
+      "kind": "output",
+      "label": "English output",
+      "description": "Original video with cloned English audio"
+    },
+    {
+      "id": "darija-test",
+      "kind": "output",
+      "label": "Darija experiment",
+      "description": "Low-resource fine-tuning exposes data limits"
+    }
+  ],
+  "edges": [
+    { "id": "edge-source-transcription", "from": "source-video", "to": "transcription", "label": "audio" },
+    { "id": "edge-transcription-translation", "from": "transcription", "to": "translation", "label": "segments" },
+    { "id": "edge-source-diarization", "from": "source-video", "to": "diarization", "label": "speaker cues" },
+    { "id": "edge-translation-voice", "from": "translation", "to": "voice-clone", "label": "English script" },
+    { "id": "edge-diarization-voice", "from": "diarization", "to": "voice-clone", "label": "speaker refs" },
+    { "id": "edge-voice-alignment", "from": "voice-clone", "to": "alignment", "label": "speech" },
+    { "id": "edge-alignment-final", "from": "alignment", "to": "final-video", "label": "synced audio" },
+    { "id": "edge-voice-darija", "from": "voice-clone", "to": "darija-test", "label": "fine-tuning path" }
+  ],
+  "animation": [
+    { "target": "edge-source-transcription", "effect": "flow", "at": 0.0, "loop": true, "speed": 24 },
+    { "target": "edge-transcription-translation", "effect": "flow", "at": 0.4, "loop": true, "speed": 24 },
+    { "target": "edge-source-diarization", "effect": "flow", "at": 0.7, "loop": true, "speed": 22 },
+    { "target": "edge-translation-voice", "effect": "flow", "at": 1.0, "loop": true, "speed": 24 },
+    { "target": "edge-diarization-voice", "effect": "flow", "at": 1.1, "loop": true, "speed": 22 },
+    { "target": "voice-clone", "effect": "highlight", "at": 1.2, "loop": true, "period": 1.8 },
+    { "target": "edge-voice-alignment", "effect": "flow", "at": 1.6, "loop": true, "speed": 24 },
+    { "target": "edge-alignment-final", "effect": "flow", "at": 2.0, "loop": true, "speed": 24 },
+    { "target": "edge-voice-darija", "effect": "flow", "at": 2.2, "loop": true, "speed": 20 },
+    { "target": "darija-test", "effect": "highlight", "at": 2.4, "loop": true, "period": 2.2 }
+  ]
+}

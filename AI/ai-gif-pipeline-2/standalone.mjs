@@ -94,6 +94,16 @@ function main() {
     if (!args.keepFrames) fs.rmSync(framesDir, { recursive: true, force: true });
   }
 
+  fs.writeFileSync(path.join(outDir, "manifest.json"), `${JSON.stringify({
+    pipeline: "ai-gif-pipeline-2",
+    source: path.basename(inputPath),
+    outputs: {
+      diagram: "diagram.json",
+      preview: "diagram.html",
+      gif: args.noRender ? null : "diagram.gif"
+    }
+  }, null, 2)}\n`);
+
   console.log(`\nOutput written to: ${outDir}`);
   console.log(`Preview: ${htmlPath}`);
   if (!args.noRender) console.log(`GIF: ${gifPath}`);

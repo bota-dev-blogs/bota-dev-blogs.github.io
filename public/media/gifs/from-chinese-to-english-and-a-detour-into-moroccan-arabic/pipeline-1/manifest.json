@@ -1,0 +1,14 @@
+{
+  "pipeline": "ai-gif-pipeline-1",
+  "source": "from-chinese-to-english-and-a-detour-into-moroccan-arabic.md",
+  "title": "From Chinese to English — and a Detour into Moroccan Arabic: Building an AI Video Language Transformation Pipeline",
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-project-overview.gif"
+    ]
+  },
+  "pages": [
+    "01-project-overview.gif"
+  ]
+}

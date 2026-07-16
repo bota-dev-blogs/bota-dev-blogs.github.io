@@ -41,7 +41,7 @@ npm run gif -- 2 --input AI/ai-gif-pipeline-2/diagram.json --slug my-post
 Default output:
 
 ```text
-public/media/gifs/<post-slug>/pipeline-2/diagram.gif
+public/media/gifs/<post-slug>/pipeline-2/
 ```
 
 Standalone output defaults to:
@@ -55,6 +55,7 @@ output/<input-name>/diagram.gif
 - `diagram.json`: LLM or hand-authored diagram structure
 - `diagram.html`: browser preview
 - `diagram.gif`: blog-ready animated GIF
+- `manifest.json`: source and output file list
 
 Intermediate PNG frames are written under `.tmp/gif-frames/` by the root wrapper, not under `public/`.
 

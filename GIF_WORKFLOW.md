@@ -29,6 +29,8 @@ Paper PDF -> pipeline 2 -> one method GIF -> MDX blog media
 Blog draft -> pipeline 1 -> optional explainer GIF sequence
 ```
 
+Both pipelines write a `manifest.json` so output folders are easy to inspect or copy.
+
 ## Commands From Repo Root
 
 Use one root command. The first argument selects the pipeline:
@@ -138,6 +140,28 @@ media:
     type: "image"
     note: "Animated method overview"
 ```
+
+## Output Contents
+
+Pipeline 1 output:
+
+```text
+plan.json          optional LLM plan for full-article runs
+storyboard.json    structured comic pages
+manifest.json      source and publishable GIF list
+01-*.gif           blog-ready comic/explainer GIFs
+```
+
+Pipeline 2 output:
+
+```text
+diagram.json       structured method diagram
+diagram.html       browser preview
+diagram.gif        blog-ready method GIF
+manifest.json      source and publishable file list
+```
+
+With `--plan-only` or `--no-render`, `manifest.json` still exists and records which final files have not been rendered yet.
 
 Inline MDX:
 

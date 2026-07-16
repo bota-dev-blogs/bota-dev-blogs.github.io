@@ -6,6 +6,11 @@ authors: ["Adam Maytoussi", "Soulaymane Temimi"]
 date: "2026-06-09"
 modifiedDate: "2026-06-09"
 readTime: "11 min read"
+tags:
+  - "Project"
+  - "Audio AI"
+  - "Voice Cloning"
+  - "Localization"
 keywords:
   - "AI video translation"
   - "voice cloning"
@@ -15,20 +20,31 @@ keywords:
   - "Moroccan Arabic"
   - "technical video localization"
 cover:
-  src: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?auto=format&fit=crop&w=1200&q=80"
-  alt: "Audio editing timeline and production controls"
-  width: 1200
-  height: 800
-media: []
+  src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/diagram.gif"
+  alt: "Animated AI video language transformation pipeline diagram"
+  width: 2096
+  height: 620
+  fit: "contain"
+media:
+  - title: "Pipeline architecture diagram"
+    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/diagram.gif"
+    type: "image"
+    note: "Pipeline 2 technical diagram for the video language transformation workflow."
+  - title: "Project explainer"
+    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-1/01-project-overview.gif"
+    type: "image"
+    note: "Pipeline 1 explainer GIF generated from the article draft."
 ---
 
-## The Starting Point
+## Project Overview
 
-This semester, our AI course asked us to pick a project and push it further — past the tutorial, past the ready-made tool, into something that required us to understand the underlying machinery.
+**AI Video Language Transformation** converts Chinese-language GitHub tutorial videos into English while preserving the original visual track and cloning the speaker's voice. The goal is simple to describe and hard to execute: same video, new language, familiar speaker identity.
 
-We picked **AI Video Language Transformation**: a pipeline that takes Chinese-language GitHub tutorial videos and converts them into English — same video, new audio, voice cloned from the original speaker. The idea was to make technical content accessible across language barriers without losing the personality of the original presenter.
+The system chains together transcription, translation, speaker diarization, speech synthesis, audio alignment, and video merging. Each stage has to work, but the final quality depends on how well the stages hand timing, speaker identity, terminology, and audio constraints to one another.
 
-That was the main project. But by the end of the project, we had also taken a detour into something much less explored: fine-tuning a voice cloning model for Darija — Moroccan Arabic. What happened during that detour is, honestly, the more interesting story.
+![AI video language transformation pipeline diagram](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/diagram.gif)
+
+After the Chinese-to-English pipeline worked, the project took a harder detour: testing what it would take to fine-tune voice cloning for Darija, Moroccan Arabic. That experiment did not produce a production-ready voice model, but it exposed the real bottlenecks behind low-resource speech synthesis.
 
 ## The Pipeline
 
@@ -44,6 +60,8 @@ The main pipeline chains together several components, each handling a distinct t
 The result: a video that looks identical to the original, but speaks English — in the same voice.
 
 A [Streamlit](https://streamlit.io/) web interface ties it all together, letting you monitor each stage, review individual segments, edit translations, and inspect quality metrics.
+
+![Project explainer GIF](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-1/01-project-overview.gif)
 
 ## Voice Cloning: The Hardest Part
 
@@ -126,4 +144,4 @@ The main pipeline — Chinese-to-English video transformation — worked. The vo
 
 The Darija extension was a shot at something harder. It taught us more.
 
-*Adam Maytoussi and Soulaymane Temimi are students at UTSEUS. This work was completed as part of an AI course project. The full pipeline code is available on [GitHub](https://github.com/EmporioSabo/ai-video-language-transformation).*
+*Adam Maytoussi and Soulaymane Temimi are students at UTSEUS. The full pipeline code is available on [GitHub](https://github.com/EmporioSabo/ai-video-language-transformation).*

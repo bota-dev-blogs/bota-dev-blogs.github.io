@@ -1,0 +1,9 @@
+{
+  "pipeline": "ai-gif-pipeline-2",
+  "source": "2312.15185",
+  "outputs": {
+    "diagram": "diagram.json",
+    "preview": "diagram.html",
+    "gif": "diagram.gif"
+  }
+}

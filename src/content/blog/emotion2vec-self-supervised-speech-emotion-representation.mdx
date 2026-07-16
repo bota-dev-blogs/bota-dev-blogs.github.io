@@ -2,10 +2,16 @@
 title: "emotion2vec: Self-Supervised Pre-Training for Speech Emotion Representation"
 slug: "emotion2vec-self-supervised-speech-emotion-representation"
 description: "A practical look at emotion2vec, a self-supervised speech emotion model trained with online distillation and dual emotion losses."
-authors: ["Bota"]
+authors: ["Editorial Team"]
 date: "2026-07-16"
 modifiedDate: "2026-07-16"
 readTime: "7 min read"
+contentType: "paper"
+tags:
+  - "Paper"
+  - "Frontier Paper"
+  - "Audio AI"
+  - "Speech Emotion"
 keywords:
   - "emotion2vec"
   - "speech emotion recognition"
@@ -13,6 +19,20 @@ keywords:
   - "audio AI"
   - "speech representation learning"
   - "emotion recognition"
+paper:
+  title: "emotion2vec: Self-Supervised Pre-Training for Speech Emotion Representation"
+  url: "https://arxiv.org/abs/2312.15185"
+  authors:
+    - "Ziyang Ma"
+    - "Zhisheng Zheng"
+    - "Jiaxin Ye"
+    - "Jinchao Li"
+    - "Zhifu Gao"
+    - "Shiliang Zhang"
+    - "Xie Chen"
+  venue: "arXiv"
+  year: "2023"
+  code: "https://github.com/ddlBoJack/emotion2vec"
 cover:
   src: "/media/gifs/emotion2vec-self-supervised-speech-emotion-representation/pipeline-2/diagram.gif"
   alt: "Animated emotion2vec pre-training method diagram"
@@ -88,7 +108,7 @@ emotion2vec is useful to track because it points toward a more modular audio AI 
 - Feed those representations into task-specific systems.
 - Keep downstream heads lightweight and adaptable.
 
-For Bota-style infrastructure, this kind of representation model sits between raw audio capture and higher-level agent context. It does not replace transcription or diarization; it adds another channel of information that can help agents understand how something was said, not only what was said.
+In an audio AI stack, this kind of representation model sits between raw audio capture and higher-level context systems. It does not replace transcription or diarization; it adds another channel of information that can help downstream systems understand how something was said, not only what was said.
 
 ## Source
 
