@@ -1,0 +1,9 @@
+node_modules/
+frames/
+output.gif
+public/diagram.html
+frames-complex/
+output-complex.gif
+public/diagram-complex.html
+.reference/
+.DS_Store

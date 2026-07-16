@@ -1,0 +1,162 @@
+---
+import MediaPanel from "../components/MediaPanel.astro";
+import { absoluteUrl, formatDisplayDate, SITE } from "../lib/site.js";
+import "../styles/global.css";
+
+const { frontmatter } = Astro.props;
+const {
+  title,
+  description,
+  authors,
+  keywords = [],
+  slug,
+  canonical,
+  noindex = false,
+  date,
+  modifiedDate,
+  readTime,
+  cover,
+  media = []
+} = frontmatter;
+
+const displayDate = formatDisplayDate(date);
+const authorText = Array.isArray(authors) ? authors.join(", ") : authors;
+const authorList = (Array.isArray(authors) ? authors : [authors]).filter(Boolean);
+const keywordList = Array.isArray(keywords) ? keywords : String(keywords).split(",").map((keyword) => keyword.trim()).filter(Boolean);
+const pageTitle = `${title} - ${SITE.shortName}`;
+const canonicalUrl = canonical ? absoluteUrl(canonical) : absoluteUrl(`/blogs/${slug}/`);
+const imageUrl = absoluteUrl(cover?.src || SITE.defaultImage);
+const publishedIso = new Date(date).toISOString();
+const modifiedIso = new Date(modifiedDate || date).toISOString();
+const robotsContent = noindex ? "noindex,nofollow" : "index,follow,max-image-preview:large";
+const articleJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: title,
+  description,
+  image: [imageUrl],
+  datePublished: publishedIso,
+  dateModified: modifiedIso,
+  mainEntityOfPage: canonicalUrl,
+  url: canonicalUrl,
+  author: authorList.map((name) => ({
+    "@type": "Person",
+    name
+  })),
+  publisher: {
+    "@type": "Organization",
+    name: SITE.shortName,
+    url: SITE.url,
+    logo: {
+      "@type": "ImageObject",
+      url: absoluteUrl("https://framerusercontent.com/images/OfZg5Oz9V0OXYHYcWVjJnWeyaU.svg")
+    }
+  },
+  keywords: keywordList,
+  isPartOf: {
+    "@type": "Blog",
+    name: SITE.name,
+    url: absoluteUrl("/blogs/")
+  }
+};
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Blogs",
+      item: absoluteUrl("/blogs/")
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: title,
+      item: canonicalUrl
+    }
+  ]
+};
+---
+
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{pageTitle}</title>
+    <meta name="description" content={description}>
+    <meta name="robots" content={robotsContent}>
+    {authorText && <meta name="author" content={authorText}>}
+    {keywordList.length > 0 && <meta name="keywords" content={keywordList.join(", ")}>}
+    <link rel="canonical" href={canonicalUrl}>
+    <link rel="alternate" type="application/rss+xml" title="Bota Blog RSS" href={absoluteUrl("/rss.xml")}>
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content={SITE.shortName}>
+    <meta property="og:title" content={pageTitle}>
+    <meta property="og:description" content={description}>
+    <meta property="og:url" content={canonicalUrl}>
+    <meta property="og:image" content={imageUrl}>
+    {cover?.alt && <meta property="og:image:alt" content={cover.alt}>}
+    {cover?.width && <meta property="og:image:width" content={String(cover.width)}>}
+    {cover?.height && <meta property="og:image:height" content={String(cover.height)}>}
+    <meta property="og:locale" content={SITE.locale}>
+    <meta property="article:published_time" content={publishedIso}>
+    <meta property="article:modified_time" content={modifiedIso}>
+    <meta property="article:section" content="Bota Blog">
+    {authorList.map((author) => <meta property="article:author" content={author}>)}
+    {keywordList.map((keyword) => <meta property="article:tag" content={keyword}>)}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content={pageTitle}>
+    <meta name="twitter:description" content={description}>
+    <meta name="twitter:image" content={imageUrl}>
+    {cover?.alt && <meta name="twitter:image:alt" content={cover.alt}>}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@600;700;800&family=DM+Mono&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://framerusercontent.com/images/OfZg5Oz9V0OXYHYcWVjJnWeyaU.svg">
+    <script type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbJsonLd)} />
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar" aria-label="Bota">
+        <a class="brand" href="/" aria-label="Bota home">
+          <span class="brand-mark" aria-hidden="true">bota</span>
+        </a>
+        <a class="back-link" href="/">Blogs</a>
+      </header>
+
+      <main>
+        <article class="blog">
+          <section class="hero" aria-labelledby="article-title">
+            <p class="eyebrow">Bota Blog</p>
+            <h1 id="article-title">{title}</h1>
+            <p class="dek">{description}</p>
+            <div class="meta-row" aria-label="Article details">
+              {authorText && <span>{authorText}</span>}
+              <span>{displayDate}</span>
+              <span>{readTime}</span>
+            </div>
+          </section>
+
+          {
+            cover?.src && (
+              <figure class:list={["cover", cover.fit === "contain" && "is-contain"]}>
+                <img src={cover.src} alt={cover.alt || ""}>
+              </figure>
+            )
+          }
+
+          <div class="content-grid">
+            <div class="article-body">
+              <slot />
+            </div>
+
+            <MediaPanel items={media} />
+          </div>
+        </article>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Animated paper diagram</title>
+  <style>
+    :root { --bg: #f7f8f4; --ink: #1d2a2d; --muted: #718083; --line: #9aa9a4; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; }
+    body { width: var(--canvas-width); height: var(--canvas-height); overflow: hidden; }
+    svg { display: block; width: 100%; height: 100%; }
+    .title { font-size: 30px; font-weight: 760; letter-spacing: -0.03em; }
+    .subtitle { font-size: 16px; fill: var(--muted); }
+    .node { opacity: 1; transform-box: fill-box; transform-origin: center; }
+    .node.highlighting .node-box { stroke: #ef785c; }
+    .node-box { stroke: var(--ink); stroke-width: 3; rx: 22; filter: drop-shadow(0 5px 0 rgba(29,42,45,.08)); }
+    .kind-input .node-box { fill: #dff3ef; }
+    .kind-method .node-box { fill: #fff0b8; }
+    .kind-output .node-box { fill: #e5e5fb; }
+    .node-label { font-size: 20px; font-weight: 730; text-anchor: middle; }
+    .node-description { font-size: 13px; fill: #5b6b6e; text-anchor: middle; }
+    .edge { fill: none; stroke: var(--line); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow); opacity: 1; }
+    .edge.flowing { stroke: #ef785c; stroke-dasharray: 10 14; marker-end: url(#arrow-active); }
+    .edge-label-bg { fill: var(--bg); opacity: .96; }
+    .edge-label { font-size: 12px; font-weight: 650; fill: var(--muted); text-anchor: middle; }
+    .grain { opacity: .12; }
+    .node-box { transition: stroke .08s linear; }
+  </style>
+</head>
+<body>
+<svg id="diagram" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Animated technical diagram">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#9aa9a4" /></marker>
+    <marker id="arrow-active" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#ef785c" /></marker>
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#aebbb4" stroke-width="1" /></pattern>
+  </defs>
+  <rect id="background" fill="var(--bg)" />
+  <rect id="grain" class="grain" fill="url(#grid)" />
+  <g id="content"></g>
+</svg>
+<script>
+  const diagram = {"title":"emotion2vec Pre-Training Method","subtitle":"Self-supervised online distillation combining utterance-level and frame-level losses","width":1396,"height":620,"duration":6,"fps":15,"theme":"light","nodes":[{"id":"raw_audio","kind":"input","label":"Raw Audio","description":"Raw audio utterance","x":64,"y":266,"width":218,"height":124,"evidence":"p.3, Section 3.1","rank":0,"row":0},{"id":"teacher_net","kind":"method","label":"Teacher Network","description":"Feature extractor + Transformer backbone","x":414,"y":172,"width":218,"height":124,"evidence":"p.3, Figure 1","rank":1,"row":0},{"id":"teacher_target","kind":"output","label":"Teacher Target","description":"Average of top-k layer outputs","x":764,"y":172,"width":218,"height":124,"evidence":"p.3, Equation 3","rank":2,"row":0},{"id":"student_net","kind":"method","label":"Student Network","description":"Feature extractor + masking + utterance embedding + backbone","x":414,"y":360,"width":218,"height":124,"evidence":"p.3, Equation 4","rank":1,"row":1},{"id":"student_outputs","kind":"output","label":"Student Outputs","description":"Frame-level and utterance-level embeddings","x":764,"y":360,"width":218,"height":124,"evidence":"p.3, Section 3.2-3.3","rank":2,"row":1},{"id":"combined_loss","kind":"method","label":"Combined Loss","description":"MSE for utterance-level and frame-level losses","x":1114,"y":266,"width":218,"height":124,"evidence":"p.4, Equation 5,8,9","rank":3,"row":0}],"edges":[{"id":"edge1","from":"raw_audio","to":"teacher_net","label":"waveform","evidence":"p.3, Section 3.1"},{"id":"edge2","from":"raw_audio","to":"student_net","label":"waveform","evidence":"p.3, Section 3.1"},{"id":"edge3","from":"teacher_net","to":"teacher_target","label":"forward","evidence":"p.3, Figure 1"},{"id":"edge4","from":"student_net","to":"student_outputs","label":"forward","evidence":"p.3, Figure 1"},{"id":"edge5","from":"teacher_target","to":"combined_loss","label":"target","evidence":"p.4, Eq. 5,8"},{"id":"edge6","from":"student_outputs","to":"combined_loss","label":"prediction","evidence":"p.4, Eq. 5,8"}],"animation":[{"target":"edge1","effect":"flow","at":0,"loop":true,"speed":24,"period":1.8},{"target":"edge2","effect":"flow","at":0,"loop":true,"speed":24,"period":1.8},{"target":"edge3","effect":"flow","at":0,"loop":true,"speed":24,"period":1.8},{"target":"edge4","effect":"flow","at":0,"loop":true,"speed":24,"period":1.8},{"target":"edge5","effect":"flow","at":0,"loop":true,"speed":24,"period":1.8},{"target":"edge6","effect":"flow","at":0,"loop":true,"speed":24,"period":1.8}],"layoutMode":"layered"};
+  const content = document.getElementById('content');
+  const svg = document.getElementById('diagram');
+  svg.setAttribute('viewBox', `0 0 ${diagram.width} ${diagram.height}`);
+  svg.setAttribute('width', diagram.width);
+  svg.setAttribute('height', diagram.height);
+  for (const id of ['background', 'grain']) {
+    const background = document.getElementById(id);
+    background.setAttribute('width', diagram.width);
+    background.setAttribute('height', diagram.height);
+  }
+  document.body.style.setProperty('--canvas-width', `${diagram.width}px`);
+  document.body.style.setProperty('--canvas-height', `${diagram.height}px`);
+
+  const ns = 'http://www.w3.org/2000/svg';
+  const el = (name, attrs = {}, text = '') => {
+    const node = document.createElementNS(ns, name);
+    Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
+    if (text) node.textContent = text;
+    return node;
+  };
+  const wrapText = (parent, className, x, y, text, maxWidth, lineHeight, maxLines) => {
+    const textNode = el('text', { class: className, x, y });
+    parent.append(textNode);
+    const words = String(text || '').split(/\s+/).filter(Boolean);
+    const lines = [];
+    let line = '';
+    const fits = (value) => {
+      textNode.textContent = value;
+      return textNode.getComputedTextLength() <= maxWidth;
+    };
+    for (const word of words) {
+      const candidate = line ? `${line} ${word}` : word;
+      if (line && !fits(candidate)) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = candidate;
+      }
+    }
+    if (line) lines.push(line);
+    const compactLines = lines.length ? lines : [''];
+    const visibleLines = compactLines.slice(0, maxLines);
+    if (compactLines.length > maxLines) {
+      let last = visibleLines[maxLines - 1];
+      while (last.length > 1 && !fits(`${last}…`)) last = last.slice(0, -1);
+      visibleLines[maxLines - 1] = `${last}…`;
+    }
+    textNode.textContent = '';
+    visibleLines.forEach((lineText, index) => {
+      textNode.append(el('tspan', { x, dy: index ? lineHeight : 0 }, lineText));
+    });
+    return visibleLines.length;
+  };
+
+  const byId = Object.fromEntries(diagram.nodes.map((node) => [node.id, node]));
+  const title = el('text', { x: 56, y: 66, class: 'title' }, diagram.title);
+  content.append(title);
+  wrapText(content, 'subtitle', 58, 98, diagram.subtitle || '', diagram.width - 116, 22, 2);
+
+  const edgeNodes = {};
+  const edgeLabels = [];
+  const edgeLabelSpecs = [];
+  const minNodeY = Math.min(...diagram.nodes.map((node) => node.y));
+  const maxNodeBottom = Math.max(...diagram.nodes.map((node) => node.y + node.height));
+  let upperTrack = minNodeY - 38;
+  let lowerTrack = maxNodeBottom + 38;
+  diagram.edges.forEach((edge) => {
+    const from = byId[edge.from]; const to = byId[edge.to];
+    if (!from || !to) return;
+    const x1 = from.x + from.width; const y1 = from.y + from.height / 2;
+    const x2 = to.x; const y2 = to.y + to.height / 2;
+    const bend = Math.max(30, (x2 - x1) / 2);
+    const rankDistance = Number(to.rank) - Number(from.rank);
+    let pathData;
+    if (rankDistance > 1) {
+      const useLowerTrack = from.y > to.y || (from.y === to.y && lowerTrack < diagram.height - 18);
+      const routeY = useLowerTrack ? lowerTrack : upperTrack;
+      if (useLowerTrack) lowerTrack += 18; else upperTrack -= 18;
+      const shoulder = Math.min(64, Math.max(38, (x2 - x1) / 4));
+      pathData = `M ${x1} ${y1} C ${x1 + shoulder} ${y1}, ${x1 + shoulder} ${routeY}, ${x1 + shoulder * 2} ${routeY} L ${x2 - shoulder * 2} ${routeY} C ${x2 - shoulder} ${routeY}, ${x2 - shoulder} ${y2}, ${x2} ${y2}`;
+    } else if (x2 > x1) {
+      pathData = `M ${x1} ${y1} C ${x1 + bend} ${y1}, ${x2 - bend} ${y2}, ${x2} ${y2}`;
+    } else {
+      const startX = from.x + from.width / 2;
+      const startY = from.y + from.height;
+      const endX = to.x + to.width / 2;
+      const endY = to.y;
+      const routeY = Math.max(startY, endY) + 36;
+      pathData = `M ${startX} ${startY} C ${startX} ${routeY}, ${endX} ${routeY}, ${endX} ${endY}`;
+    }
+    const path = el('path', { id: edge.id, class: 'edge', d: pathData });
+    edgeNodes[edge.id] = path;
+    edgeLabelSpecs.push({ edge, path });
+    content.append(path);
+  });
+
+  // Draw labels after every edge so no animated path can cut through the text.
+  // Horizontal labels are more legible than text following steep bezier curves.
+  edgeLabelSpecs.forEach(({ edge, path }, index) => {
+    if (!edge.label) return;
+    const point = path.getPointAtLength(path.getTotalLength() / 2);
+    const group = el('g', { class: 'edge-label-group', 'data-edge-id': edge.id });
+    content.append(group);
+    wrapText(group, 'edge-label', point.x, point.y - 15, edge.label, 118, 14, 2);
+    const label = group.querySelector('.edge-label');
+    // Keep the label background clear of the animated stroke. The old first
+    // offset left only a few pixels of clearance, so dashed flow marks were
+    // visually clipped beneath the label.
+    const offsets = [-32, -60, 32, 60, -88, 88, -116, 116];
+    const overlaps = (a, b) => a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
+    const distanceToPath = (bounds) => {
+      const length = path.getTotalLength();
+      let nearest = Infinity;
+      for (let distance = 0; distance <= length; distance += Math.max(4, length / 120)) {
+        const point = path.getPointAtLength(distance);
+        const dx = Math.max(bounds.x - point.x, 0, point.x - (bounds.x + bounds.width));
+        const dy = Math.max(bounds.y - point.y, 0, point.y - (bounds.y + bounds.height));
+        nearest = Math.min(nearest, Math.hypot(dx, dy));
+      }
+      return nearest;
+    };
+    let chosenOffset = null;
+    for (const offset of offsets) {
+      label.setAttribute('y', point.y + offset);
+      const bounds = label.getBBox();
+      const occupied = edgeLabels.slice(0, index).some((other) => overlaps(bounds, other.getBBox()));
+      const overlapsNode = diagram.nodes.some((node) => overlaps(bounds, node));
+      const inCanvas = bounds.x >= 0 && bounds.y >= 0 && bounds.x + bounds.width <= diagram.width && bounds.y + bounds.height <= diagram.height;
+      if (!occupied && !overlapsNode && inCanvas && distanceToPath(bounds) >= 16) {
+        chosenOffset = offset;
+        break;
+      }
+      if (chosenOffset === null && inCanvas && !overlapsNode && !occupied) chosenOffset = offset;
+    }
+    if (chosenOffset !== null) label.setAttribute('y', point.y + chosenOffset);
+    const bounds = label.getBBox();
+    group.insertBefore(el('rect', { class: 'edge-label-bg', x: bounds.x - 6, y: bounds.y - 3, width: bounds.width + 12, height: bounds.height + 6, rx: 5 }), label);
+    edgeLabels.push(label);
+  });
+
+  const nodeGroups = {};
+  diagram.nodes.forEach((node) => {
+    const group = el('g', { id: node.id, class: `node kind-${node.kind}` });
+    content.append(group);
+    group.append(el('rect', { class: 'node-box', x: node.x, y: node.y, width: node.width, height: node.height }));
+    const centerX = node.x + node.width / 2;
+    const labelLines = wrapText(group, 'node-label', centerX, node.y + 42, node.label, node.width - 24, 24, 2);
+    wrapText(group, 'node-description', centerX, node.y + 68 + (labelLines - 1) * 22, node.description || '', node.width - 24, 17, 3);
+    nodeGroups[node.id] = group;
+  });
+
+  window.setDiagramTime = (time) => {
+    Object.values(nodeGroups).forEach((node) => {
+      node.classList.remove('highlighting');
+      node.style.transform = 'scale(1)';
+      node.style.filter = 'drop-shadow(0 5px 0 rgba(29,42,45,.08))';
+    });
+    Object.values(edgeNodes).forEach((edge) => {
+      edge.classList.remove('flowing');
+      edge.style.strokeDashoffset = '0';
+    });
+    diagram.animation.forEach((animation) => {
+      if (time < animation.at) return;
+      const target = nodeGroups[animation.target] || edgeNodes[animation.target];
+      if (!target) return;
+      if (animation.effect === 'flow') {
+        target.classList.add('flowing');
+        const speed = animation.speed || 24;
+        target.style.strokeDashoffset = `${-((time - animation.at) * speed % 24)}`;
+      }
+      if (animation.effect === 'highlight') {
+        target.classList.add('highlighting');
+        const period = animation.period || 1.8;
+        const phase = ((time - animation.at) % period) / period;
+        const pulse = (Math.sin(phase * Math.PI * 2) + 1) / 2;
+        target.style.transform = `scale(${1 + pulse * 0.012})`;
+        target.style.filter = `drop-shadow(0 5px 0 rgba(29,42,45,.08)) drop-shadow(0 0 ${6 + pulse * 12}px rgba(239,120,92,${0.18 + pulse * 0.38}))`;
+      }
+    });
+  };
+  window.setDiagramTime(0);
+</script>
+</body>
+</html>

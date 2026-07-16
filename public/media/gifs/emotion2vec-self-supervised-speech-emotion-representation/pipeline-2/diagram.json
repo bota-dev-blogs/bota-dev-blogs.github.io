@@ -1,0 +1,171 @@
+{
+  "title": "emotion2vec Pre-Training Method",
+  "subtitle": "Self-supervised online distillation combining utterance-level and frame-level losses",
+  "width": 1080,
+  "height": 650,
+  "duration": 6,
+  "fps": 15,
+  "theme": "light",
+  "nodes": [
+    {
+      "id": "raw_audio",
+      "kind": "input",
+      "label": "Raw Audio",
+      "description": "Raw audio utterance",
+      "x": 100,
+      "y": 270,
+      "width": 200,
+      "height": 110,
+      "evidence": "p.3, Section 3.1"
+    },
+    {
+      "id": "teacher_net",
+      "kind": "method",
+      "label": "Teacher Network",
+      "description": "Feature extractor + Transformer backbone",
+      "x": 350,
+      "y": 150,
+      "width": 200,
+      "height": 110,
+      "evidence": "p.3, Figure 1"
+    },
+    {
+      "id": "teacher_target",
+      "kind": "output",
+      "label": "Teacher Target",
+      "description": "Average of top-k layer outputs",
+      "x": 600,
+      "y": 150,
+      "width": 200,
+      "height": 110,
+      "evidence": "p.3, Equation 3"
+    },
+    {
+      "id": "student_net",
+      "kind": "method",
+      "label": "Student Network",
+      "description": "Feature extractor + masking + utterance embedding + backbone",
+      "x": 350,
+      "y": 390,
+      "width": 200,
+      "height": 110,
+      "evidence": "p.3, Equation 4"
+    },
+    {
+      "id": "student_outputs",
+      "kind": "output",
+      "label": "Student Outputs",
+      "description": "Frame-level and utterance-level embeddings",
+      "x": 600,
+      "y": 390,
+      "width": 200,
+      "height": 110,
+      "evidence": "p.3, Section 3.2-3.3"
+    },
+    {
+      "id": "combined_loss",
+      "kind": "method",
+      "label": "Combined Loss",
+      "description": "MSE for utterance-level and frame-level losses",
+      "x": 850,
+      "y": 270,
+      "width": 200,
+      "height": 110,
+      "evidence": "p.4, Equation 5,8,9"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge1",
+      "from": "raw_audio",
+      "to": "teacher_net",
+      "label": "waveform",
+      "evidence": "p.3, Section 3.1"
+    },
+    {
+      "id": "edge2",
+      "from": "raw_audio",
+      "to": "student_net",
+      "label": "waveform",
+      "evidence": "p.3, Section 3.1"
+    },
+    {
+      "id": "edge3",
+      "from": "teacher_net",
+      "to": "teacher_target",
+      "label": "forward",
+      "evidence": "p.3, Figure 1"
+    },
+    {
+      "id": "edge4",
+      "from": "student_net",
+      "to": "student_outputs",
+      "label": "forward",
+      "evidence": "p.3, Figure 1"
+    },
+    {
+      "id": "edge5",
+      "from": "teacher_target",
+      "to": "combined_loss",
+      "label": "target",
+      "evidence": "p.4, Eq. 5,8"
+    },
+    {
+      "id": "edge6",
+      "from": "student_outputs",
+      "to": "combined_loss",
+      "label": "prediction",
+      "evidence": "p.4, Eq. 5,8"
+    }
+  ],
+  "animation": [
+    {
+      "target": "edge1",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "edge2",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "edge3",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "edge4",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "edge5",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "edge6",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    }
+  ]
+}

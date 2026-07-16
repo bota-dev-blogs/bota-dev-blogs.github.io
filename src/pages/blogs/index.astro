@@ -1,0 +1,102 @@
+---
+import "../../styles/global.css";
+import { absoluteUrl, formatDisplayDate, SITE } from "../../lib/site.js";
+import { getBlogPosts } from "../../lib/posts.js";
+
+const posts = await getBlogPosts();
+const canonicalUrl = absoluteUrl("/blogs/");
+const pageTitle = "Bota Blogs";
+const pageDescription = SITE.description;
+const latestDate = posts[0]?.modifiedDate || posts[0]?.date;
+const collectionJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  isPartOf: {
+    "@type": "WebSite",
+    name: SITE.shortName,
+    url: SITE.url
+  },
+  mainEntity: posts.map((post) => ({
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.description,
+    url: post.url,
+    datePublished: new Date(post.date).toISOString(),
+    dateModified: new Date(post.modifiedDate || post.date).toISOString(),
+    author: (Array.isArray(post.authors) ? post.authors : [post.authors]).filter(Boolean).map((name) => ({
+      "@type": "Person",
+      name
+    }))
+  }))
+};
+---
+
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription}>
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <link rel="canonical" href={canonicalUrl}>
+    <link rel="alternate" type="application/rss+xml" title="Bota Blog RSS" href={absoluteUrl("/rss.xml")}>
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content={SITE.shortName}>
+    <meta property="og:title" content={pageTitle}>
+    <meta property="og:description" content={pageDescription}>
+    <meta property="og:url" content={canonicalUrl}>
+    <meta property="og:image" content={SITE.defaultImage}>
+    <meta property="og:locale" content={SITE.locale}>
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content={pageTitle}>
+    <meta name="twitter:description" content={pageDescription}>
+    <meta name="twitter:image" content={SITE.defaultImage}>
+    {latestDate && <meta property="og:updated_time" content={new Date(latestDate).toISOString()}>}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@600;700;800&family=DM+Mono&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="https://framerusercontent.com/images/OfZg5Oz9V0OXYHYcWVjJnWeyaU.svg">
+    <script type="application/ld+json" set:html={JSON.stringify(collectionJsonLd)} />
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar" aria-label="Bota">
+        <a class="brand" href="/" aria-label="Bota home">
+          <span class="brand-mark" aria-hidden="true">bota</span>
+        </a>
+      </header>
+
+      <main class="blog-index">
+        <section class="hero blog-index-hero" aria-labelledby="blogs-title">
+          <p class="eyebrow">Bota Blog</p>
+          <h1 id="blogs-title">Blogs</h1>
+          <p class="dek">{pageDescription}</p>
+        </section>
+
+        <section class="post-list" aria-label="Blog posts">
+          {
+            posts.map((post) => {
+              const authorText = Array.isArray(post.authors) ? post.authors.join(", ") : post.authors;
+
+              return (
+                <a class="post-card" href={post.path}>
+                  {post.cover?.src && <img src={post.cover.src} alt={post.cover.alt || ""}>}
+                  <div class="post-card-body">
+                    <p class="post-date">{formatDisplayDate(post.date)}{post.readTime ? ` / ${post.readTime}` : ""}</p>
+                    <h2>{post.title}</h2>
+                    <p>{post.description}</p>
+                    {authorText && <p class="post-author">{authorText}</p>}
+                  </div>
+                </a>
+              );
+            })
+          }
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

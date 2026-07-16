@@ -1,0 +1,20 @@
+---
+import BlogLayout from "../../layouts/BlogLayout.astro";
+import { getBlogPostEntries } from "../../lib/posts.js";
+
+export async function getStaticPaths() {
+  const posts = await getBlogPostEntries();
+
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post }
+  }));
+}
+
+const { post } = Astro.props;
+const Content = post.module.default;
+---
+
+<BlogLayout frontmatter={post}>
+  <Content />
+</BlogLayout>

@@ -1,0 +1,194 @@
+---
+const { items = [] } = Astro.props;
+---
+
+<aside class="media-panel" aria-labelledby="media-title">
+  <div class="media-head">
+    <div>
+      <p class="eyebrow">Preview</p>
+      <h2 id="media-title">Media</h2>
+    </div>
+    <label class="file-button" title="Add media files">
+      <input id="media-input" type="file" accept="audio/*,video/*,image/*,.pdf,.srt,.vtt" multiple>
+      <span aria-hidden="true">+</span>
+      <span>Add</span>
+    </label>
+  </div>
+  <div class="media-actions">
+    <button id="clear-media" class="ghost-button" type="button">Clear</button>
+  </div>
+  <script id="configured-media" type="application/json" set:html={JSON.stringify(items)} />
+  <div id="media-list" class="media-list" aria-live="polite"></div>
+</aside>
+
+<script is:inline>
+  const mediaInput = document.querySelector("#media-input");
+  const clearButton = document.querySelector("#clear-media");
+  const mediaList = document.querySelector("#media-list");
+  const dataElement = document.querySelector("#configured-media");
+
+  const configuredMedia = JSON.parse(dataElement?.textContent || "[]");
+  let localMedia = [];
+
+  const extensionTypeMap = new Map([
+    ["mp3", "audio"],
+    ["wav", "audio"],
+    ["m4a", "audio"],
+    ["aac", "audio"],
+    ["ogg", "audio"],
+    ["flac", "audio"],
+    ["mp4", "video"],
+    ["mov", "video"],
+    ["webm", "video"],
+    ["m4v", "video"],
+    ["jpg", "image"],
+    ["jpeg", "image"],
+    ["png", "image"],
+    ["webp", "image"],
+    ["gif", "image"],
+    ["pdf", "pdf"],
+    ["srt", "transcript"],
+    ["vtt", "transcript"]
+  ]);
+
+  function inferType(item) {
+    if (item.type) {
+      if (item.type.startsWith("audio/")) return "audio";
+      if (item.type.startsWith("video/")) return "video";
+      if (item.type.startsWith("image/")) return "image";
+      if (item.type === "application/pdf") return "pdf";
+      return item.type;
+    }
+
+    const source = item.src || item.name || "";
+    const clean = source.split("?")[0].split("#")[0];
+    const extension = clean.includes(".") ? clean.split(".").pop().toLowerCase() : "";
+    return extensionTypeMap.get(extension) || "file";
+  }
+
+  function appendTracks(mediaElement, item) {
+    const tracks = Array.isArray(item.tracks) ? item.tracks : [];
+    tracks.forEach((trackItem) => {
+      if (!trackItem?.src) return;
+      const track = document.createElement("track");
+      track.src = trackItem.src;
+      track.kind = trackItem.kind || "subtitles";
+      track.srclang = trackItem.srclang || "en";
+      track.label = trackItem.label || trackItem.srclang || "English";
+      if (trackItem.default) track.default = true;
+      mediaElement.append(track);
+    });
+  }
+
+  function textElement(tag, className, text) {
+    const element = document.createElement(tag);
+    element.className = className;
+    element.textContent = text;
+    return element;
+  }
+
+  function appendPreview(card, item, type) {
+    if (type === "audio") {
+      const audio = document.createElement("audio");
+      audio.controls = true;
+      audio.preload = "metadata";
+      audio.src = item.src;
+      appendTracks(audio, item);
+      card.append(audio);
+      return;
+    }
+
+    if (type === "video") {
+      const video = document.createElement("video");
+      video.controls = true;
+      video.playsInline = true;
+      video.preload = "metadata";
+      video.src = item.src;
+      if (item.poster) video.poster = item.poster;
+      appendTracks(video, item);
+      card.prepend(video);
+      return;
+    }
+
+    if (type === "image") {
+      const image = document.createElement("img");
+      image.src = item.src;
+      image.alt = item.title || item.name || "Media preview";
+      card.prepend(image);
+      return;
+    }
+
+    if (type === "pdf") {
+      const frame = document.createElement("iframe");
+      frame.title = item.title || item.name || "PDF preview";
+      frame.src = item.src;
+      card.prepend(frame);
+    }
+  }
+
+  function renderMedia() {
+    const items = [...configuredMedia, ...localMedia];
+    mediaList.replaceChildren();
+
+    if (!items.length) {
+      mediaList.append(textElement("p", "media-empty", "No media loaded."));
+      return;
+    }
+
+    items.forEach((item) => {
+      const type = inferType(item);
+      const card = document.createElement("article");
+      card.className = "media-card";
+
+      appendPreview(card, item, type);
+
+      const body = document.createElement("div");
+      body.className = "media-card-body";
+      body.append(textElement("p", "media-kicker", type));
+      body.append(textElement("h3", "media-title", item.title || item.name || "Media file"));
+
+      if (item.note) {
+        body.append(textElement("p", "media-note", item.note));
+      }
+
+      if (!["audio", "video", "image", "pdf"].includes(type)) {
+        const link = document.createElement("a");
+        link.className = "download-link";
+        link.href = item.src;
+        link.textContent = "Open file";
+        link.target = "_blank";
+        link.rel = "noreferrer";
+        body.append(link);
+      }
+
+      card.append(body);
+      mediaList.append(card);
+    });
+  }
+
+  function clearLocalMedia() {
+    localMedia.forEach((item) => {
+      if (item.localUrl) URL.revokeObjectURL(item.src);
+    });
+    localMedia = [];
+    if (mediaInput) mediaInput.value = "";
+    renderMedia();
+  }
+
+  mediaInput?.addEventListener("change", (event) => {
+    clearLocalMedia();
+    const files = Array.from(event.target.files || []);
+    localMedia = files.map((file) => ({
+      title: file.name,
+      name: file.name,
+      type: file.type,
+      src: URL.createObjectURL(file),
+      localUrl: true,
+      note: `${Math.max(1, Math.round(file.size / 1024))} KB`
+    }));
+    renderMedia();
+  });
+
+  clearButton?.addEventListener("click", clearLocalMedia);
+  renderMedia();
+</script>

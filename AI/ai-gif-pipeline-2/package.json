@@ -1,0 +1,13 @@
+{
+  "name": "paper-diagram-gif",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Render a structured SVG diagram as a short animated GIF.",
+  "scripts": {
+    "generate": "node standalone.mjs"
+  },
+  "dependencies": {
+    "pdf-parse": "^1.1.1",
+    "playwright": "^1.52.0"
+  }
+}
