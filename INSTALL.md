@@ -263,6 +263,8 @@ In GitHub:
 3. Set **Source** to **GitHub Actions**.
 4. Push to `main`.
 
+If a Pages run shows `GitHub Pages: jekyll` in the logs, GitHub is still using the default branch/Jekyll builder instead of this Astro workflow. Switch **Settings -> Pages -> Build and deployment -> Source** to **GitHub Actions**, then rerun the `Deploy to GitHub Pages` workflow.
+
 Because this is the user/organization Pages repo `bota-dev-blogs.github.io`, Astro does not need a `base` path.
 
 ## Common Issues
