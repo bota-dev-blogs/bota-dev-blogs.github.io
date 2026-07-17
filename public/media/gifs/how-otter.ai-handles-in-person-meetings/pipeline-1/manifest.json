@@ -1,0 +1,14 @@
+{
+  "pipeline": "ai-gif-pipeline-1",
+  "source": "how-otter-ai-handles-in-person-meetings.md",
+  "title": "How Otter.ai Handles In-Person Meetings (And What's Missing)",
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-what-is-otter-ai.gif"
+    ]
+  },
+  "pages": [
+    "01-what-is-otter-ai.gif"
+  ]
+}

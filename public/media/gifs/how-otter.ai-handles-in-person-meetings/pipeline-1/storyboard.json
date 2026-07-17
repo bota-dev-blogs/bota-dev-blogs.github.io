@@ -1,0 +1,236 @@
+{
+  "version": 1,
+  "style": "pastel-handdrawn",
+  "title": "How Otter.ai Handles In-Person Meetings (And What's Missing)",
+  "pages": [
+    {
+      "title": "How Otter.ai Handles In-Person Meetings (And What's Missing)",
+      "section": "What is Otter.ai?",
+      "pageLabel": "1",
+      "cards": [
+        {
+          "title": "[Otter.",
+          "body": "[Otter.ai](https://otter.ai) is a popular app for transcribing meetings. It works well for virtual video conferencing meetings and also supports in-person meetings.",
+          "icon": "chat"
+        },
+        {
+          "title": "For virtual meetings, Otter send…",
+          "body": "For virtual meetings, Otter sends a bot to join the user's meeting to record and transcribe. For in-person meetings, Otter relies on a mobile app to record the conversation.",
+          "icon": "brain"
+        },
+        {
+          "title": "If you're building a transcripti…",
+          "body": "If you're building a transcription or meeting intelligence product, you might consider enabling in-person capture similar to Otter, especially as hybrid work becomes the norm.",
+          "icon": "schema"
+        }
+      ]
+    },
+    {
+      "title": "How Otter.ai Handles In-Person Meetings (And What's Missing)",
+      "section": "What is Otter.ai?",
+      "pageLabel": "2",
+      "cards": [
+        {
+          "title": "However, relying on phones or la…",
+          "body": "However, relying on phones or laptops to capture offline meetings introduces limitations in audio quality, reliability, and scalability.",
+          "icon": "graph"
+        }
+      ]
+    },
+    {
+      "title": "How Otter.ai Handles In-Person Meetings (And What's Missing)",
+      "section": "Does Otter Provide Dedicated Hardware for In-Person Meetings?",
+      "pageLabel": "1",
+      "cards": [
+        {
+          "title": "No.",
+          "body": "No. Otter does not offer dedicated meeting room hardware.",
+          "icon": "chat"
+        },
+        {
+          "title": "For virtual meetings, bots work …",
+          "body": "For virtual meetings, bots work well because audio streams are already digitized. But physical meeting rooms require microphones, edge processing, connectivity, and secure syncing infrastructure.",
+          "icon": "brain"
+        },
+        {
+          "title": "Without purpose-built hardware, …",
+          "body": "Without purpose-built hardware, in-person recording depends on:",
+          "icon": "schema"
+        }
+      ]
+    },
+    {
+      "title": "How Otter.ai Handles In-Person Meetings (And What's Missing)",
+      "section": "Does Otter Provide Dedicated Hardware for In-Person Meetings?",
+      "pageLabel": "2",
+      "cards": [
+        {
+          "title": "A user remembering to open an ap…",
+          "body": "A user remembering to open an app A phone placed in the middle of the table Consumer-grade microphones Manual workflows",
+          "icon": "graph"
+        },
+        {
+          "title": "For teams building transcription…",
+          "body": "For teams building transcription products, this creates a gap between virtual and physical meeting capture.",
+          "icon": "chat"
+        }
+      ]
+    },
+    {
+      "title": "How Otter.ai Handles In-Person Meetings (And What's Missing)",
+      "section": "Ways to Support In-Person Meeting Recording",
+      "pageLabel": "1",
+      "cards": [
+        {
+          "title": "If you're building a transcripti…",
+          "body": "If you're building a transcription platform and want to support offline meetings, there are a few options:",
+          "icon": "chat"
+        }
+      ]
+    },
+    {
+      "title": "How Otter.ai Handles In-Person Meetings (And What's Missing)",
+      "section": "1. Rely on Mobile Devices",
+      "pageLabel": "1",
+      "cards": [
+        {
+          "title": "You can ask users to record meet…",
+          "body": "You can ask users to record meetings using their phones or laptops.",
+          "icon": "chat"
+        },
+        {
+          "title": "**Benefits**",
+          "body": "**Benefits**",
+          "icon": "brain"
+        },
+        {
+          "title": "Easy to implement No additional …",
+          "body": "Easy to implement No additional hardware required",
+          "icon": "schema"
+        }
+      ]
+    },
+    {
+      "title": "How Otter.ai Handles In-Person Meetings (And What's Missing)",
+      "section": "1. Rely on Mobile Devices",
+      "pageLabel": "2",
+      "cards": [
+        {
+          "title": "**Downsides**",
+          "body": "**Downsides**",
+          "icon": "graph"
+        },
+        {
+          "title": "Inconsistent audio quality Poor …",
+          "body": "Inconsistent audio quality Poor speaker capture in larger rooms Battery limitations Manual user actions required Not ideal for enterprise deployments",
+          "icon": "chat"
+        },
+        {
+          "title": "This approach works for small me…",
+          "body": "This approach works for small meetings but does not scale well for conference rooms.",
+          "icon": "brain"
+        }
+      ]
+    },
+    {
+      "title": "How Otter.ai Handles In-Person Meetings (And What's Missing)",
+      "section": "2. Build Your Own Hardware",
+      "pageLabel": "1",
+      "cards": [
+        {
+          "title": "Another option is to design and …",
+          "body": "Another option is to design and manufacture your own dedicated recording devices.",
+          "icon": "chat"
+        },
+        {
+          "title": "This would allow you to:",
+          "body": "This would allow you to:",
+          "icon": "brain"
+        },
+        {
+          "title": "Optimize microphone arrays Contr…",
+          "body": "Optimize microphone arrays Control device firmware Manage security and syncing Deliver a seamless in-room experience",
+          "icon": "schema"
+        }
+      ]
+    },
+    {
+      "title": "How Otter.ai Handles In-Person Meetings (And What's Missing)",
+      "section": "2. Build Your Own Hardware",
+      "pageLabel": "2",
+      "cards": [
+        {
+          "title": "However, building hardware is co…",
+          "body": "However, building hardware is complex. It requires:",
+          "icon": "graph"
+        },
+        {
+          "title": "Industrial design Supply chain m…",
+          "body": "Industrial design Supply chain management Firmware development Certification and compliance Ongoing device management infrastructure",
+          "icon": "chat"
+        },
+        {
+          "title": "For most software companies, thi…",
+          "body": "For most software companies, this adds years of development and significant operational overhead.",
+          "icon": "brain"
+        }
+      ]
+    },
+    {
+      "title": "How Otter.ai Handles In-Person Meetings (And What's Missing)",
+      "section": "3. Integrate with a Hardware + API Platform",
+      "pageLabel": "1",
+      "cards": [
+        {
+          "title": "Instead of building hardware fro…",
+          "body": "Instead of building hardware from scratch, you can integrate with an existing infrastructure provider.",
+          "icon": "chat"
+        },
+        {
+          "title": "Bota provides dedicated meeting …",
+          "body": "Bota provides dedicated meeting room hardware paired with an API.",
+          "icon": "brain"
+        },
+        {
+          "title": "With Bota, transcription platfor…",
+          "body": "With Bota, transcription platforms can:",
+          "icon": "schema"
+        }
+      ]
+    },
+    {
+      "title": "How Otter.ai Handles In-Person Meetings (And What's Missing)",
+      "section": "3. Integrate with a Hardware + API Platform",
+      "pageLabel": "2",
+      "cards": [
+        {
+          "title": "Deploy physical recording device…",
+          "body": "Deploy physical recording devices in meeting rooms Automatically capture in-person conversations Securely sync recordings to the cloud Access audio via API Trigger transcription pipelines automatically",
+          "icon": "graph"
+        },
+        {
+          "title": "This allows software companies t…",
+          "body": "This allows software companies to add offline meeting support without becoming a hardware company.",
+          "icon": "chat"
+        }
+      ]
+    },
+    {
+      "title": "How Otter.ai Handles In-Person Meetings (And What's Missing)",
+      "section": "Summary",
+      "pageLabel": "1",
+      "cards": [
+        {
+          "title": "In summary, Otter.",
+          "body": "In summary, Otter.ai does not provide dedicated hardware for in-person meetings.",
+          "icon": "chat"
+        },
+        {
+          "title": "However, there are other options…",
+          "body": "However, there are other options such as relying on mobile devices to record conversations, building your own hardware infrastructure, or integrating with a hardware + API platform like Bota instead.",
+          "icon": "brain"
+        }
+      ]
+    }
+  ]
+}
