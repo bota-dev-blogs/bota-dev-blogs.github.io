@@ -9,6 +9,7 @@
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "gif": "node scripts/generate-blog-gif.mjs",
     "gif:doctor": "node scripts/gif-doctor.mjs",
+    "gif:check": "node scripts/check-gif-assets.mjs",
     "export:bota": "node scripts/export-bota-post.mjs",
     "export:bota:all": "node scripts/export-bota-post.mjs --all",
     "export:bota:site": "node scripts/export-bota-site.mjs",

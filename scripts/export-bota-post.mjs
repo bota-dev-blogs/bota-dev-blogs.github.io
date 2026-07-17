@@ -84,6 +84,14 @@ function readPosts() {
     });
 }
 
+function assetSlugFor(value) {
+  return String(value || "blog-gif")
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fff]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 72) || "blog-gif";
+}
+
 function collectMediaRefs(raw, slug) {
   const refs = new Set();
   const quoted = /["'](\/media\/[^"']+)["']/g;
@@ -98,6 +106,9 @@ function collectMediaRefs(raw, slug) {
 
   const generatedGifDir = path.join(publicDir, "media", "gifs", slug);
   if (fs.existsSync(generatedGifDir)) refs.add(`/media/gifs/${slug}/`);
+  const assetSlug = assetSlugFor(slug);
+  const generatedAssetGifDir = path.join(publicDir, "media", "gifs", assetSlug);
+  if (fs.existsSync(generatedAssetGifDir)) refs.add(`/media/gifs/${assetSlug}/`);
 
   const allRefs = [...refs].sort();
   const directoryRefs = allRefs.filter((ref) => ref.endsWith("/"));

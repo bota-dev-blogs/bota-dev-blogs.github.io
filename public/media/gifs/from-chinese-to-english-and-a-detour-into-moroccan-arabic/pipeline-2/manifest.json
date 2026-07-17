@@ -1,6 +1,7 @@
 {
   "pipeline": "ai-gif-pipeline-2",
   "source": "video-language-transformation-diagram.json",
+  "assetSlug": "from-chinese-to-english-and-a-detour-into-moroccan-arabic",
   "outputs": {
     "diagram": "diagram.json",
     "preview": "diagram.html",

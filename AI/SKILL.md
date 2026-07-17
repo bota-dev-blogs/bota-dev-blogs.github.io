@@ -1,4 +1,4 @@
-# Blog GIF Asset Skill
+# GIF Asset Skill
 
 Use this folder only to generate visual assets for Bota blog posts. The public blog lives in `src/content/blog/` and `public/media/`.
 
@@ -15,6 +15,7 @@ Readiness check:
 
 ```bash
 npm run gif:doctor
+npm run gif:check
 ```
 
 ## Pipeline Choice
@@ -25,14 +26,16 @@ Use pipeline 2 for audio AI paper diagrams and method/architecture GIFs.
 
 ## Output Rule
 
-Generated blog assets must go under:
+Publishable generated blog assets must go under:
 
 ```text
-public/media/gifs/<post-slug>/pipeline-1/
-public/media/gifs/<post-slug>/pipeline-2/
+public/media/gifs/<asset-slug>/pipeline-1/
+public/media/gifs/<asset-slug>/pipeline-2/
 ```
 
-Do not put generated frames under `public/`; temporary frames belong in `.tmp/gif-frames/`.
+Do not put generated frames under `public/`; temporary frames belong in `.tmp/gif-frames/`. Standalone pipeline outputs stay in `AI/ai-gif-pipeline-*/output/` until selected files are intentionally moved into `public/media/`.
+
+Only create `pipeline-1/` or `pipeline-2/` when that pipeline has actual outputs. Empty pipeline folders are unnecessary.
 
 ## Secrets
 

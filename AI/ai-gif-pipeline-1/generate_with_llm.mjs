@@ -71,6 +71,20 @@ function parseArgs(argv) {
   };
 }
 
+function assetSlugFor(value) {
+  return String(value || 'blog-gif')
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 72) || 'blog-gif';
+}
+
+function assetSlugFromOutputDir(outputDir) {
+  const base = path.basename(outputDir);
+  const candidate = /^pipeline-\d+$/.test(base) ? path.basename(path.dirname(outputDir)) : base;
+  return assetSlugFor(candidate);
+}
+
 async function openAIParsedResponse(client, { model, schema, name, instructions, input }) {
   const response = await client.responses.parse({
     model,
@@ -162,6 +176,7 @@ async function main() {
 
   const inputPath = path.resolve(args.input);
   const outputDir = path.resolve(args.output);
+  const assetSlug = assetSlugFromOutputDir(outputDir);
   const article = await fs.readFile(inputPath, 'utf8');
   if (article.trim().length < 80) throw new Error('The article is too short to plan.');
   await fs.mkdir(outputDir, { recursive: true });
@@ -186,6 +201,7 @@ async function main() {
   await writeManifest(outputDir, {
     pipeline: 'ai-gif-pipeline-1',
     source: path.basename(inputPath),
+    assetSlug,
     title: plan.title,
     outputs: {
       plan: 'plan.json',
@@ -217,6 +233,7 @@ async function main() {
   await writeManifest(outputDir, {
     pipeline: 'ai-gif-pipeline-1',
     source: path.basename(inputPath),
+    assetSlug,
     title: storyboard.title,
     outputs: {
       plan: 'plan.json',
@@ -235,6 +252,7 @@ async function main() {
   await writeManifest(outputDir, {
     ...renderedManifest,
     source: path.basename(inputPath),
+    assetSlug,
     outputs: {
       plan: 'plan.json',
       storyboard: 'storyboard.json',

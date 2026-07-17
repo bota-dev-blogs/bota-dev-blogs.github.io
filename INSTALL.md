@@ -1,10 +1,10 @@
-# Install and Deploy
+# Install, Run, Deploy
 
 This repo is an Astro static site for `https://bota-dev-blogs.github.io`.
 
 Blog content lives in the Markdown family: use `.mdx` files in `src/content/blog/`. Astro builds those files into static HTML for GitHub Pages.
 
-Permanent non-GIF assets should live under `public/media/<post-slug>/`. Generated GIF assets live under `public/media/gifs/<post-slug>/`. Do not use root-level `media/`, `assets/`, or `blogs/` folders.
+Permanent non-GIF assets should live under `public/media/<post-slug>/`. Generated GIF assets live under `public/media/gifs/<asset-slug>/`, where the asset slug is filesystem-safe. Do not use root-level `media/`, `assets/`, or `blogs/` folders.
 
 ## Requirements
 
@@ -58,7 +58,7 @@ To preview the built output:
 npm run preview
 ```
 
-## Add a Blog Post
+## Add A Blog Post
 
 Create a new `.mdx` file in `src/content/blog/`.
 

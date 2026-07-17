@@ -6,7 +6,7 @@ This repository is an Astro static blog plus local-only AI asset generators.
 
 - Public website source lives in `src/content/blog/`, `src/`, and `public/media/`.
 - `AI/` is only for generating GIF assets before publishing.
-- Do not copy `AI/`, `.tmp/`, `.exports/`, `node_modules/`, or frame directories into a production `bota.dev` deployment.
+- Do not copy `AI/`, `.tmp/`, `.exports/`, `node_modules/`, pipeline `output/`, or frame directories into a production `bota.dev` deployment.
 - Do not create root-level `blogs/`, `media/`, or `assets/` folders. Use `src/content/blog/` and `public/media/`.
 
 ## Main Commands
@@ -17,13 +17,14 @@ Use root commands:
 npm run dev
 npm run build
 npm run gif:doctor
+npm run gif:check
 npm run gif -- 1 --input src/content/blog/<slug>.mdx
 npm run gif -- 2 --input .tmp/papers/<paper>.pdf --slug <slug>
 npm run export:bota -- <slug>
 npm run export:bota:site
 ```
 
-Do not recommend old direct pipeline commands as the primary workflow.
+Use direct commands inside `AI/ai-gif-pipeline-*` only for standalone maintenance or debugging.
 
 ## Bota.dev Handoff
 
@@ -67,7 +68,8 @@ SITE_URL=https://bota.dev npm run build
 
 - Blog posts should remain in the Markdown family, preferably `.mdx`.
 - Permanent non-GIF assets should usually be under `public/media/<slug>/`.
-- Generated GIF assets should be under `public/media/gifs/<slug>/`.
+- Generated GIF assets should be under `public/media/gifs/<asset-slug>/`, using a filesystem-safe slug with punctuation converted to hyphens.
+- Each generated GIF asset folder should contain only the pipeline folders that actually have outputs. Do not add empty `pipeline-1/` or `pipeline-2/` folders for symmetry.
 - Posts should reference media as `/media/...`, never as filesystem paths.
 - Every post should have SEO frontmatter: `title`, `slug`, `description`, `authors`, `date`, `modifiedDate`, `keywords`, and `cover` metadata.
 - Paper posts should use `contentType: "paper"`, visible `tags`, and a `paper:` attribution block.

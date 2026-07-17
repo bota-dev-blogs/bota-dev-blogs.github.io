@@ -15,6 +15,16 @@ function slug(s) {
   return String(s || 'article').toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-').replace(/^-|-$/g, '').slice(0, 48) || 'article';
 }
 
+function assetSlug(s) {
+  return String(s || 'blog-gif').toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-').replace(/^-|-$/g, '').slice(0, 72) || 'blog-gif';
+}
+
+function assetSlugFromOutputDir(outputDir) {
+  const base = path.basename(outputDir);
+  const candidate = /^pipeline-\d+$/.test(base) ? path.basename(path.dirname(outputDir)) : base;
+  return assetSlug(candidate);
+}
+
 function sentences(text) {
   return text.replace(/\s+/g, ' ').trim().split(/(?<=[。！？.!?])\s*/).filter(Boolean);
 }
@@ -186,6 +196,7 @@ function main() {
   fs.writeFileSync(path.join(outDir,'manifest.json'),JSON.stringify({
     pipeline:'ai-gif-pipeline-1',
     source:path.basename(abs),
+    assetSlug:assetSlugFromOutputDir(outDir),
     title:storyboard.title,
     outputs:{
       storyboard:'storyboard.json',

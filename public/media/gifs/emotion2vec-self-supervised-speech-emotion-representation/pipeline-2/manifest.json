@@ -1,6 +1,7 @@
 {
   "pipeline": "ai-gif-pipeline-2",
   "source": "2312.15185",
+  "assetSlug": "emotion2vec-self-supervised-speech-emotion-representation",
   "outputs": {
     "diagram": "diagram.json",
     "preview": "diagram.html",

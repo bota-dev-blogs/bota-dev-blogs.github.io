@@ -1,8 +1,8 @@
-# AI Asset Generator Guidelines
+# AI Generator Notes
 
 This folder is a local generator workspace. Keep the publishable blog independent from it.
 
-Use root commands instead of direct subfolder commands:
+Use root commands for blog work:
 
 ```bash
 npm run gif:doctor
@@ -10,7 +10,7 @@ npm run gif -- 1 --input src/content/blog/<slug>.mdx
 npm run gif -- 2 --input .tmp/papers/<paper>.pdf --slug <slug>
 ```
 
-Standalone mode is also supported:
+Use standalone mode only when maintaining or copying one pipeline:
 
 ```bash
 cd AI/ai-gif-pipeline-1
@@ -24,7 +24,7 @@ npm run generate -- --input paper.pdf
 
 When updating these pipelines:
 
-- Keep generated assets under `public/media/gifs/<slug>/`.
+- Keep publishable generated assets under `public/media/gifs/<asset-slug>/`.
 - Keep temporary inputs and frames under `.tmp/`.
 - Never print, copy, or commit `.env` values.
 - Prefer editing the root wrapper when improving the user workflow.

@@ -9,7 +9,7 @@ Use these paths only:
 ```text
 src/content/blog/     blog MDX files
 public/media/<slug>/  publishable audio, video, images, PDFs, transcripts
-public/media/gifs/    generated blog GIFs
+public/media/gifs/    generated blog GIFs, grouped by filesystem-safe asset slug
 .exports/             temporary bota.dev handoff bundles
 AI/                   local-only GIF generation
 ```
@@ -25,7 +25,17 @@ Do not create top-level `blogs/`, `media/`, or `assets/` folders; those are igno
 - `AGENT-PAPER-TO-BLOG.md`: paper-to-blog workflow with attribution rules.
 - `AI/README.md`: standalone GIF generator usage.
 
-## Write a Blog
+## Everyday Workflow
+
+```bash
+npm install
+npm run dev
+npm run build
+```
+
+Write posts in `src/content/blog/`. Put regular media in `public/media/<post-slug>/`. Generate GIFs with the root `npm run gif` wrapper, which writes publishable files under `public/media/gifs/<asset-slug>/`.
+
+## Write A Blog
 
 Add posts in `src/content/blog/` as `.mdx` files. The filename can be the URL slug, or you can set `slug` in frontmatter.
 
@@ -70,7 +80,7 @@ media:
 Your article content goes here.
 ```
 
-Put audio, video, image, transcript, and PDF files in `public/media/<post-slug>/`. They become available at `/media/<post-slug>/<filename>`.
+Put audio, video, image, transcript, and PDF files in `public/media/<post-slug>/`. Reference them from MDX as `/media/<post-slug>/<filename>`.
 
 For scientific paper posts, add `contentType: "paper"`, visible tags such as `Paper` and `Frontier Paper`, and a `paper:` block with the original title, authors, source URL, venue, year, and code link when available. The layout renders that block as a prominent third-party attribution notice.
 
@@ -94,14 +104,15 @@ cp AI/ai-gif-pipeline-1/.env.example AI/ai-gif-pipeline-1/.env
 cp AI/ai-gif-pipeline-2/.env.example AI/ai-gif-pipeline-2/.env
 ```
 
-Use the root wrapper instead of entering the AI pipeline folders directly:
+Use the root wrapper for blog work:
 
 ```bash
 npm run gif -- 1 --input src/content/blog/my-post.mdx
 npm run gif -- 2 --input .tmp/papers/paper.pdf --slug my-post
+npm run gif:check
 ```
 
-Generated assets go to `public/media/gifs/<post-slug>/` and can be referenced from MDX with `/media/gifs/...`.
+Generated assets go to `public/media/gifs/<asset-slug>/` and can be referenced from MDX with `/media/gifs/...`. The asset slug is a filesystem-safe version of the post slug, so punctuation becomes hyphens.
 
 See [GIF_WORKFLOW.md](GIF_WORKFLOW.md) for the full workflow.
 
@@ -137,17 +148,10 @@ Canonical URLs default to `https://bota-dev-blogs.github.io`. For a production c
 SITE_URL=https://bota.dev npm run build
 ```
 
-## Develop
-
-```bash
-npm install
-npm run dev
-```
-
-Both `/` and `/blogs/` render the blog index directly. Individual posts live under `/blogs/<slug>/`.
-
 ## Deploy
 
 The `.github/workflows/deploy.yml` workflow builds the Astro site and deploys the generated `dist/` folder to GitHub Pages on pushes to `main`.
 
 For copying a post to `https://bota.dev/blogs/`, the portable pieces are the MDX content and the selected files under `public/media/`. The `AI/` folder is not needed on the publishing side.
+
+Both `/` and `/blogs/` render the blog index directly. Individual posts live under `/blogs/<slug>/`.

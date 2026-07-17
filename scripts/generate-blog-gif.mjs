@@ -18,7 +18,7 @@ Options:
   --pipeline 1|2     Optional if the first positional arg is 1 or 2.
   --input <path>     Required. MD/MDX/TXT for pipeline 1; PDF/MD/TXT/JSON for pipeline 2.
   --slug <slug>      Optional. Defaults to MDX frontmatter slug or input filename.
-  --out <dir>        Optional. Defaults to public/media/gifs/<slug>/pipeline-<n>.
+  --out <dir>        Optional. Defaults to public/media/gifs/<asset-slug>/pipeline-<n>.
   --local            Pipeline 1 only. Skip LLM and use heuristic renderer.
   --plan-only        Pipeline 1 only. Save LLM plan without storyboard/render.
   --no-render        Pipeline 1 or 2. Save intermediate JSON/HTML without final GIF render.`);
@@ -79,7 +79,7 @@ function parseFrontmatter(raw) {
   return { data, body };
 }
 
-function slugify(value) {
+function assetSlugFor(value) {
   return String(value || "blog-gif")
     .toLowerCase()
     .replace(/[^a-z0-9\u4e00-\u9fff]+/g, "-")
@@ -91,16 +91,17 @@ function prepareTextInput(inputPath, explicitSlug) {
   const ext = path.extname(inputPath).toLowerCase();
   const raw = fs.readFileSync(inputPath, "utf8");
   const { data, body } = parseFrontmatter(raw);
-  const slug = slugify(explicitSlug || data.slug || path.basename(inputPath, ext));
-  const title = data.title || slug;
+  const sourceSlug = explicitSlug || data.slug || path.basename(inputPath, ext);
+  const assetSlug = assetSlugFor(sourceSlug);
+  const title = data.title || sourceSlug;
   const normalized = ext === ".mdx" || ext === ".md"
     ? `# ${title}\n\n${body}`
     : raw;
   const tmpDir = path.join(rootDir, ".tmp", "gif-inputs");
   fs.mkdirSync(tmpDir, { recursive: true });
-  const tmpPath = path.join(tmpDir, `${slug}.md`);
+  const tmpPath = path.join(tmpDir, `${assetSlug}.md`);
   fs.writeFileSync(tmpPath, normalized);
-  return { slug, inputPath: tmpPath };
+  return { sourceSlug, assetSlug, inputPath: tmpPath };
 }
 
 function resolveInput(input) {
@@ -123,8 +124,8 @@ function run(command, args, options) {
   if (result.status !== 0) throw new Error(`${command} ${args.join(" ")} exited with code ${result.status}`);
 }
 
-function outputDirFor({ slug, pipeline, out }) {
-  return path.resolve(rootDir, out || path.join("public", "media", "gifs", slug, `pipeline-${pipeline}`));
+function outputDirFor({ assetSlug, pipeline, out }) {
+  return path.resolve(rootDir, out || path.join("public", "media", "gifs", assetSlug, `pipeline-${pipeline}`));
 }
 
 function envFor(pipelineDir) {
@@ -146,13 +147,13 @@ function runPipeline1(args, inputPath, outDir) {
   run(process.execPath, commandArgs, { cwd: pipelineDir, env: envFor(pipelineDir) });
 }
 
-function runPipeline2(args, inputPath, outDir) {
+function runPipeline2(args, inputPath, outDir, assetSlug) {
   const pipelineDir = pipelines["2"];
   ensurePipelineReady(pipelineDir);
   fs.mkdirSync(outDir, { recursive: true });
   const diagramPath = path.join(outDir, "diagram.json");
   const htmlPath = path.join(outDir, "diagram.html");
-  const framesDir = path.join(rootDir, ".tmp", "gif-frames", `${path.basename(outDir)}-${Date.now()}`);
+  const framesDir = path.join(rootDir, ".tmp", "gif-frames", `${assetSlug}-pipeline-2-${Date.now()}`);
   const gifPath = path.join(outDir, "diagram.gif");
   if (path.extname(inputPath).toLowerCase() === ".json") {
     fs.copyFileSync(inputPath, diagramPath);
@@ -166,6 +167,7 @@ function runPipeline2(args, inputPath, outDir) {
   fs.writeFileSync(path.join(outDir, "manifest.json"), `${JSON.stringify({
     pipeline: "ai-gif-pipeline-2",
     source: path.basename(inputPath),
+    assetSlug,
     outputs: {
       diagram: "diagram.json",
       preview: "diagram.html",
@@ -187,17 +189,22 @@ function main() {
   const textLike = [".md", ".mdx", ".txt"].includes(path.extname(originalInput).toLowerCase());
   const prepared = textLike
     ? prepareTextInput(originalInput, args.slug)
-    : { slug: slugify(args.slug || path.basename(originalInput, path.extname(originalInput))), inputPath: originalInput };
-  const outDir = outputDirFor({ slug: prepared.slug, pipeline: args.pipeline, out: args.out });
+    : {
+      sourceSlug: args.slug || path.basename(originalInput, path.extname(originalInput)),
+      assetSlug: assetSlugFor(args.slug || path.basename(originalInput, path.extname(originalInput))),
+      inputPath: originalInput
+    };
+  const outDir = outputDirFor({ assetSlug: prepared.assetSlug, pipeline: args.pipeline, out: args.out });
 
   if (args.pipeline === "1") runPipeline1(args, prepared.inputPath, outDir);
-  else runPipeline2(args, prepared.inputPath, outDir);
+  else runPipeline2(args, prepared.inputPath, outDir, prepared.assetSlug);
 
   const publicDir = path.join(rootDir, "public");
   const isPublicOutput = outDir === publicDir || outDir.startsWith(`${publicDir}${path.sep}`);
   console.log(`\nGIF assets written to: ${outDir}`);
   if (isPublicOutput) {
     const publicPath = `/${path.relative(publicDir, outDir).split(path.sep).join("/")}`;
+    console.log(`Asset slug: ${prepared.assetSlug}`);
     console.log(`Blog URL prefix: ${publicPath}`);
   } else {
     console.log("Output is outside public/, so it is for local review only.");

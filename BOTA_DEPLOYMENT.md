@@ -1,4 +1,4 @@
-# Bota.dev Blog Deployment Guide
+# Bota.dev Handoff
 
 This repo has two separate responsibilities:
 
@@ -14,14 +14,16 @@ Use this layout consistently:
 ```text
 src/content/blog/<slug>.mdx
 public/media/<slug>/<asset>
-public/media/gifs/<slug>/
+public/media/gifs/<asset-slug>/
 .exports/bota/<slug>/
 .exports/bota-site/
 ```
 
+Use the post slug for URLs and MDX filenames. Use a filesystem-safe asset slug for GIF folders; dots and other punctuation become hyphens.
+
 Do not use root-level `blogs/`, `media/`, or `assets/` folders. They are ignored because this repo is the source, not a scraped mirror of the production site.
 
-## Recommended Publishing Flow
+## Publishing Flow
 
 1. Write or edit a post in `src/content/blog/<slug>.mdx`.
 2. Put permanent media under `public/media/<slug>/`.
@@ -47,8 +49,10 @@ npm run gif -- 1 --input src/content/blog/post-slug.mdx
 Generated blog-ready files land under:
 
 ```text
-public/media/gifs/<post-slug>/
+public/media/gifs/<asset-slug>/
 ```
+
+If the post slug contains punctuation, use the generated asset slug folder instead.
 
 That folder is publishable. The pipeline source code in `AI/` is not.
 
@@ -117,7 +121,7 @@ The export script includes:
 
 - The selected `.mdx` file.
 - Media referenced as `/media/...` in frontmatter or body content.
-- The generated GIF folder at `public/media/gifs/<post-slug>/`, when it exists.
+- Referenced media under `public/media/gifs/<asset-slug>/`, when it exists.
 
 The export script does not include:
 
@@ -167,7 +171,7 @@ For generated diagram GIF covers, use:
 
 ```yaml
 cover:
-  src: "/media/gifs/post-slug/pipeline-2/diagram.gif"
+  src: "/media/gifs/<asset-slug>/pipeline-2/diagram.gif"
   alt: "Animated method diagram"
   width: 1396
   height: 620
@@ -183,7 +187,7 @@ src: "/media/post-slug/demo.mp3"
 ```
 
 ```mdx
-![Method diagram](/media/gifs/post-slug/pipeline-2/diagram.gif)
+![Method diagram](/media/gifs/<asset-slug>/pipeline-2/diagram.gif)
 ```
 
 For audio/video captions, prefer WebVTT:

@@ -62,6 +62,20 @@ function defaultOut(inputPath) {
   return path.resolve(pipelineDir, "output", path.basename(inputPath, path.extname(inputPath)));
 }
 
+function assetSlugFor(value) {
+  return String(value || "blog-gif")
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fff]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 72) || "blog-gif";
+}
+
+function assetSlugFromOutputDir(outputDir) {
+  const base = path.basename(outputDir);
+  const candidate = /^pipeline-\d+$/.test(base) ? path.basename(path.dirname(outputDir)) : base;
+  return assetSlugFor(candidate);
+}
+
 function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help || !args.input) {
@@ -97,6 +111,7 @@ function main() {
   fs.writeFileSync(path.join(outDir, "manifest.json"), `${JSON.stringify({
     pipeline: "ai-gif-pipeline-2",
     source: path.basename(inputPath),
+    assetSlug: assetSlugFromOutputDir(outDir),
     outputs: {
       diagram: "diagram.json",
       preview: "diagram.html",

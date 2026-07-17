@@ -2,7 +2,7 @@
 
 This folder contains local tools for producing GIF assets for Bota blog posts.
 
-For normal blog work, use the repository root commands. Standalone mode is available when you want to copy one pipeline elsewhere or test it without the Astro blog.
+For normal blog work, use the repository root commands. Standalone mode is only for maintaining, copying, or testing one pipeline without the Astro blog.
 
 ## Choose A Mode
 
@@ -13,7 +13,7 @@ npm run gif -- 1 --input src/content/blog/<slug>.mdx
 npm run gif -- 2 --input .tmp/papers/<paper>.pdf --slug <slug>
 ```
 
-Use standalone mode only when working inside a pipeline folder:
+Use standalone mode only inside a pipeline folder:
 
 ```bash
 cd AI/ai-gif-pipeline-1
@@ -52,6 +52,24 @@ cp AI/ai-gif-pipeline-2/.env.example AI/ai-gif-pipeline-2/.env
 ```
 
 Do not commit `.env`.
+
+Provider variables:
+
+```text
+LLM_PROVIDER=openai
+OPENAI_API_KEY=...
+OPENAI_URL=https://YOUR-OPENAI-COMPATIBLE-PROVIDER
+OPENAI_MODEL=gpt-5.5
+```
+
+```text
+LLM_PROVIDER=deepseek
+DEEPSEEK_API_KEY=...
+DEEPSEEK_BASE_URL=https://api.deepseek.com
+LLM_MODEL=deepseek-v4-pro
+```
+
+Shell environment variables override `.env` values.
 
 Check readiness without printing secrets:
 
@@ -110,13 +128,15 @@ Standalone output defaults to:
 AI/ai-gif-pipeline-2/output/<input-name>/
 ```
 
-## Publishable Output
+## Output Contract
 
 For the blog, publish only selected assets under:
 
 ```text
-public/media/gifs/<post-slug>/
+public/media/gifs/<asset-slug>/
 ```
+
+Use the filesystem-safe asset slug for this folder. If a post slug contains dots or other punctuation, convert them to hyphens.
 
 Integrated output folders should be consistent:
 

@@ -70,9 +70,11 @@ public/media/<slug>/
 Put generated GIF assets here:
 
 ```text
-public/media/gifs/<slug>/pipeline-1/
-public/media/gifs/<slug>/pipeline-2/
+public/media/gifs/<asset-slug>/pipeline-1/
+public/media/gifs/<asset-slug>/pipeline-2/
 ```
+
+The asset slug is a filesystem-safe version of the post slug. Use it in media paths and generated GIF folders.
 
 Do not create root-level `blogs/`, `media/`, or `assets/` folders.
 
@@ -130,14 +132,14 @@ paper:
   project: "https://..."
   dataset: "https://..."
 cover:
-  src: "/media/gifs/<slug>/pipeline-2/diagram.gif"
+  src: "/media/gifs/<asset-slug>/pipeline-2/diagram.gif"
   alt: "Animated visual explanation of the original paper's method"
   width: 1396
   height: 620
   fit: "contain"
 media:
   - title: "Visual method explanation"
-    src: "/media/gifs/<slug>/pipeline-2/diagram.gif"
+    src: "/media/gifs/<asset-slug>/pipeline-2/diagram.gif"
     type: "image"
     note: "Original visualization generated from the public paper."
 ---
@@ -267,10 +269,10 @@ npm run gif -- 2 --input .tmp/papers/<paper>.pdf --slug <slug>
 This writes:
 
 ```text
-public/media/gifs/<slug>/pipeline-2/diagram.json
-public/media/gifs/<slug>/pipeline-2/diagram.html
-public/media/gifs/<slug>/pipeline-2/diagram.gif
-public/media/gifs/<slug>/pipeline-2/manifest.json
+public/media/gifs/<asset-slug>/pipeline-2/diagram.json
+public/media/gifs/<asset-slug>/pipeline-2/diagram.html
+public/media/gifs/<asset-slug>/pipeline-2/diagram.gif
+public/media/gifs/<asset-slug>/pipeline-2/manifest.json
 ```
 
 For optional explainer cards after the MDX draft exists, use pipeline 1:
@@ -282,9 +284,9 @@ npm run gif -- 1 --input src/content/blog/<slug>.mdx
 This writes:
 
 ```text
-public/media/gifs/<slug>/pipeline-1/storyboard.json
-public/media/gifs/<slug>/pipeline-1/*.gif
-public/media/gifs/<slug>/pipeline-1/manifest.json
+public/media/gifs/<asset-slug>/pipeline-1/storyboard.json
+public/media/gifs/<asset-slug>/pipeline-1/*.gif
+public/media/gifs/<asset-slug>/pipeline-1/manifest.json
 ```
 
 GIF rules:
@@ -298,7 +300,7 @@ GIF rules:
 Example:
 
 ```mdx
-![Method diagram](/media/gifs/<slug>/pipeline-2/diagram.gif)
+![Method diagram](/media/gifs/<asset-slug>/pipeline-2/diagram.gif)
 ```
 
 ## References Section

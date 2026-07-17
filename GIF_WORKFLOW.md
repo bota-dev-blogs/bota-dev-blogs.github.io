@@ -1,20 +1,22 @@
-# Blog GIF Workflow
+# GIF Workflow
 
 `AI/` is a local asset-generation toolbox for this blog repo. It is not part of the runtime website. The deployable blog is the Astro output plus files under `public/`.
 
 Generated GIFs should land in:
 
 ```text
-public/media/gifs/<post-slug>/pipeline-1/
-public/media/gifs/<post-slug>/pipeline-2/
+public/media/gifs/<asset-slug>/pipeline-1/
+public/media/gifs/<asset-slug>/pipeline-2/
 ```
 
 Those files are served by Astro at:
 
 ```text
-/media/gifs/<post-slug>/pipeline-1/...
-/media/gifs/<post-slug>/pipeline-2/...
+/media/gifs/<asset-slug>/pipeline-1/...
+/media/gifs/<asset-slug>/pipeline-2/...
 ```
+
+The asset slug is a filesystem-safe version of the post slug. For example, the post slug `how-otter.ai-handles-in-person-meetings` uses `how-otter-ai-handles-in-person-meetings`.
 
 ## Pick A Pipeline
 
@@ -31,13 +33,16 @@ Blog draft -> pipeline 1 -> optional explainer GIF sequence
 
 Both pipelines write a `manifest.json` so output folders are easy to inspect or copy.
 
-## Commands From Repo Root
+A post does not need both pipeline folders. If only pipeline 2 has been generated, the asset folder should contain only `pipeline-2/`; if only pipeline 1 has been generated, it should contain only `pipeline-1/`. Do not add empty pipeline folders just for symmetry.
+
+## Root Commands
 
 Use one root command. The first argument selects the pipeline:
 
 ```bash
 npm run gif -- 1 --input src/content/blog/my-post.mdx
 npm run gif -- 2 --input .tmp/papers/paper.pdf --slug my-post
+npm run gif:check
 ```
 
 Useful options:
@@ -74,7 +79,7 @@ Pipeline 2 also needs `ffmpeg` available on your shell path.
 
 ## Standalone Mode
 
-Integrated mode is preferred for blog work because it writes directly to `public/media/gifs/<post-slug>/`.
+Integrated mode is preferred for blog work because it writes directly to `public/media/gifs/<asset-slug>/`.
 
 Standalone mode is available when a pipeline needs to be copied or tested by itself.
 
@@ -94,7 +99,7 @@ npm run generate -- --input paper.pdf
 npm run generate -- --input diagram.json
 ```
 
-Standalone outputs stay inside that pipeline's `output/` folder. Move only final assets you want to publish into `public/media/gifs/<post-slug>/`.
+Standalone outputs stay inside that pipeline's `output/` folder. Move only final assets you want to publish into `public/media/gifs/<asset-slug>/`.
 
 ## Environment
 
@@ -177,7 +182,7 @@ For copying content to `https://bota.dev/blogs/`, the portable pieces are:
 
 ```text
 src/content/blog/<post>.mdx
-public/media/gifs/<post-slug>/
+public/media/gifs/<asset-slug>/
 public/media/<post-slug>/<other-assets>
 ```
 

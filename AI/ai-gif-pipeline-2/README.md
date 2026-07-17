@@ -1,4 +1,4 @@
-# Pipeline 2: Paper To Technical Diagram GIF
+# Pipeline 2: Paper To Diagram GIF
 
 This folder contains the implementation for the paper/method diagram GIF generator.
 
@@ -24,7 +24,7 @@ cp .env.example .env
 
 The renderer also needs `ffmpeg` on your shell path.
 
-Fill in `.env`, then run:
+Fill in `.env`, then run standalone commands only when needed:
 
 ```bash
 npm run generate -- --input paper.pdf
@@ -41,7 +41,7 @@ npm run gif -- 2 --input AI/ai-gif-pipeline-2/diagram.json --slug my-post
 Default output:
 
 ```text
-public/media/gifs/<post-slug>/pipeline-2/
+public/media/gifs/<asset-slug>/pipeline-2/
 ```
 
 Standalone output defaults to:
@@ -61,24 +61,6 @@ Intermediate PNG frames are written under `.tmp/gif-frames/` by the root wrapper
 
 ## Environment
 
-The root wrapper reads this folder's `.env` and passes values into the generator.
+The root wrapper reads this folder's `.env` and passes values into the generator. See `AI/README.md` for provider variables.
 
-For ccswitch/OpenAI-compatible routing:
-
-```text
-LLM_PROVIDER=openai
-OPENAI_API_KEY=...
-OPENAI_URL=https://YOUR-OPENAI-PROVIDER
-OPENAI_MODEL=gpt-5.5
-```
-
-For DeepSeek:
-
-```text
-LLM_PROVIDER=deepseek
-DEEPSEEK_API_KEY=...
-DEEPSEEK_BASE_URL=https://api.deepseek.com
-LLM_MODEL=deepseek-v4-pro
-```
-
-Prefer the root `npm run gif` command for blog work. Use standalone mode only when this folder is copied or tested by itself.
+Prefer the root `npm run gif` command for blog work. Use standalone mode only when this folder is copied, tested, or maintained by itself.
