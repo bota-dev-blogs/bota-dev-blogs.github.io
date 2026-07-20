@@ -24,6 +24,8 @@ Use pipeline 1 for article-based comic/explainer GIF sequences.
 
 Use pipeline 2 for audio AI paper diagrams and method/architecture GIFs.
 
+Use pipeline 3 for one concise article-wide animated summary. Pipeline 3 is standalone until the repository-root wrapper explicitly adds selector `3`.
+
 ## Output Rule
 
 Publishable generated blog assets must go under:
@@ -31,11 +33,12 @@ Publishable generated blog assets must go under:
 ```text
 public/media/gifs/<asset-slug>/pipeline-1/
 public/media/gifs/<asset-slug>/pipeline-2/
+public/media/gifs/<asset-slug>/pipeline-3/
 ```
 
 Do not put generated frames under `public/`; temporary frames belong in `.tmp/gif-frames/`. Standalone pipeline outputs stay in `AI/ai-gif-pipeline-*/output/` until selected files are intentionally moved into `public/media/`.
 
-Only create `pipeline-1/` or `pipeline-2/` when that pipeline has actual outputs. Empty pipeline folders are unnecessary.
+Only create a pipeline output folder when that pipeline has actual outputs. Empty pipeline folders are unnecessary.
 
 ## Secrets
 
