@@ -25,6 +25,11 @@ cd AI/ai-gif-pipeline-2
 npm run generate -- --input paper.pdf
 ```
 
+```bash
+cd AI/ai-gif-pipeline-3
+npm run generate -- --input ../../src/content/blog/<slug>.mdx
+```
+
 ## First-Time Setup
 
 From the repository root:
@@ -40,6 +45,13 @@ npm run gif:setup:1
 npm run gif:setup:2
 ```
 
+Pipeline 3 is currently standalone because repository-root wrappers remain unchanged:
+
+```bash
+cd AI/ai-gif-pipeline-3
+npm install
+```
+
 Pipeline 2 also needs `ffmpeg` on your shell path.
 
 ## Environment
@@ -49,6 +61,7 @@ Copy the safe templates and fill in your provider keys:
 ```bash
 cp AI/ai-gif-pipeline-1/.env.example AI/ai-gif-pipeline-1/.env
 cp AI/ai-gif-pipeline-2/.env.example AI/ai-gif-pipeline-2/.env
+cp AI/ai-gif-pipeline-3/.env.example AI/ai-gif-pipeline-3/.env
 ```
 
 Do not commit `.env`.
@@ -128,6 +141,24 @@ Standalone output defaults to:
 AI/ai-gif-pipeline-2/output/<input-name>/
 ```
 
+## Pipeline 3: Article To One Animated Summary
+
+Best for one concise article-wide graphical abstract. It defaults to exactly one GIF and uses shared typography, semantic groups, curved paths, and collision-aware labels.
+
+Pipeline 3 is standalone in this repository configuration:
+
+```bash
+cd AI/ai-gif-pipeline-3
+npm run generate -- --input ../../src/content/blog/<slug>.mdx
+npm run series -- --input article.mdx
+```
+
+Standalone output defaults to:
+
+```text
+AI/ai-gif-pipeline-3/output/<input-name>/
+```
+
 ## Output Contract
 
 For the blog, publish only selected assets under:
@@ -148,6 +179,9 @@ pipeline-2/manifest.json
 pipeline-2/diagram.json
 pipeline-2/diagram.html
 pipeline-2/diagram.gif
+pipeline-3/manifest.json
+pipeline-3/storyboard.json
+pipeline-3/01-article-summary.gif
 ```
 
 Pipeline 1 may also include `plan.json` when the LLM planner is used.
