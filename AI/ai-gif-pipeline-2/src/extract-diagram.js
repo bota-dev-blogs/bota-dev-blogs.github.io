@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const pdfParse = require('pdf-parse');
+const { sanitizeDiagram } = require('./sanitize-diagram');
 
 const inputPath = process.argv[2];
 const outputPath = process.argv[3] || 'diagram.json';
@@ -70,11 +71,13 @@ Hard constraints:
 - Use evidence strings such as "p.4, Method" when the input supports them.
 - Use a 1080x650 canvas and a 5-8 second duration.
 - Node kinds are only input, method, output.
+- The renderer chooses wordless monoline node glyphs from node content. Write precise node labels and descriptions; do not rely on acronyms, emoji, flags, or language characters as visual symbols.
+- Never put article-utility or meta-writing terms in any title, subtitle, node label, node description, edge label, or evidence string: takeaway, TL;DR, references, bibliography, sources, further reading, appendix, table of contents, abstract, introduction, related work, conclusion, summary, overview, discussion, limitation, future work, this article, this post, blog post, section, chapter, figure, table, metadata, front matter, SEO, author note, read more, comments, newsletter. Use the precise method concept instead.
 
 Output this exact shape:
 {
   "title": "short title",
-  "subtitle": "one-sentence takeaway",
+  "subtitle": "one-sentence summary",
   "width": 1080,
   "height": 650,
   "duration": 6,
@@ -109,6 +112,8 @@ Priorities:
 - Every retained edge must include concise evidence with a page or section reference.
 - Use only input, method, and output node kinds.
 - All animations must be flow animations targeting edges, starting at 0; never animate nodes.
+- Node labels and descriptions must be precise enough for wordless monoline glyphs; do not use acronyms, emoji, flags, or language characters as visual symbols.
+- Never put article-utility or meta-writing terms in any title, subtitle, node label, node description, edge label, or evidence string: takeaway, TL;DR, references, bibliography, sources, further reading, appendix, table of contents, abstract, introduction, related work, conclusion, summary, overview, discussion, limitation, future work, this article, this post, blog post, section, chapter, figure, table, metadata, front matter, SEO, author note, read more, comments, newsletter. Use a precise method concept instead.
 
 Return the same exact diagram JSON shape as the draft.`;
 
@@ -186,7 +191,7 @@ function validate(diagram) {
   diagram.height = 650;
   diagram.duration = Math.min(8, Math.max(5, Number(diagram.duration) || 6));
   diagram.fps = 15;
-  return diagram;
+  return sanitizeDiagram(diagram);
 }
 
 (async () => {

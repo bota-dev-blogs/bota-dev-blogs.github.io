@@ -1,79 +1,197 @@
 {
-  "title": "AI video language transformation",
-  "subtitle": "Chinese tutorial video to English voice-cloned output",
+  "title": "AI Video Localization Pipeline",
+  "subtitle": "Chinese tutorial video becomes English output while a Darija branch exposes TTS limits.",
+  "width": 1396,
+  "height": 620,
   "duration": 6,
   "fps": 15,
   "theme": "light",
   "nodes": [
     {
-      "id": "source-video",
+      "id": "Evidence",
       "kind": "input",
-      "label": "Source video",
-      "description": "Chinese tutorial audio + original visuals"
+      "label": "Source Video",
+      "description": "Chinese tutorial audio plus original visual track.",
+      "x": 64,
+      "y": 266,
+      "width": 218,
+      "height": 124
     },
     {
-      "id": "transcription",
+      "id": "segments",
       "kind": "method",
-      "label": "Transcription",
-      "description": "faster-whisper extracts timed Chinese segments"
+      "label": "Timed Script",
+      "description": "faster-whisper segments, DeepL translation, Gemini terminology review.",
+      "x": 360,
+      "y": 172,
+      "width": 230,
+      "height": 124
     },
     {
-      "id": "translation",
+      "id": "speakers",
       "kind": "method",
-      "label": "Translation review",
-      "description": "DeepL translation with terminology cleanup"
+      "label": "Speaker Map",
+      "description": "pyannote diarization extracts per-speaker reference clips.",
+      "x": 360,
+      "y": 360,
+      "width": 230,
+      "height": 124
     },
     {
-      "id": "diarization",
+      "id": "voice",
       "kind": "method",
-      "label": "Speaker diarization",
-      "description": "pyannote separates speakers for voice identity"
+      "label": "Voice Clone",
+      "description": "F5-TTS and Voxtral generate English speech in source voices.",
+      "x": 690,
+      "y": 266,
+      "width": 230,
+      "height": 124
     },
     {
-      "id": "voice-clone",
+      "id": "quality",
       "kind": "method",
-      "label": "Voice synthesis",
-      "description": "F5-TTS / Voxtral generate English speech"
+      "label": "Alignment Gates",
+      "description": "Time-stretch, loudness normalize, inspect, and rerun weak segments.",
+      "x": 1015,
+      "y": 172,
+      "width": 230,
+      "height": 124
     },
     {
-      "id": "alignment",
-      "kind": "method",
-      "label": "Audio alignment",
-      "description": "Time-stretch and loudness normalize segments"
-    },
-    {
-      "id": "final-video",
+      "id": "output",
       "kind": "output",
-      "label": "English output",
-      "description": "Original video with cloned English audio"
+      "label": "English Video",
+      "description": "Original visuals with synchronized cloned English audio.",
+      "x": 1015,
+      "y": 360,
+      "width": 230,
+      "height": 124
     },
     {
-      "id": "darija-test",
+      "id": "darija",
       "kind": "output",
-      "label": "Darija experiment",
-      "description": "Low-resource fine-tuning exposes data limits"
+      "label": "Darija Test",
+      "description": "Vocabulary extension worked, but TTS pronunciation did not converge.",
+      "x": 690,
+      "y": 455,
+      "width": 230,
+      "height": 112
     }
   ],
   "edges": [
-    { "id": "edge-source-transcription", "from": "source-video", "to": "transcription", "label": "audio" },
-    { "id": "edge-transcription-translation", "from": "transcription", "to": "translation", "label": "segments" },
-    { "id": "edge-source-diarization", "from": "source-video", "to": "diarization", "label": "speaker cues" },
-    { "id": "edge-translation-voice", "from": "translation", "to": "voice-clone", "label": "English script" },
-    { "id": "edge-diarization-voice", "from": "diarization", "to": "voice-clone", "label": "speaker refs" },
-    { "id": "edge-voice-alignment", "from": "voice-clone", "to": "alignment", "label": "speech" },
-    { "id": "edge-alignment-final", "from": "alignment", "to": "final-video", "label": "synced audio" },
-    { "id": "edge-voice-darija", "from": "voice-clone", "to": "darija-test", "label": "fine-tuning path" }
+    {
+      "id": "e-source-segments",
+      "from": "Evidence",
+      "to": "segments",
+      "label": "audio to text"
+    },
+    {
+      "id": "e-source-speakers",
+      "from": "Evidence",
+      "to": "speakers",
+      "label": "speaker cues"
+    },
+    {
+      "id": "e-segments-voice",
+      "from": "segments",
+      "to": "voice",
+      "label": "English script"
+    },
+    {
+      "id": "e-speakers-voice",
+      "from": "speakers",
+      "to": "voice",
+      "label": "voice refs"
+    },
+    {
+      "id": "e-voice-quality",
+      "from": "voice",
+      "to": "quality",
+      "label": "synthetic speech"
+    },
+    {
+      "id": "e-quality-output",
+      "from": "quality",
+      "to": "output",
+      "label": "synced audio"
+    },
+    {
+      "id": "e-voice-darija",
+      "from": "voice",
+      "to": "darija",
+      "label": "low-resource branch"
+    }
   ],
   "animation": [
-    { "target": "edge-source-transcription", "effect": "flow", "at": 0.0, "loop": true, "speed": 24 },
-    { "target": "edge-transcription-translation", "effect": "flow", "at": 0.4, "loop": true, "speed": 24 },
-    { "target": "edge-source-diarization", "effect": "flow", "at": 0.7, "loop": true, "speed": 22 },
-    { "target": "edge-translation-voice", "effect": "flow", "at": 1.0, "loop": true, "speed": 24 },
-    { "target": "edge-diarization-voice", "effect": "flow", "at": 1.1, "loop": true, "speed": 22 },
-    { "target": "voice-clone", "effect": "highlight", "at": 1.2, "loop": true, "period": 1.8 },
-    { "target": "edge-voice-alignment", "effect": "flow", "at": 1.6, "loop": true, "speed": 24 },
-    { "target": "edge-alignment-final", "effect": "flow", "at": 2.0, "loop": true, "speed": 24 },
-    { "target": "edge-voice-darija", "effect": "flow", "at": 2.2, "loop": true, "speed": 20 },
-    { "target": "darija-test", "effect": "highlight", "at": 2.4, "loop": true, "period": 2.2 }
+    {
+      "target": "e-source-segments",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e-source-speakers",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e-segments-voice",
+      "effect": "flow",
+      "at": 0.6,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e-speakers-voice",
+      "effect": "flow",
+      "at": 0.8,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "voice",
+      "effect": "highlight",
+      "at": 1.2,
+      "loop": true,
+      "period": 1.8
+    },
+    {
+      "target": "e-voice-quality",
+      "effect": "flow",
+      "at": 1.4,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e-quality-output",
+      "effect": "flow",
+      "at": 1.8,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e-voice-darija",
+      "effect": "flow",
+      "at": 2,
+      "loop": true,
+      "speed": 20,
+      "period": 1.8
+    },
+    {
+      "target": "darija",
+      "effect": "highlight",
+      "at": 2.2,
+      "loop": true,
+      "period": 2.2
+    }
   ]
 }

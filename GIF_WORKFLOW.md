@@ -7,6 +7,7 @@ Generated GIFs should land in:
 ```text
 public/media/gifs/<asset-slug>/pipeline-1/
 public/media/gifs/<asset-slug>/pipeline-2/
+public/media/gifs/<asset-slug>/pipeline-3/
 ```
 
 Those files are served by Astro at:
@@ -14,26 +15,34 @@ Those files are served by Astro at:
 ```text
 /media/gifs/<asset-slug>/pipeline-1/...
 /media/gifs/<asset-slug>/pipeline-2/...
+/media/gifs/<asset-slug>/pipeline-3/...
 ```
 
 The asset slug is a filesystem-safe version of the post slug. For example, the post slug `how-otter.ai-handles-in-person-meetings` uses `how-otter-ai-handles-in-person-meetings`.
 
 ## Pick A Pipeline
 
-Use pipeline 1 for article-to-comic explainers. It reads a blog draft or Markdown note, asks the LLM for a plan/storyboard, then renders several square cartoon explainer GIFs.
+Use pipeline 1 for section-level article explainers. It reads a blog draft or Markdown note, asks the LLM for a plan/storyboard, then renders square animated compact tile-board GIFs with aligned pastel rectangles, semantic icon tiles, varied card compositions, and subtle block zoom motion. Pipeline 1 should not depend on arrows, scattered node maps, or guide-character scenes.
 
 Use pipeline 2 for paper-to-technical-diagram GIFs. It reads a paper, Markdown note, or diagram JSON, asks the LLM for a compact method diagram, then renders one animated architecture/method GIF.
+
+Pipeline 1 and pipeline 2 should both use the canvas deliberately: avoid large accidental blank quadrants, keep intro-to-content gaps tight, and let pipeline 2 cap very wide method flows before they become mostly horizontal padding.
+
+Use pipeline 3 for article-wide animated graphical abstracts, research maps, comparison maps, and practical checklists. It defaults to one concise GIF; use `--series` only when a multi-page visual digest is useful.
 
 For audio AI paper blogs, the default flow is:
 
 ```text
 Paper PDF -> pipeline 2 -> one method GIF -> MDX blog media
 Blog draft -> pipeline 1 -> optional explainer GIF sequence
+Blog draft -> pipeline 3 -> optional article-wide summary or research map
 ```
 
-Both pipelines write a `manifest.json` so output folders are easy to inspect or copy.
+All pipelines write a `manifest.json` so output folders are easy to inspect or copy.
 
-A post does not need both pipeline folders. If only pipeline 2 has been generated, the asset folder should contain only `pipeline-2/`; if only pipeline 1 has been generated, it should contain only `pipeline-1/`. Do not add empty pipeline folders just for symmetry.
+Visible GIF text should read like finished publication copy. Do not let any pipeline render internal editorial labels such as "takeaway"; use "key idea", "design rule", "checklist", "summary", or the concrete concept name instead.
+
+A post does not need every pipeline folder. If only pipeline 2 has been generated, the asset folder should contain only `pipeline-2/`; if only pipeline 1 has been generated, it should contain only `pipeline-1/`. Do not add empty pipeline folders just for symmetry.
 
 ## Root Commands
 
@@ -42,7 +51,9 @@ Use one root command. The first argument selects the pipeline:
 ```bash
 npm run gif -- 1 --input src/content/blog/my-post.mdx
 npm run gif -- 2 --input .tmp/papers/paper.pdf --slug my-post
+npm run gif -- 3 --input src/content/blog/my-post.mdx
 npm run gif:check
+npm run gif:clean -- --dry-run
 ```
 
 Useful options:
@@ -52,11 +63,20 @@ npm run gif -- 1 --input src/content/blog/my-post.mdx --local
 npm run gif -- 1 --input src/content/blog/my-post.mdx --plan-only
 npm run gif -- 1 --input src/content/blog/my-post.mdx --no-render
 npm run gif -- 2 --input AI/ai-gif-pipeline-2/diagram.json --slug my-post
+npm run gif -- 2 --input .tmp/papers/paper.pdf --slug my-post --keep-frames
+npm run gif -- 3 --input src/content/blog/my-post.mdx --series
+npm run gif -- 3 --input public/media/gifs/my-post/pipeline-3/storyboard.json --slug my-post --local --page 1
 ```
 
-`--local` is pipeline 1 only. It skips the LLM and renders a quick heuristic storyboard.
+`--local` is supported by pipeline 1 and pipeline 3. It skips the LLM and renders a quick heuristic storyboard or an existing storyboard JSON.
 
 `--no-render` keeps intermediate JSON/HTML without making the final GIF.
+
+When `--plan-only` or `--no-render` is used without `--out`, root commands write to `.tmp/gif-drafts/<asset-slug>/pipeline-<n>/` instead of `public/media/gifs/`.
+
+Pipeline 2 temporary PNG frames are cleaned after successful root renders. Use `--keep-frames` only when debugging renderer output.
+
+Use `npm run gif:clean` to remove root pipeline-2 frame scratch data. Use `npm run gif:clean -- --all` to also remove `.tmp` draft, smoke, visual-audit, and verification folders.
 
 ## First-Time Setup
 
@@ -73,7 +93,7 @@ npm run gif:setup
 npm run gif:doctor
 ```
 
-This installs pipeline 1, pipeline 2, and Playwright Chromium for pipeline 2.
+This installs pipeline 1, pipeline 2, pipeline 3, and Playwright Chromium for pipeline 2.
 
 Pipeline 2 also needs `ffmpeg` available on your shell path.
 
@@ -99,6 +119,15 @@ npm run generate -- --input paper.pdf
 npm run generate -- --input diagram.json
 ```
 
+Pipeline 3:
+
+```bash
+cd AI/ai-gif-pipeline-3
+npm run generate -- --input article.mdx
+npm run series -- --input article.mdx
+npm run local -- --input storyboard.json --page 1
+```
+
 Standalone outputs stay inside that pipeline's `output/` folder. Move only final assets you want to publish into `public/media/gifs/<asset-slug>/`.
 
 ## Environment
@@ -110,6 +139,7 @@ Create a local `.env` from the safe template:
 ```bash
 cp AI/ai-gif-pipeline-1/.env.example AI/ai-gif-pipeline-1/.env
 cp AI/ai-gif-pipeline-2/.env.example AI/ai-gif-pipeline-2/.env
+cp AI/ai-gif-pipeline-3/.env.example AI/ai-gif-pipeline-3/.env
 ```
 
 For ccswitch/OpenAI-compatible routing:
@@ -127,6 +157,7 @@ For DeepSeek:
 LLM_PROVIDER=deepseek
 DEEPSEEK_API_KEY=...
 DEEPSEEK_BASE_URL=https://api.deepseek.com
+DEEPSEEK_MODEL=deepseek-v4-pro
 LLM_MODEL=deepseek-v4-pro
 ```
 
@@ -140,10 +171,10 @@ Frontmatter media panel:
 
 ```yaml
 media:
-  - title: "emotion2vec method diagram"
-    src: "/media/gifs/emotion2vec-self-supervised-speech-emotion-representation/pipeline-2/diagram.gif"
+  - title: "Affect-aware ASR stack"
+    src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-2/01-affect-aware-asr-stack.gif"
     type: "image"
-    note: "Animated method overview"
+    note: "Animated stack overview"
 ```
 
 ## Output Contents
@@ -162,16 +193,16 @@ Pipeline 2 output:
 ```text
 diagram.json       structured method diagram
 diagram.html       browser preview
-diagram.gif        blog-ready method GIF
+01-*.gif           blog-ready method GIF named from the diagram title
 manifest.json      source and publishable file list
 ```
 
-With `--plan-only` or `--no-render`, `manifest.json` still exists and records which final files have not been rendered yet.
+With `--plan-only` or `--no-render`, `manifest.json` still exists and records which final files have not been rendered yet. Root commands put these intermediate-only outputs under `.tmp/gif-drafts/` unless an explicit `--out` is provided.
 
 Inline MDX:
 
 ```mdx
-![emotion2vec method diagram](/media/gifs/emotion2vec-self-supervised-speech-emotion-representation/pipeline-2/diagram.gif)
+![Affect-aware ASR stack](/media/gifs/emotion-aware-asr-research-digest/pipeline-2/01-affect-aware-asr-stack.gif)
 ```
 
 ## Deployable Output

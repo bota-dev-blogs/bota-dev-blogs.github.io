@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { layoutDiagram } = require('./layout-diagram');
 
-const [, , diagramPath = 'diagram.json', outputPath = 'public/diagram.html'] = process.argv;
+const [, , diagramPath = 'diagram.json', outputPath = 'output/diagram.html'] = process.argv;
 const diagram = layoutDiagram(JSON.parse(fs.readFileSync(diagramPath, 'utf8')));
 const template = fs.readFileSync(path.join(__dirname, '..', 'templates', 'diagram.html'), 'utf8');
 

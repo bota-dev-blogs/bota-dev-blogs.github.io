@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "style": "pastel-handdrawn",
+  "title": "Realtime Speech AI",
+  "pages": [
+    {
+      "title": "Voice Agent Design Questions",
+      "section": "Design Questions",
+      "pageLabel": "1",
+      "kicker": "Choose the control boundary before choosing the model",
+      "composition": "checklist",
+      "layout": "checklist",
+      "introStyle": "ribbon",
+      "titleTreatment": "none",
+      "cards": [
+        {
+          "title": "What must be exact?",
+          "body": "Keep ASR visible for transcripts, timestamps, search, confidence, and audit.",
+          "icon": "asr"
+        },
+        {
+          "title": "What must be heard?",
+          "body": "Use audio models for prosody, overlap, sound events, speaker cues, and uncertainty.",
+          "icon": "waveform"
+        },
+        {
+          "title": "When must it speak?",
+          "body": "Measure turn timing, interruption recovery, first audio, and live translation jitter.",
+          "icon": "latency"
+        },
+        {
+          "title": "What can it do?",
+          "body": "Put permissions, confirmations, schema checks, and logs between intent and action.",
+          "icon": "gate"
+        }
+      ],
+      "fileSlug": "design-questions"
+    }
+  ]
+}

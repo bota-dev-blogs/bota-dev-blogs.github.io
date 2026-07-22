@@ -1,0 +1,22 @@
+{
+  "pipeline": "ai-gif-pipeline-3",
+  "source": "storyboard.json",
+  "assetSlug": "emotion-aware-asr-research-digest",
+  "title": "Emotion-Aware ASR",
+  "version": 2,
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-article-summary.gif",
+      "02-model-families.gif",
+      "03-data-and-evaluation.gif",
+      "04-deployment-checklist.gif"
+    ]
+  },
+  "pages": [
+    "01-article-summary.gif",
+    "02-model-families.gif",
+    "03-data-and-evaluation.gif",
+    "04-deployment-checklist.gif"
+  ]
+}

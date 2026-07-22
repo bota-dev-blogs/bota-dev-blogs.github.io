@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "style": "pastel-handdrawn",
+  "title": "Qwen-Audio-3.0-Realtime: A Field Guide for Voice Agents",
+  "pages": [
+    {
+      "title": "Demo Evaluation Checklist (Conversation)",
+      "section": "Demo Evaluation Checklist",
+      "pageLabel": "9",
+      "kicker": "Rate these dimensions to gauge real-world readiness.",
+      "composition": "checklist",
+      "layout": "checklist",
+      "introStyle": "badge",
+      "titleTreatment": "corner-tag",
+      "cards": [
+        {
+          "title": "First Audio Latency",
+          "body": "Does the first audio arrive fast enough for a natural conversational flow?",
+          "icon": "clock"
+        },
+        {
+          "title": "Interruption Speed",
+          "body": "Does playback stop instantly when the user interrupts, or does it bleed over?",
+          "icon": "alert"
+        },
+        {
+          "title": "Filler Handling",
+          "body": "Does smart_turn ignore “uh,” “um,” and pauses without triggering false turn completions?",
+          "icon": "ear"
+        },
+        {
+          "title": "Command Revision",
+          "body": "Can the agent gracefully recover when the user revises or restates a command mid-turn?",
+          "icon": "branch"
+        }
+      ],
+      "fileSlug": "demo-evaluation-checklist"
+    }
+  ]
+}

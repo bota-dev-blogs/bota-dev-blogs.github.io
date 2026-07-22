@@ -1,0 +1,119 @@
+{
+  "title": "Qwen-Audio-3.0-Realtime Voice Agent Loop",
+  "subtitle": "A realtime speech system that listens, reasons, speaks, and calls tools within a single interaction loop.",
+  "width": 1080,
+  "height": 650,
+  "duration": 6,
+  "fps": 15,
+  "theme": "light",
+  "nodes": [
+    {
+      "id": "mic_audio",
+      "kind": "input",
+      "label": "Microphone Audio",
+      "description": "Streaming audio chunks captured from the user's microphone.",
+      "x": 50,
+      "y": 270,
+      "width": 200,
+      "height": 110,
+      "evidence": "Audio capture layer"
+    },
+    {
+      "id": "speech_model",
+      "kind": "method",
+      "label": "Speech Model",
+      "description": "Qwen-Audio-3.0-Realtime processes speech input and generates streaming text/audio or function calls.",
+      "x": 310,
+      "y": 270,
+      "width": 200,
+      "height": 110,
+      "evidence": "The Short Version"
+    },
+    {
+      "id": "direct_output",
+      "kind": "output",
+      "label": "Streaming Output",
+      "description": "Incremental text and audio responses sent back to the client in real time.",
+      "x": 570,
+      "y": 270,
+      "width": 200,
+      "height": 110,
+      "evidence": "Streaming Output"
+    },
+    {
+      "id": "tool_exec",
+      "kind": "method",
+      "label": "Tool Execution",
+      "description": "Client-side execution of external tools (e.g., APIs, databases) based on the model's function call request.",
+      "x": 310,
+      "y": 470,
+      "width": 200,
+      "height": 110,
+      "evidence": "Function Calling makes the voice agent useful"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "mic_audio",
+      "to": "speech_model",
+      "label": "audio stream",
+      "evidence": "The Short Version: client streams microphone audio"
+    },
+    {
+      "id": "e2",
+      "from": "speech_model",
+      "to": "direct_output",
+      "label": "streaming response",
+      "evidence": "Streaming Output: text and audio arrive incrementally"
+    },
+    {
+      "id": "e3",
+      "from": "speech_model",
+      "to": "tool_exec",
+      "label": "function_call",
+      "evidence": "Function Calling: model requests tool call"
+    },
+    {
+      "id": "e4",
+      "from": "tool_exec",
+      "to": "speech_model",
+      "label": "tool result",
+      "evidence": "Function Calling loop: client returns tool result"
+    }
+  ],
+  "animation": [
+    {
+      "target": "e1",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e2",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e3",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e4",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    }
+  ]
+}

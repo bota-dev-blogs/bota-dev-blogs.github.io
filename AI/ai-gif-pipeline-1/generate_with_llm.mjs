@@ -2,11 +2,26 @@ import fsSync from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
+import { createRequire } from 'node:module';
 import OpenAI from 'openai';
 import { z } from 'zod';
 import { zodTextFormat } from 'openai/helpers/zod';
 
-const Icon = z.enum(['chat', 'brain', 'schema', 'graph']);
+const require = createRequire(import.meta.url);
+const sharedIcons = require('../shared/semantic-icons.cjs');
+const Icon = z.enum(sharedIcons.ICON_NAMES);
+const CONCRETE_ICON_HINTS = [
+  'microphone', 'waveform', 'asr', 'tts', 'headphones', 'speaker', 'subtitle',
+  'phone', 'edge-device', 'chip', 'gpu', 'server', 'router', 'sensor',
+  'camera', 'cloud', 'network', 'database', 'dataset', 'embedding', 'model',
+  'shield', 'lock', 'gate', 'filter', 'target', 'sliders', 'latency',
+  'translate', 'globe', 'document', 'search', 'check', 'alert', 'gear',
+  'link', 'layers', 'merge', 'room', 'bot', 'ear', 'video', 'branch'
+].filter((name) => sharedIcons.ICON_NAMES.includes(name)).join(', ');
+const Layout = z.enum(['row', 'timeline', 'spotlight', 'stacked', 'grid', 'mosaic', 'compare', 'lanes', 'checklist']);
+const Composition = z.enum(['flow', 'comparison', 'checklist', 'system-map', 'failure-map', 'evidence-map', 'compact-grid', 'spotlight']);
+const IntroStyle = z.enum(['guide', 'badge', 'ribbon', 'split', 'quiet']);
+const TitleTreatment = z.enum(['underline', 'corner-tag', 'none']);
 const Plan = z.object({
   title: z.string().min(1),
   language: z.string().min(1),
@@ -34,11 +49,16 @@ const Storyboard = z.object({
     title: z.string().min(1),
     section: z.string().min(1),
     pageLabel: z.string().min(1),
+    kicker: z.string().min(1).max(120),
+    composition: Composition,
+    layout: Layout,
+    introStyle: IntroStyle,
+    titleTreatment: TitleTreatment,
     cards: z.array(z.object({
       title: z.string().min(1).max(60),
       body: z.string().min(1).max(320),
       icon: Icon
-    })).min(1).max(3)
+    })).min(1).max(4)
   })).min(1).max(36)
 });
 
@@ -58,7 +78,7 @@ function loadEnvFile(filePath) {
 function usage() {
   console.log('Usage: node generate_with_llm.mjs <article.md|txt> [output-dir]');
   console.log('Environment: DEEPSEEK_API_KEY or OPENAI_API_KEY (one required)');
-  console.log('Optional: LLM_PROVIDER, LLM_MODEL, DEEPSEEK_BASE_URL, OPENAI_URL');
+  console.log('Optional: LLM_PROVIDER, LLM_MODEL, DEEPSEEK_MODEL, DEEPSEEK_BASE_URL, OPENAI_MODEL, OPENAI_URL');
 }
 
 function parseArgs(argv) {
@@ -137,7 +157,7 @@ function chooseProvider() {
     return {
       provider, apiKey,
       baseURL: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com',
-      model: process.env.LLM_MODEL || 'deepseek-v4-flash'
+      model: process.env.LLM_MODEL || process.env.DEEPSEEK_MODEL || 'deepseek-v4-flash'
     };
   }
   return {
@@ -192,6 +212,8 @@ async function main() {
       'Read the entire article before planning. Preserve technical correctness and causal order.',
       'Create a global outline, glossary, and consistent visual direction before any page is composed.',
       'Do not mechanically map paragraphs to pages. Merge repetition and split dense concepts semantically.',
+      'Ignore article utility sections such as references, bibliography, sources, further reading, appendix, footnotes, table of contents, acknowledgments, citation notes, metadata, front matter, SEO, changelog, author notes, read-more blocks, comments, and newsletter prompts.',
+      'Treat visual_style.character as "none" unless a real human actor is essential. Prefer systems, evidence, tools, and product surfaces over guide characters.',
       'Keep each key point concise enough to become one visual card later.'
     ].join('\n'),
     input: `SOURCE ARTICLE\n\n${article}`
@@ -217,14 +239,27 @@ async function main() {
   const storyboard = await parsedResponse(client, {
     model, schema: Storyboard, name: 'comic_storyboard',
     instructions: [
-      'You compose a sequence of square, pastel hand-drawn technical infographic pages.',
+      'You compose a sequence of square, clean pastel technical infographic pages.',
       'Use the supplied global plan as the single source of truth.',
       'Create one or more pages per section and keep the section order.',
-      'Each page must have 1 to 3 cards. Prefer 2 or 3; use 1 only for a strong conclusion.',
+      'Each page must have 1 to 4 cards. Prefer 2 to 4; use 1 only for a strong conclusion or spotlight claim.',
+      'The preferred visual grammar is a compact tile board: large rectangular information blocks, square-ish rhythm, clear alignment, and little dead space. Think editorial Win8-style tiles softened into the existing hand-drawn pastel style.',
+      'Choose a page composition before choosing a layout: flow for staged processes, comparison for two options or trade-offs, checklist for design rules or decision criteria, system-map for gates or interacting subsystems, failure-map for bottlenecks or negative results, evidence-map for signal/evidence collection, compact-grid for ordinary grouped points, and spotlight for one dominant claim.',
+      'Use composition diversity across an article. Do not make every page a compact-grid or card table.',
+      'Choose a varied fallback layout for each page: row, timeline, spotlight, stacked, grid, mosaic, compare, lanes, or checklist.',
+      'Choose a varied introStyle for each page: guide, badge, ribbon, split, or quiet. Treat guide as a compact key-idea card, not a character scene.',
+      'Choose a varied titleTreatment: underline, corner-tag, or none. Do not expose internal composition labels in the artwork.',
+      'Use kicker as the page-level key idea. It should be specific, not a generic subtitle.',
+      'Never put article-utility or meta-writing terms in any visible title, label, card, caption, badge, or subtitle: takeaway, TL;DR, references, bibliography, sources, further reading, appendix, table of contents, abstract, introduction, related work, conclusion, summary, overview, discussion, limitation, future work, this article, this post, blog post, section, chapter, figure, table, metadata, front matter, SEO, author note, read more, comments, newsletter.',
+      'Rewrite those ideas into the actual concept name whenever possible. If a generic replacement is unavoidable, use a reader-facing phrase such as design rule, evidence, map, short version, or what it means.',
+      'Avoid repeating the same layout or introStyle on adjacent pages unless the section truly needs continuity.',
+      'Do not plan arrows, arrow labels, scattered node maps, or person-arrow-subtitle compositions. Flow pages should use stacked or tiled process blocks, not isolated islands.',
       'Card titles must be short. Card bodies must be self-contained and readable, not fragments.',
       'Avoid repeating the article title or the same background context on every page.',
-      'Use one of the permitted semantic icons: chat, brain, schema, graph.',
-      'Use pageLabel as a local section page number such as 1, 2, or 3.'
+      `Use a diverse semantic icon set. Prefer concrete domain icons before abstract icons: ${CONCRETE_ICON_HINTS}.`,
+      'Use agent only for an agentic system, planner, tool-using assistant, or explicit autonomous actor. Use graph, schema, chat-bubbles, or idea only when that exact abstraction is the visible subject. Do not use idea as a generic fallback when a concrete object, signal, constraint, product surface, or process icon fits.',
+      'Treat every icon as a wordless monoline glyph. Never choose an icon that needs a visible letter, acronym, flag, emoji, mascot, or language character to make sense.',
+      'Use pageLabel only as ordering metadata such as 1, 2, or 3. Do not repeat pageLabel, section numbers, or file-like labels in any visible copy.'
     ].join('\n'),
     input: `GLOBAL PLAN\n\n${JSON.stringify(plan, null, 2)}`
   });

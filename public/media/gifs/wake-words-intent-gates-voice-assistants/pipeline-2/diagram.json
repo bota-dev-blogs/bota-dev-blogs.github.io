@@ -1,0 +1,130 @@
+{
+  "title": "Wake Word To Intent Gate",
+  "subtitle": "A voice assistant spends tiny compute first, then escalates only after stronger evidence.",
+  "width": 1080,
+  "height": 650,
+  "duration": 6,
+  "fps": 15,
+  "theme": "light",
+  "nodes": [
+    {
+      "id": "front-end",
+      "kind": "input",
+      "label": "Audio Front End",
+      "description": "Microphones, VAD, denoising, echo control, and low-power buffering.",
+      "x": 70,
+      "y": 250,
+      "width": 210,
+      "height": 120,
+      "evidence": "Research digest: Basic Architecture"
+    },
+    {
+      "id": "wake-word",
+      "kind": "method",
+      "label": "Wake Word Check",
+      "description": "A tiny detector looks for an explicit trigger phrase.",
+      "x": 330,
+      "y": 250,
+      "width": 210,
+      "height": 120,
+      "evidence": "Research digest: Why Wake Words Still Matter"
+    },
+    {
+      "id": "context",
+      "kind": "method",
+      "label": "Context Gates",
+      "description": "Speaker, session, risk, device state, and privacy controls add evidence.",
+      "x": 590,
+      "y": 130,
+      "width": 220,
+      "height": 120,
+      "evidence": "Research digest: The New Gate Stack"
+    },
+    {
+      "id": "intent",
+      "kind": "method",
+      "label": "Intent Decision",
+      "description": "The system estimates whether the speech is directed to the assistant.",
+      "x": 590,
+      "y": 370,
+      "width": 220,
+      "height": 120,
+      "evidence": "Research digest: Why No Wake Word Is Not No Gate"
+    },
+    {
+      "id": "agent",
+      "kind": "output",
+      "label": "Voice Agent",
+      "description": "ASR, reasoning, tools, and TTS wake only after the gate passes.",
+      "x": 860,
+      "y": 250,
+      "width": 180,
+      "height": 120,
+      "evidence": "Research digest: Practical Design Key Ideas"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "front-end",
+      "to": "wake-word",
+      "label": "candidate speech",
+      "evidence": "Audio is filtered before keyword spotting."
+    },
+    {
+      "id": "e2",
+      "from": "wake-word",
+      "to": "intent",
+      "label": "explicit signal",
+      "evidence": "Wake phrases are strong but not the only signal."
+    },
+    {
+      "id": "e3",
+      "from": "context",
+      "to": "intent",
+      "label": "soft signals",
+      "evidence": "Context makes wake-word-free follow-up safer."
+    },
+    {
+      "id": "e4",
+      "from": "intent",
+      "to": "agent",
+      "label": "approved",
+      "evidence": "High confidence gates expensive processing."
+    }
+  ],
+  "animation": [
+    {
+      "target": "e1",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e2",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e3",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e4",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    }
+  ]
+}

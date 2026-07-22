@@ -1,12 +1,19 @@
 const NODE_WIDTH = 218;
+const { sanitizeDiagram } = require('./sanitize-diagram');
+const sharedIcons = require('../../shared/semantic-icons.cjs');
+
 const NODE_HEIGHT = 124;
 // Labels stay in the whitespace between columns. This is still substantially
 // tighter than the old 200px gap, while leaving room for technical edge names.
-const COLUMN_GAP = 132;
+const COLUMN_GAP = 124;
 const ROW_GAP = 64;
-const MARGIN_X = 64;
-const CONTENT_TOP = 172;
-const CONTENT_BOTTOM = 72;
+const MARGIN_X = 54;
+const CONTENT_TOP = 146;
+const CONTENT_BOTTOM = 54;
+const MIN_CANVAS_WIDTH = 1080;
+const MIN_CANVAS_HEIGHT = 560;
+const MAX_COMFORTABLE_WIDTH = 1480;
+const MIN_COLUMN_GAP = 72;
 
 function groupByRank(nodes, ranks) {
   const groups = [];
@@ -77,7 +84,7 @@ function orderRows(groups, edges, ranks, originalOrder) {
 }
 
 function layoutDiagram(input) {
-  const diagram = JSON.parse(JSON.stringify(input));
+  const diagram = sanitizeDiagram(input);
   const nodes = Array.isArray(diagram.nodes) ? diagram.nodes : [];
   const edges = Array.isArray(diagram.edges) ? diagram.edges : [];
   const originalOrder = new Map(nodes.map((node, index) => [node.id, index]));
@@ -89,8 +96,10 @@ function layoutDiagram(input) {
   const maxRows = Math.max(1, ...groups.map((group) => group.length));
   const contentHeight = maxRows * NODE_HEIGHT + Math.max(0, maxRows - 1) * ROW_GAP;
   diagram.layoutMode = 'layered';
-  diagram.width = Math.max(1080, MARGIN_X * 2 + columnCount * NODE_WIDTH + Math.max(0, columnCount - 1) * COLUMN_GAP);
-  diagram.height = Math.max(620, CONTENT_TOP + contentHeight + CONTENT_BOTTOM);
+  const desiredWidth = MARGIN_X * 2 + columnCount * NODE_WIDTH + Math.max(0, columnCount - 1) * COLUMN_GAP;
+  const compactWidth = MARGIN_X * 2 + NODE_WIDTH + Math.max(0, columnCount - 1) * (NODE_WIDTH + MIN_COLUMN_GAP);
+  diagram.width = Math.max(MIN_CANVAS_WIDTH, Math.min(desiredWidth, Math.max(MAX_COMFORTABLE_WIDTH, compactWidth)));
+  diagram.height = Math.max(MIN_CANVAS_HEIGHT, CONTENT_TOP + contentHeight + CONTENT_BOTTOM);
 
   const columnStep = columnCount === 1
     ? 0
@@ -109,8 +118,14 @@ function layoutDiagram(input) {
     });
   });
 
-  diagram.nodes = nodes.map((node) => ({
+  diagram.nodes = nodes.map((node, index) => ({
     ...node,
+    icon: sharedIcons.resolveIconName(
+      node.icon,
+      `${node.label || ''} ${node.description || ''} ${node.evidence || ''}`,
+      index,
+      node.kind === 'input' ? 'document' : node.kind === 'output' ? 'check' : 'layers'
+    ),
     ...positions.get(node.id),
     width: NODE_WIDTH,
     height: NODE_HEIGHT

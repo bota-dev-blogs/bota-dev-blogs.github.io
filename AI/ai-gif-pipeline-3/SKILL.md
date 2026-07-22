@@ -29,9 +29,11 @@ Default to `single-canvas synthesis`: one graphical abstract for the complete ar
 - Choose 2–6 nodes from the actual relationship: 2 for direct contrast, 3 for a simple chain, 4–5 for a genuine multi-stage process, and 6 only when all nodes are essential. Treat 6 as a ceiling, not a target.
 - Split at a semantic boundary when more than 6 essential ideas belong together. Never force every page to use the same count.
 - Make `headline` specific to the current article and page. Never use generic filler such as “AI turns ideas into a visual story.”
+- Never render internal editorial labels such as "takeaway", "TL;DR", "references", "abstract", "introduction", "related work", "summary", "overview", "discussion", "limitations", "future work", "figure", "table", "metadata", or "read more" in any page title, headline, node, edge label, group label, badge, or caption. Rewrite them as the actual concept name or a reader-facing concept such as "design rule", "evidence", "context", "prior work", "next question", or "boundary".
 - Use the recurring metaphor to guide object and relationship choices; do not print it as decorative footer copy.
 - Treat people as semantic nodes, never permanent mascots. Use a person only when the source contains a real human actor, user, customer, reader, or operator.
-- Choose a distinct visual and shape for each node. Prefer recognizable objects over generic cards.
+- Choose a distinct visual and shape for each node. Prefer recognizable objects over generic cards; use the expanded AI/audio/product/system set when relevant (`asr`, `tts`, `microphone`, `waveform`, `phone`, `edge-device`, `chip`, `gpu`, `server`, `router`, `dataset`, `embedding`, `model`, `bot`, `cloud`, `lock`, `ear`, `video`, `target`, `branch`, `filter`, `latency`).
+- Prefer concrete domain visuals before abstract visuals. Use `idea`, `schema`, `graph`, `chat-bubbles`, or `agent` only when that abstraction is the actual subject.
 - Keep node labels at most 28 characters.
 - Keep Chinese captions near 18–45 characters and English captions near 8–22 words. Put only one idea in each caption.
 - Split a node or page before shrinking copy into unreadable text.
@@ -39,6 +41,7 @@ Default to `single-canvas synthesis`: one graphical abstract for the complete ar
 - Prefer an explicit example node when the source uses an example to make an abstract claim understandable.
 - Vary layouts when the source relationship changes, but do not vary them merely for decoration.
 - Avoid single-row compression: use a staged two-row flow when four or more substantial sequential nodes would create tiny arrows and large unused areas.
+- For semantic maps, use coordinates to express relative relationships rather than manual canvas padding. The renderer fits those positions into the content frame after the title and headline.
 
 ## Validation checklist
 

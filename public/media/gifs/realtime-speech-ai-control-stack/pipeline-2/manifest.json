@@ -1,0 +1,13 @@
+{
+  "pipeline": "ai-gif-pipeline-2",
+  "source": "diagram.json",
+  "assetSlug": "realtime-speech-ai-control-stack",
+  "outputs": {
+    "diagram": "diagram.json",
+    "preview": "diagram.html",
+    "gif": "01-realtime-speech-control-plane.gif"
+  },
+  "pages": [
+    "01-realtime-speech-control-plane.gif"
+  ]
+}

@@ -1,11 +1,11 @@
 ---
-title: "From Chinese to English — and a Detour into Moroccan Arabic: Building an AI Video Language Transformation Pipeline"
+title: "From Chinese to English, Then Darija: Lessons From an AI Video Localization Pipeline"
 slug: "from-chinese-to-english-and-a-detour-into-moroccan-arabic"
-description: "Building an AI video language transformation pipeline for Chinese-to-English tutorials, then testing how far voice cloning can go for Darija."
+description: "A project retrospective on translating Chinese tutorial videos into English with cloned voices, then testing what breaks when the same stack is pushed toward Moroccan Arabic."
 authors: ["Adam Maytoussi", "Soulaymane Temimi"]
 date: "2026-06-09"
-modifiedDate: "2026-06-09"
-readTime: "11 min read"
+modifiedDate: "2026-07-21"
+readTime: "12 min read"
 tags:
   - "Project"
   - "Audio AI"
@@ -20,128 +20,162 @@ keywords:
   - "Moroccan Arabic"
   - "technical video localization"
 cover:
-  src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/diagram.gif"
-  alt: "Animated AI video language transformation pipeline diagram"
-  width: 2096
-  height: 620
-  fit: "contain"
+  src: "/media/from-chinese-to-english-and-a-detour-into-moroccan-arabic/featured.png"
+  alt: "Futuristic AI video localization pipeline from Chinese to English and Moroccan Arabic"
+  width: 1600
+  height: 900
+  fit: "cover"
 media:
+  - title: "Project research map"
+    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-3/01-article-summary.gif"
+    type: "image"
+    note: "Pipeline 3 summary map for the video localization project."
   - title: "Pipeline architecture diagram"
-    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/diagram.gif"
+    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/01-ai-video-localization-pipeline.gif"
     type: "image"
     note: "Pipeline 2 technical diagram for the video language transformation workflow."
   - title: "Project explainer"
     src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-1/01-project-overview.gif"
     type: "image"
-    note: "Pipeline 1 explainer GIF generated from the article draft."
+    note: "Pipeline 1 explainer GIF for the main Chinese-to-English workflow."
+  - title: "Darija bottleneck map"
+    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-3/02-darija-bottlenecks.gif"
+    type: "image"
+    note: "Why the Moroccan Arabic fine-tuning experiment did not converge."
+  - title: "Lessons from the negative result"
+    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-1/02-darija-lessons.gif"
+    type: "image"
+    note: "Pipeline 1 explainer GIF for data and writing-system lessons."
+  - title: "Localization quality gates"
+    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-3/03-quality-gates.gif"
+    type: "image"
+    note: "Checks that keep a translated and voice-cloned video usable."
 ---
 
 ## Project Overview
 
-**AI Video Language Transformation** converts Chinese-language GitHub tutorial videos into English while preserving the original visual track and cloning the speaker's voice. The goal is simple to describe and hard to execute: same video, new language, familiar speaker identity.
+This project started with a practical goal: take Chinese-language GitHub tutorial videos and produce English versions that keep the original video track, technical meaning, timing, and speaker identity. The output should feel like the same tutorial in another language, not like a generic dubbed video pasted on top.
 
-The system chains together transcription, translation, speaker diarization, speech synthesis, audio alignment, and video merging. Each stage has to work, but the final quality depends on how well the stages hand timing, speaker identity, terminology, and audio constraints to one another.
+That requirement turns localization into a systems problem. Translation quality matters, but it is only one part of the stack. The pipeline also has to preserve segment timing, speaker boundaries, voice references, audio loudness, and final video synchronization.
 
-![AI video language transformation pipeline diagram](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/diagram.gif)
+![Project research map](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-3/01-article-summary.gif)
 
-After the Chinese-to-English pipeline worked, the project took a harder detour: testing what it would take to fine-tune voice cloning for Darija, Moroccan Arabic. That experiment did not produce a production-ready voice model, but it exposed the real bottlenecks behind low-resource speech synthesis.
+After the Chinese-to-English path worked, the project took a harder detour: could the same voice-cloning stack be pushed toward Darija, Moroccan Arabic? That experiment did not produce intelligible Darija speech, but it clarified where low-resource TTS fails: not in one dramatic bug, but in the interaction between data, orthography, speaker variation, and pronunciation ambiguity.
 
-## The Pipeline
+## The Main Pipeline
 
-The main pipeline chains together several components, each handling a distinct task:
+The working pipeline combines several components:
 
-1. **Transcription** — [faster-whisper](https://github.com/SYSTRAN/faster-whisper) (large-v3) converts the Chinese audio into timed text segments
-2. **Translation** — [DeepL](https://www.deepl.com/) translates Chinese segments to English, with a [Gemini](https://deepmind.google/technologies/gemini/) review pass for technical terminology (GitHub-specific vocabulary like "pull request", "commit", "branch")
-3. **Speaker Diarization** — [pyannote.audio](https://github.com/pyannote/pyannote-audio) identifies who is speaking and when, enabling per-speaker voice cloning
-4. **Speech Synthesis** — [F5-TTS](https://github.com/SWivid/F5-TTS) and [Voxtral](https://mistral.ai/news/voxtral) generate English audio in the original speaker's voice
-5. **Audio Alignment** — [pyrubberband](https://github.com/bmcfee/pyrubberband) time-stretches segments that are too long, preserving pitch; [pyloudnorm](https://github.com/csteinmetz1/pyloudnorm) normalizes loudness to broadcast standard (-14 LUFS)
-6. **Video Merge** — [FFmpeg](https://ffmpeg.org/) replaces the original audio track with the new English one
+1. **Transcription** - [faster-whisper](https://github.com/SYSTRAN/faster-whisper) converts the Chinese audio into timed text segments.
+2. **Translation** - [DeepL](https://www.deepl.com/) produces the first English translation, followed by a [Gemini](https://deepmind.google/technologies/gemini/) review pass for GitHub-specific terminology such as "pull request", "commit", and "branch".
+3. **Speaker diarization** - [pyannote.audio](https://github.com/pyannote/pyannote-audio) identifies who spoke when, so each speaker can receive a separate reference voice.
+4. **Speech synthesis** - [F5-TTS](https://github.com/SWivid/F5-TTS) and [Voxtral](https://mistral.ai/news/voxtral) generate English speech from translated segments and speaker references.
+5. **Audio alignment** - [pyrubberband](https://github.com/bmcfee/pyrubberband) time-stretches long segments while preserving pitch; [pyloudnorm](https://github.com/csteinmetz1/pyloudnorm) normalizes loudness.
+6. **Video merge** - [FFmpeg](https://ffmpeg.org/) replaces the original audio track with the translated, aligned, voice-cloned output.
 
-The result: a video that looks identical to the original, but speaks English — in the same voice.
+![AI video language transformation pipeline diagram](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/01-ai-video-localization-pipeline.gif)
 
-A [Streamlit](https://streamlit.io/) web interface ties it all together, letting you monitor each stage, review individual segments, edit translations, and inspect quality metrics.
+A [Streamlit](https://streamlit.io/) interface ties the workflow together. It lets the operator monitor each stage, inspect segment-level output, edit translations, and rerun weak parts of the pipeline.
+
+## Why This Is More Than Translation
+
+Text translation can ignore time. Video localization cannot.
+
+If the English sentence is too long, it can overflow the original segment. If diarization assigns a segment to the wrong speaker, the voice clone breaks identity. If the reference clip contains noise, the synthetic voice inherits that weakness. If loudness varies between segments, the final video feels stitched together.
+
+The usable unit is therefore not a sentence. It is a timed, speaker-labeled, quality-checked segment.
 
 ![Project explainer GIF](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-1/01-project-overview.gif)
 
-## Voice Cloning: The Hardest Part
+That segment-level view also makes the system debuggable. When a clip sounds wrong, the operator can ask which layer failed: transcription, terminology, speaker assignment, voice reference quality, synthesis, timing, loudness, or merge.
 
-The most technically demanding piece of the pipeline is voice cloning — and it is worth dwelling on why.
+## Voice Cloning Is The Hardest Link
 
-Commercial TTS systems give you a library of pre-made voices. You pick one and type your text. That is convenient but fundamentally limited: the voice is fictional, and you lose the identity of the original speaker.
+Commercial TTS systems usually offer predefined voices. They are convenient, but they erase the original speaker. Zero-shot voice cloning is different: a model such as F5-TTS can synthesize new speech in a target speaker's voice using a short reference clip.
 
-Zero-shot voice cloning is different. Models like F5-TTS can synthesize speech in an arbitrary speaker's voice using only a short reference audio clip. They learn not just *how to speak*, but *how a specific person speaks* — their timbre, their rhythm, their breath patterns. Feed it a clip of someone, and it will generate new sentences in that voice.
+That makes the result feel more faithful, but it also raises the engineering bar. The system needs clean per-speaker reference audio, stable diarization, careful text segmentation, and enough timing flexibility to fit translated speech back into the source video.
 
-This is powerful. It is also hard to get right across multiple speakers, across videos, across different recording conditions. Our pipeline uses speaker diarization to extract clean reference audio per speaker, enabling consistent voice identity throughout the output.
+The Chinese-to-English pipeline worked because those constraints were manageable. The source language was supported by ASR. English synthesis was supported by the TTS models. Technical terminology could be corrected by a review pass. Most importantly, the system could preserve the video timeline without asking the TTS model to learn a new language.
 
-## The Extension: Fine-Tuning for Darija
+## The Darija Detour
 
-After completing the main pipeline, we asked a natural question: what would it take to apply this to a language that barely exists in any TTS model's training data?
+Darija changed the problem.
 
-That question pointed directly at Darija — Moroccan Arabic — for reasons that were both personal and technical.
+Moroccan Arabic is the language of everyday life in Morocco: family conversations, street markets, jokes, voice notes, and informal online speech. It is also a difficult target for speech synthesis. It differs from Modern Standard Arabic in phonology, vocabulary, rhythm, and borrowing patterns from Amazigh, French, Spanish, and other sources.
 
-On the personal side: Darija is the language of everyday life in Morocco. It is the language of family conversations, street markets, and voice messages between friends. The idea that AI speech systems largely do not support it — while supporting dozens of European languages with far fewer speakers — felt worth pushing against.
+It also has no single stable written form. Darija can be written in Arabic script, Latin script, or Arabizi, a Latin-numeric writing style where **3afak** can represent **عفاك** because "3" stands for the Arabic letter ع. Arabic-script Darija is usually unvocalized: short vowels are omitted, as in standard Arabic writing. That is normal for humans, but it creates ambiguity for a TTS model trying to learn pronunciation.
 
-On the technical side: Darija is a genuine research challenge. It is a low-resource dialect with deep structural differences from Modern Standard Arabic (MSA) — different phonology, a vocabulary that borrows heavily from Amazigh, French, and Spanish, and a rapid consonant-heavy rhythm. It can be written in Arabic script or in Arabizi (a Latin-numeric hybrid where, for example, **3afak** represents **عفاك** — the 3 standing for the Arabic letter ع). Neither form is standardized. When Arabic script is used, short vowels are omitted, as is standard in Arabic writing; vowel diacritics (tashkeel) would help a TTS model but are rarely used in practice and hard to collect at scale.
-
-## The State of Darija TTS
-
-Before describing the fine-tuning attempt, it is worth situating it within what already exists.
-
-Commercial services like SpeechGen.io offer native Moroccan Arabic voices — "Mouna" (female) and "Jamal" (male) — explicitly tuned to Darija. These work well for marketing videos or radio promotions. But they use predefined voices. You cannot clone an arbitrary speaker with them.
-
-The open-source landscape is more recent and more interesting. Hugging Face spaces like [medmac01/Darija-Arabic-TTS](https://huggingface.co/spaces/medmac01/Darija-Arabic-TTS) fine-tune XTTS checkpoints for Darija. HAMMALE's speecht5-darija adapts Microsoft's SpeechT5 for Moroccan Arabic. Most recently, the "Habibi" framework (2026) adapted F5-TTS itself to cover 12 regional Arabic dialects using a curriculum training strategy — starting from MSA data and gradually shifting to dialect-specific speech.
-
-The datasets remain the bottleneck. The premier open-source TTS corpus for Darija is DODa (AtlasIA): roughly 9 hours of speech across 7 speakers, with text in Arabic, Latin, and English. Most other large Darija corpora (MGB-5, MoulSot, Casablanca) were built for speech recognition, not synthesis, and lack the standardized orthography synthesis models need.
-
-This data situation shapes everything that follows.
+![Darija bottleneck map](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-3/02-darija-bottlenecks.gif)
 
 ## What We Tried
 
-F5-TTS's base vocabulary contains 2,545 character tokens. Arabic characters are not among them. Before any fine-tuning could begin, we had to extend the model's input layer.
+The fine-tuning attempt kept the F5-TTS acoustic architecture intact and changed the text input layer.
 
-The process:
+F5-TTS's base vocabulary contained 2,545 character tokens, but Arabic characters were not part of that vocabulary. Before training could begin, the vocabulary had to be extended.
 
-1. **Vocabulary extension** — collect every unique character from the Darija dataset, append the new Arabic ones to the base vocab file
-2. **Embedding resize** — the model's text embedding matrix needs a new row for each added character. We initialized new rows with random noise scaled to the standard deviation of existing embeddings, so the model starts with a reasonable prior rather than zeros
-3. **Fine-tuning** — train on 20,000 samples from [DarijaTTS-clean](https://huggingface.co/datasets/KandirResearch/DarijaTTS-clean) on an H100 GPU in Google Colab
+The process was:
+
+1. Collect every unique character from the Darija dataset.
+2. Append new Arabic characters to the base vocabulary file.
+3. Resize the model's text embedding matrix.
+4. Initialize the new rows with random noise scaled to the standard deviation of existing embeddings.
+5. Fine-tune on 20,000 samples from [DarijaTTS-clean](https://huggingface.co/datasets/KandirResearch/DarijaTTS-clean) on an H100 GPU in Google Colab.
 
 ```python
-old_emb = state_dict['ema_model.transformer.text_embed.text_embed.weight']
+old_emb = state_dict["ema_model.transformer.text_embed.text_embed.weight"]
 new_emb = torch.zeros(new_vocab_size, emb_dim)
 new_emb[:old_size] = old_emb
 std = old_emb.std().item()
 new_emb[old_size:] = torch.randn(new_vocab_size - old_size, emb_dim) * std
 ```
 
-The acoustic architecture — the flow-matching model, the voice cloning mechanism — was preserved entirely. Only the text input representation changed.
+The model produced speech-like rhythm and structure, but not intelligible Darija. It was generating audio, but it had not learned a reliable mapping from written input to Moroccan Arabic phonemes.
 
-## What Happened
+## Why The Attempt Failed
 
-The fine-tuned model did not produce intelligible Darija. The output had structure — rhythm, voice, the shape of speech — but no recognizable phonemes. The model was clearly generating something, but it had not learned to map the input to actual pronunciation. This was our first fine-tuning attempt, and the results reflect that.
+Two bottlenecks stood out.
 
-The failure very likely stems from a combination of two factors:
+**The data was too small and too spread out.** Teaching a voice model an underrepresented language is harder than adapting a voice inside a known language. The available Darija data was far below the likely data requirement for robust convergence, and it was distributed across multiple speakers. That forced the model to learn language structure and speaker variation at the same time.
 
-- **Not enough data, spread across too many voices**: Teaching F5-TTS an entirely new language typically requires 50 to 100+ hours of audio. DarijaTTS-clean contains around 15-20 hours — already short of that threshold. More importantly, that audio is spread across many different speakers. A multi-speaker dataset forces the model to simultaneously learn the language and adapt to speaker variation, which makes convergence harder. A single-voice dataset of the same size would likely have given the model a much better chance, since it could focus entirely on learning Darija phonetics without the added complexity.
-- **Unvocalized text**: DarijaTTS-clean uses Arabic script without tashkeel. Tashkeel would give the model an explicit pronunciation target, but Moroccans do not write Darija with it in everyday life, making a diacritized dataset very hard to build — you cannot scrape it from real-world sources and manual annotation is costly. This alone definitely did not cause the failure, but it is a known source of input ambiguity for any TTS model trained on Arabic-script Darija data.
+**The writing system under-specified pronunciation.** Unvocalized Arabic-script Darija does not tell the model enough about vowels. Arabizi introduces a different normalization problem. Humans resolve those ambiguities through context and native knowledge. A TTS model needs either much more data or an explicit grapheme-to-phoneme layer.
 
-## What We Learned
+![Lessons from the negative result](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-1/02-darija-lessons.gif)
 
-**Data quantity and speaker diversity matter as much as the model.** Teaching F5-TTS a new language requires significantly more data than we had — and ideally from a single speaker or a small consistent set, so the model can focus on learning the language rather than simultaneously adapting to many different voices. DarijaTTS-clean's 15-20 hours spread across multiple speakers was not enough for convergence.
+## Quality Gates For Video Localization
 
-**The text input matters as much as the model.** Getting the acoustic architecture right is necessary but not sufficient. If the text representation cannot fully specify pronunciation, the model cannot learn the mapping. For Darija, the missing piece is a G2P layer that handles how the language is actually written — unvocalized Arabic or Arabizi — rather than expecting a sanitized, diacritized input that no one produces in practice.
+The main pipeline points toward a useful architecture pattern for video localization: every stage should produce an inspectable artifact and a quality signal.
 
-**A negative result is still a result.** We know exactly where DarijaTTS-clean fails for F5-TTS fine-tuning. We know what a better dataset looks like. The vocabulary extension and embedding resize procedures work correctly — those are reusable building blocks. The failure is localized and diagnosable.
+![Localization quality gates](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-3/03-quality-gates.gif)
 
-## What Is Next
+| Stage | Artifact | Quality question |
+| --- | --- | --- |
+| Transcription | Timed source segments | Are words and boundaries correct enough to translate? |
+| Translation | Target-language script | Does it preserve technical meaning and fit the segment? |
+| Diarization | Speaker turns | Is each segment assigned to the right voice? |
+| Voice cloning | Synthetic segment audio | Does it sound like the speaker without artifacts? |
+| Alignment | Time-fitted audio | Does the speech fit without sounding unnaturally stretched? |
+| Merge | Final video | Does the output feel like one coherent video? |
 
-A longer-term direction could be a grapheme-to-phoneme model for Darija, which would normalize written text into a phoneme sequence before passing it to the synthesis model. This is harder than it sounds: Arabic script and Arabizi are structurally different enough that a single G2P model covering both would be noisy and complex to train — separate models per script are probably more realistic, and each one is already a non-trivial task on its own. That said, the payoff would be significant, especially for loanwords: French words like "voiture" or "problème", Amazigh terms, and proper names all get transliterated inconsistently in Arabic script, and a G2P layer would resolve them to the correct Moroccan-inflected pronunciation rather than a broken Arabic reading.
+This is what made the Chinese-to-English path usable. The system did not depend on one perfect model. It depended on a chain of models whose outputs could be inspected, corrected, and recombined.
+
+## What Comes Next
+
+For Darija, the next step is probably not "train longer" by itself. A stronger path would combine:
+
+- More hours of consistent, high-quality Darija speech.
+- A smaller number of speakers for early convergence.
+- Script normalization for Arabic script and Arabizi.
+- A grapheme-to-phoneme layer that resolves missing vowels and loanword pronunciations.
+- Evaluation clips organized by speaker, script, and text style.
+
+The payoff would be significant. A good Darija TTS stack would not only support dubbing. It would also make voice interfaces, accessibility tools, and local-language educational content more realistic for Moroccan speakers.
 
 ## Closing Thought
 
-We did not ship a working Darija TTS system. We built the infrastructure, identified exactly why the first attempt failed, and pointed at what needs to change.
+The Chinese-to-English video pipeline worked: the visual track stayed intact, the translated audio was aligned, and the cloned voices made the output feel closer to the source.
 
-The main pipeline — Chinese-to-English video transformation — worked. The voices were cloned. The timing held. The videos were watchable.
+The Darija experiment did not work, but it failed in a useful way. It showed that the missing piece was not only model architecture. It was data design, writing-system normalization, and pronunciation modeling.
 
-The Darija extension was a shot at something harder. It taught us more.
+Negative results are still engineering results when they narrow the next experiment.
 
 *Adam Maytoussi and Soulaymane Temimi are students at UTSEUS. The full pipeline code is available on [GitHub](https://github.com/EmporioSabo/ai-video-language-transformation).*

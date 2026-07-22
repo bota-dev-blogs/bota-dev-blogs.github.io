@@ -1,0 +1,145 @@
+{
+  "title": "Realtime Speech Control Plane",
+  "subtitle": "Keep speech evidence, realtime response, and external authority as separate layers.",
+  "width": 1080,
+  "height": 650,
+  "duration": 6,
+  "fps": 15,
+  "theme": "light",
+  "nodes": [
+    {
+      "id": "audio-stream",
+      "kind": "input",
+      "label": "Audio Stream",
+      "description": "Microphone chunks, VAD events, timing, speaker cues, and device context.",
+      "x": 60,
+      "y": 250,
+      "width": 210,
+      "height": 120,
+      "evidence": "Research digest: speech products start from a timed acoustic stream."
+    },
+    {
+      "id": "asr-trace",
+      "kind": "method",
+      "label": "ASR Trace",
+      "description": "Words, timestamps, confidence, domain vocabulary, and searchable logs.",
+      "x": 330,
+      "y": 120,
+      "width": 220,
+      "height": 120,
+      "evidence": "Alibaba Cloud Model Studio ASR documentation."
+    },
+    {
+      "id": "audio-reasoning",
+      "kind": "method",
+      "label": "Audio Reasoning",
+      "description": "LALM context over speech, music, sound events, intent, and uncertainty.",
+      "x": 330,
+      "y": 380,
+      "width": 220,
+      "height": 120,
+      "evidence": "Audio Flamingo Next and MOSS-Audio model cards."
+    },
+    {
+      "id": "realtime-loop",
+      "kind": "method",
+      "label": "Realtime Loop",
+      "description": "Turn detection, live translation, interruption recovery, and speech output.",
+      "x": 620,
+      "y": 250,
+      "width": 220,
+      "height": 120,
+      "evidence": "Qwen3.5-LiveTranslate and Qwen3.5-Omni references."
+    },
+    {
+      "id": "tool-gateway",
+      "kind": "output",
+      "label": "Tool Gateway",
+      "description": "Validate tool arguments, permissions, confirmations, idempotency, and audit.",
+      "x": 880,
+      "y": 250,
+      "width": 180,
+      "height": 120,
+      "evidence": "Research digest: external authority belongs outside the model loop."
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-stream-asr",
+      "from": "audio-stream",
+      "to": "asr-trace",
+      "label": "recognition",
+      "evidence": "ASR turns audio into text and timing publishing details."
+    },
+    {
+      "id": "e-stream-reasoning",
+      "from": "audio-stream",
+      "to": "audio-reasoning",
+      "label": "sound context",
+      "evidence": "Audio-language models reason over non-text acoustic cues."
+    },
+    {
+      "id": "e-asr-loop",
+      "from": "asr-trace",
+      "to": "realtime-loop",
+      "label": "text evidence",
+      "evidence": "Transcript state supports response and audit."
+    },
+    {
+      "id": "e-reason-loop",
+      "from": "audio-reasoning",
+      "to": "realtime-loop",
+      "label": "audio evidence",
+      "evidence": "Realtime response can use prosody, sound, and turn context."
+    },
+    {
+      "id": "e-loop-gateway",
+      "from": "realtime-loop",
+      "to": "tool-gateway",
+      "label": "intent gate",
+      "evidence": "Tool calls need validation before external action."
+    }
+  ],
+  "animation": [
+    {
+      "target": "e-stream-asr",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e-stream-reasoning",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e-asr-loop",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e-reason-loop",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e-loop-gateway",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    }
+  ]
+}

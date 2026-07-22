@@ -33,11 +33,13 @@ Choose a layout from the relationship the page must communicate.
 - Do not compress four or more substantial process nodes into one horizontal strip. Prefer `staged-flow`, alternating rows, or a semantic map so arrows have room and the composition occupies the canvas.
 - Use edge labels for verbs such as “filters,” “causes,” “validates,” or “feeds back.”
 - Use node captions for evidence, conditions, or examples; do not repeat the edge verb.
+- Use finished reader-facing wording in all visible text. Avoid article-utility or internal editorial labels such as "takeaway", "TL;DR", "references", "appendix", "table of contents", "conclusion", "summary", "overview", "this article", "blog post", "section", "chapter", "figure", or "table". Prefer the actual concept label.
 - Keep the reading direction visually obvious. Minimize crossing edges.
 - Prefer three or four strong nodes over six weak fragments.
 - Vary node count across pages when the source varies in complexity. Do not normalize every composition to three cards.
 - Reuse the article-specific metaphor across pages through labels and captions, not fixed decorative prose.
 - Use `semantic-map` rather than a fake timeline when networks run in parallel, several factors converge, or two channels merge downstream.
+- For `semantic-map`, use positions to express relative structure. The renderer will fit the map into the available content frame; avoid compensating with artificial outer margins.
 - Use groups only to label meaningful lanes or subsystems.
 - Classify edges as `flow`, `supervision`, `evidence`, `contrast`, or `constraint`.
 - Assign one `edgeGroup` to a continuous logical path. All edges in that group share color, dash rhythm, and weight; use node color or iconography to show a failure inside the path.
@@ -50,8 +52,11 @@ Choose a layout from the relationship the page must communicate.
 
 - Use `person` only for an actual human role.
 - Use `chat-bubbles` for a query, conversation, prompt, or exchange.
-- Use `agent` for an AI model or reasoning system.
+- Use `model` for an AI model, classifier, encoder/decoder, transformer, or inference system.
+- Use `agent` only for an agentic system, planner, tool-using assistant, or explicit autonomous actor.
 - Use `document` for an article, response, report, or generated artifact.
+- Use `dataset` for a corpus, benchmark, annotations, labels, or training/evaluation data.
+- Use `embedding` for vector representations, latent spaces, feature spaces, or semantic spaces.
 - Use `database` for stored memory or a durable data source.
 - Use `search` for retrieval, discovery, or extraction.
 - Use `merge` for deduplication or reconciliation.
@@ -59,15 +64,27 @@ Choose a layout from the relationship the page must communicate.
 - Use `graph` for entities and typed relationships.
 - Use `link` for connections or integration.
 - Use `clock` for temporal validity, delay, or history.
+- Use `latency` for real-time response budgets, streaming delay, or low-latency constraints.
 - Use `alert` for risk, invalid state, or failure.
 - Use `idea` for an abstract claim only when no concrete object fits.
 - Use `gear` for execution, automation, or transformation.
+- Use `asr` for speech-to-text, transcription, and automatic speech recognition.
+- Use `tts` for text-to-speech, speech synthesis, or generated voice.
 - Use `waveform`, `microphone`, or `headphones` for acoustic signals, capture, and listening.
+- Use `phone`, `edge-device`, `chip`, `gpu`, `server`, `router`, `sensor`, `cloud`, or `network` for mobile capture, on-device inference, silicon, accelerators, backend compute, connectivity, telemetry, cloud streams, and integrations.
+- Use `room`, `speaker`, `subtitle`, `sliders`, `bot`, `lock`, `ear`, `video`, `target`, `branch`, or `filter` for physical meetings, speaker identity, captions/transcripts, tuning controls, meeting bots, consent/permission, always-on listening, media output, success criteria, alternatives, and thresholds.
 - Use `music` for song emotion or musical affect.
 - Use `globe` for cross-language or cross-dataset transfer.
 - Use `shield` for privacy, uncertainty boundaries, or responsible product use.
 - Use `layers` for frame-level versus utterance-level representations.
 - Use `mask` for masked prediction or hidden input regions.
+- Use `person`, `bot`, `agent`, `schema`, `graph`, `chat-bubbles`, and `idea`
+  only when the source directly names that actor or abstraction. They should
+  not be used as default filler icons.
+
+Prefer concrete domain visuals before abstract ones. Reserve `idea`, `schema`,
+`graph`, `chat-bubbles`, and `agent` for pages where that abstraction is the
+actual subject, not as generic decoration.
 
 Use `illustration` for a visually distinctive actor or object, `pill` for compact process steps, and `card` for evidence that needs explanatory text. Do not render every peer with the same container by default.
 

@@ -69,7 +69,7 @@ npm run export:bota -- post-slug
 Example:
 
 ```bash
-npm run export:bota -- emotion2vec-self-supervised-speech-emotion-representation
+npm run export:bota -- emotion-aware-asr-research-digest
 ```
 
 The export bundle is written to:
@@ -171,7 +171,7 @@ For generated diagram GIF covers, use:
 
 ```yaml
 cover:
-  src: "/media/gifs/<asset-slug>/pipeline-2/diagram.gif"
+  src: "/media/gifs/<asset-slug>/pipeline-2/01-<diagram-title>.gif"
   alt: "Animated method diagram"
   width: 1396
   height: 620
@@ -187,7 +187,7 @@ src: "/media/post-slug/demo.mp3"
 ```
 
 ```mdx
-![Method diagram](/media/gifs/<asset-slug>/pipeline-2/diagram.gif)
+![Method diagram](/media/gifs/<asset-slug>/pipeline-2/01-<diagram-title>.gif)
 ```
 
 For audio/video captions, prefer WebVTT:

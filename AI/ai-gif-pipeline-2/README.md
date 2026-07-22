@@ -1,11 +1,33 @@
 # Pipeline 2: Paper To Diagram GIF
 
 This folder contains the implementation for the paper/method diagram GIF generator.
+The layout keeps a compact header, a tighter vertical frame, and capped wide
+canvases so method diagrams use the available area without feeling cramped.
+Connectors use animated dashed lines without triangular arrowheads, keeping
+attention on the method nodes and edge labels. Nodes use shared semantic
+matching and compact SVG line glyphs, so ASR, TTS, datasets, embeddings,
+models, phones, edge devices, chips, GPUs, servers, routers, sensors, gates,
+filters, and outputs can be distinguished without becoming icon-heavy.
+
+Visible diagram text must be publication-ready. Never render the word
+"takeaway" or article-utility labels such as "TL;DR", "references",
+"abstract", "introduction", "related work", "summary", "overview",
+"discussion", "limitations", "future work", "figure", "table", "metadata", or
+"read more" in titles, subtitles, nodes, edges, or evidence-derived labels; use
+the exact method concept instead.
+
+Node icons are wordless monoline glyphs. Avoid relying on visible acronyms,
+letters, flags, emoji, language characters, or mascots as visual symbols.
+`src/layout-diagram.js` derives `node.icon` through the shared resolver in
+`AI/shared/semantic-icons.cjs`, using `input -> document`, `method -> layers`,
+and `output -> check` as kind-aware fallbacks. The HTML template must keep a
+small SVG drawing case for every shared icon name.
 
 For normal blog work, run it from the repository root:
 
 ```bash
 npm run gif -- 2 --input .tmp/papers/paper.pdf --slug my-post
+npm run gif -- 2 --input .tmp/papers/paper.pdf --slug my-post --keep-frames
 ```
 
 First-time setup from the repository root:
@@ -47,17 +69,21 @@ public/media/gifs/<asset-slug>/pipeline-2/
 Standalone output defaults to:
 
 ```text
-output/<input-name>/diagram.gif
+output/<input-name>/01-<diagram-title>.gif
 ```
 
 ## What It Produces
 
 - `diagram.json`: LLM or hand-authored diagram structure
 - `diagram.html`: browser preview
-- `diagram.gif`: blog-ready animated GIF
+- `01-*.gif`: blog-ready animated GIF named from the diagram title
 - `manifest.json`: source and output file list
 
-Intermediate PNG frames are written under `.tmp/gif-frames/` by the root wrapper, not under `public/`.
+Intermediate PNG frames are written under `.tmp/gif-frames/` by the root wrapper, not under `public/`. Successful root renders remove those frames automatically; use `--keep-frames` only when debugging.
+
+Existing hand-authored `diagram.json` files are sanitized before rendering, so
+old internal labels are rewritten in the copied output diagram as well as in
+the final GIF.
 
 ## Environment
 

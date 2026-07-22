@@ -42,6 +42,8 @@ technical interpretation
 visual walkthrough
 ```
 
+If the source is a technical report, survey notes, or several Markdown files rather than one formal paper, position the output as a research digest or survey-style article. Use `contentType: "research-digest"` unless the post is centered on one specific paper with a complete `paper:` attribution block.
+
 Do not position the site as:
 
 ```text
@@ -72,6 +74,7 @@ Put generated GIF assets here:
 ```text
 public/media/gifs/<asset-slug>/pipeline-1/
 public/media/gifs/<asset-slug>/pipeline-2/
+public/media/gifs/<asset-slug>/pipeline-3/
 ```
 
 The asset slug is a filesystem-safe version of the post slug. Use it in media paths and generated GIF folders.
@@ -80,7 +83,7 @@ Do not create root-level `blogs/`, `media/`, or `assets/` folders.
 
 ## SEO Title Strategy
 
-Do not use the exact paper title as the blog title. The title should signal explanation, analysis, or practical value.
+Do not use the exact paper title as the blog title. The title should signal explanation, analysis, or practical value. Also avoid turning post type labels into repetitive headline suffixes: `Research Digest`, `Paper Review`, and `Visual Guide` are useful positioning categories, but they should not appear in every title.
 
 Bad:
 
@@ -94,6 +97,9 @@ Good:
 Attention Is All You Need Explained: Why Transformers Changed Modern AI
 How Self-Attention Works: A Visual Guide to the Transformer Paper
 DeepSeek R1 Explained: Reasoning Model Architecture and Training Pipeline
+Wake Word Detection Is Becoming Intent Gating
+A Field Guide To Emotion-Aware ASR
+What Device-Directed Speech Changes About Voice Assistants
 ```
 
 Use the original paper title in the `paper.title` frontmatter and attribution block, not necessarily as the blog headline.
@@ -132,14 +138,14 @@ paper:
   project: "https://..."
   dataset: "https://..."
 cover:
-  src: "/media/gifs/<asset-slug>/pipeline-2/diagram.gif"
+  src: "/media/gifs/<asset-slug>/pipeline-2/01-<diagram-title>.gif"
   alt: "Animated visual explanation of the original paper's method"
   width: 1396
   height: 620
   fit: "contain"
 media:
   - title: "Visual method explanation"
-    src: "/media/gifs/<asset-slug>/pipeline-2/diagram.gif"
+    src: "/media/gifs/<asset-slug>/pipeline-2/01-<diagram-title>.gif"
     type: "image"
     note: "Original visualization generated from the public paper."
 ---
@@ -198,6 +204,7 @@ Always link to the official paper page or arXiv page. Add official code, project
 ## Writing Rules
 
 - Write in blog language, not paper language.
+- For survey-style research digests, write with a stronger literature-review structure: research question, terminology, historical trajectory, method families, frontier directions, limitations, and practical implications. Keep `research-digest` in frontmatter when appropriate, but make the title sound like a specific article, not a repeated content label.
 - Use "the authors propose", "the paper introduces", and "the authors evaluate".
 - Do not write "our method", "our experiment", or "our model" when describing third-party research.
 - Do not explicitly mention the site brand in the article body, author-facing commentary, examples, or practical implications.
@@ -205,6 +212,8 @@ Always link to the official paper page or arXiv page. Add official code, project
 - Treat the post as commentary, explanation, implementation notes, or a visual guide.
 - Distinguish paper claims from editorial interpretation.
 - Include a `References` section with the original paper and official related links.
+- Add inline links for difficult concepts the first time they appear. Link terms such as zero-shot learning, VAD, ASR, MFCC, beamforming, false accept rate, EER, knowledge distillation, device-directed speech, or other domain vocabulary to reliable concept pages, official docs, or relevant papers.
+- Build a reference network, not only a source list. Important claims should point either to the `References` section, an official source, a concept explainer, or a representative paper.
 - Use tags to identify the post type and topic, for example `Paper`, `Frontier Paper`, `Audio AI`, `LLM`, `Speech`, or `Research`.
 
 ## Copyright And Content Boundaries
@@ -271,7 +280,7 @@ This writes:
 ```text
 public/media/gifs/<asset-slug>/pipeline-2/diagram.json
 public/media/gifs/<asset-slug>/pipeline-2/diagram.html
-public/media/gifs/<asset-slug>/pipeline-2/diagram.gif
+public/media/gifs/<asset-slug>/pipeline-2/01-<diagram-title>.gif
 public/media/gifs/<asset-slug>/pipeline-2/manifest.json
 ```
 
@@ -279,6 +288,12 @@ For optional explainer cards after the MDX draft exists, use pipeline 1:
 
 ```bash
 npm run gif -- 1 --input src/content/blog/<slug>.mdx
+```
+
+To rerender one selected page from an existing storyboard, use:
+
+```bash
+npm run gif -- 1 --input public/media/gifs/<asset-slug>/pipeline-1/storyboard.json --slug <slug> --local --page 1
 ```
 
 This writes:
@@ -289,18 +304,56 @@ public/media/gifs/<asset-slug>/pipeline-1/*.gif
 public/media/gifs/<asset-slug>/pipeline-1/manifest.json
 ```
 
+Pipeline 1 cleans stale `.gif` files after a successful render. Keep `storyboard.json`, `manifest.json`, and optional `plan.json`; do not keep unreferenced old GIFs.
+
+For one concise article-wide graphical abstract after the MDX draft exists, use pipeline 3:
+
+```bash
+npm run gif -- 3 --input src/content/blog/<slug>.mdx
+```
+
+This writes:
+
+```text
+public/media/gifs/<asset-slug>/pipeline-3/storyboard.json
+public/media/gifs/<asset-slug>/pipeline-3/01-article-summary.gif
+public/media/gifs/<asset-slug>/pipeline-3/manifest.json
+```
+
+Pipeline 3 may also write `plan.json` when the LLM planner is used. Local storyboard renders do not require it.
+
+For research digests or survey posts, pipeline 3 can also be used for multiple section-level research maps, such as:
+
+```text
+01-article-summary.gif
+02-operating-point.gif
+03-research-frontier.gif
+04-design-checklist.gif
+```
+
+Use `--series` when the article needs a multi-page visual summary:
+
+```bash
+npm run gif -- 3 --input src/content/blog/<slug>.mdx --series
+```
+
 GIF rules:
 
 - Generate original visual explanations.
 - Do not convert paper figures into GIFs.
 - Do not trace paper figures too closely.
-- Use GIFs to teach the concept, architecture, timeline, or data flow.
+- Use pipeline 2 to teach a method, architecture, or data flow.
+- Use pipeline 1 for section-level explainer cards.
+- Use pipeline 3 for a single graphical abstract, a research landscape, a comparison map, or a practical checklist. Dense survey posts often benefit from 2-5 pipeline-3 visuals distributed through the article.
+- Do not let generated GIF artwork display internal editorial labels such as "takeaway". Use reader-facing labels such as "key idea", "design rule", "checklist", or the actual concept being explained.
+- Use the shared icon vocabulary in `AI/shared/semantic-icons.cjs`. Prefer concrete AI/audio/mobile/edge/computing icons such as ASR, TTS, microphone, waveform, phone, edge device, chip, GPU, server, router, dataset, embedding, model, gate, filter, and latency before generic idea/agent/schema icons. Keep fallback icons concrete and narrow; fallback should not select person, bot, idea, agent, schema, graph, or chat bubbles.
+- For manual pipeline-3 storyboards, treat `semantic-map` coordinates as relative anchors. Do not add fake margin in coordinates; the renderer fits the map into the post-header content frame.
 - Reference GIFs from MDX with public paths only.
 
 Example:
 
 ```mdx
-![Method diagram](/media/gifs/<asset-slug>/pipeline-2/diagram.gif)
+![Method diagram](/media/gifs/<asset-slug>/pipeline-2/01-<diagram-title>.gif)
 ```
 
 ## References Section
@@ -330,6 +383,9 @@ Before publishing, check:
 - The post answers practical reader questions.
 - The post contains original explanation and interpretation.
 - The post links to related topics or papers when useful.
+- Difficult terms are linked inline on first use.
+- Survey-style posts include enough references to support the research map, not only the final conclusion.
+- Longer research digests use visual aids near dense sections, especially comparison tables, frontier maps, and practical checklist sections.
 - The cover image has descriptive alt text.
 - The page has a complete `paper:` attribution block.
 

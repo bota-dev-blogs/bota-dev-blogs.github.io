@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "style": "pastel-handdrawn",
+  "title": "Layered Voice Intent Gate",
+  "pages": [
+    {
+      "title": "Layered Voice Intent Gate",
+      "section": "Layered Gate",
+      "pageLabel": "1",
+      "kicker": "Small gates decide when larger voice AI should wake",
+      "cards": [
+        {
+          "title": "Tiny listener",
+          "body": "VAD and wake word checks run first because they are cheap enough to stay on.",
+          "icon": "ear"
+        },
+        {
+          "title": "Context evidence",
+          "body": "Speaker identity, session state, device posture, and privacy controls shape confidence.",
+          "icon": "lock"
+        },
+        {
+          "title": "Escalate carefully",
+          "body": "ASR, reasoning, and tools wake only when the system has enough evidence to respond.",
+          "icon": "gate"
+        }
+      ],
+      "fileSlug": "layered-gate"
+    }
+  ]
+}

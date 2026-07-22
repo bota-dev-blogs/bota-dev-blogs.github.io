@@ -2,35 +2,135 @@ const { createCanvas } = require('@napi-rs/canvas');
 const GIFEncoder = require('gif-encoder-2');
 const fs = require('fs');
 const path = require('path');
+const sharedIcons = require('../shared/semantic-icons.cjs');
 
 let W = 1000, H = 1000;
 const FPS = 20, DURATION = 2;
 const BG = '#fffdf8', INK = '#30324d', MUTED = '#686c80';
 const PALETTE = ['#dff4ee', '#e5eafe', '#f7e5f1', '#fff0cf', '#e5f5dc'];
 const ACCENTS = ['#259d8f', '#557bd8', '#ad67a7', '#e99b1c', '#69a34f'];
-const VISUAL_COLORS = {
-  person:'#6f4bd8', 'chat-bubbles':'#248fc4', agent:'#7354c7', document:'#1769c2', database:'#7354c7',
-  search:'#2d76d6', merge:'#35a65b', schema:'#ef9c18', graph:'#6f58c9', link:'#ed9f12', clock:'#ee6688',
-  alert:'#df2f35', idea:'#e7a817', gear:'#5d963f', waveform:'#2f9f9a', microphone:'#7656c8',
-  headphones:'#477bd1', music:'#d85f91', globe:'#3c9b78', shield:'#4d8d68', layers:'#e2962d', mask:'#6f67bc'
-};
 const LAYOUTS = new Set(['linear-flow', 'staged-flow', 'branching', 'before-after', 'cycle', 'hub-spoke', 'cause-effect', 'timeline', 'semantic-map']);
 const EDGE_GROUP_COLORS = ['#505365','#397c72','#6858b5','#b87918','#b84f63'];
 const GROUP_COLORS = {teal:'rgba(37,157,143,.07)',blue:'rgba(85,123,216,.07)',purple:'rgba(173,103,167,.07)',orange:'rgba(233,155,28,.07)',green:'rgba(105,163,79,.07)'};
 const GROUP_STROKES = {teal:'#62afa5',blue:'#829ce0',purple:'#bf8aba',orange:'#ebb256',green:'#8db879'};
 
-function usage() { console.log('Usage: node comic_pipeline.js <article.md|storyboard.json> [output-dir]'); }
+function usage() { console.log('Usage: node comic_pipeline.js <article.md|storyboard.json> [output-dir] [--page n]'); }
+function parseArgs(argv) {
+  const positional = [];
+  const args = {};
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === '--page') args.page = Number(argv[++i]);
+    else if (arg === '--help' || arg === '-h') args.help = true;
+    else positional.push(arg);
+  }
+  return { input: positional[0], outDir: positional[1] || 'output', page: args.page, help: args.help };
+}
 function slug(s) { return String(s || 'article').toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-').replace(/^-|-$/g, '').slice(0, 48) || 'article'; }
+function assetSlug(s) { return String(s || 'blog-gif').toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, '-').replace(/^-|-$/g, '').slice(0, 72) || 'blog-gif'; }
+function assetSlugFromOutputDir(outputDir) {
+  const base = path.basename(outputDir);
+  const candidate = /^pipeline-\d+$/.test(base) ? path.basename(path.dirname(outputDir)) : base;
+  return assetSlug(candidate);
+}
 function roundRect(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
 function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 function sentences(text) { return String(text).replace(/\s+/g, ' ').trim().split(/(?<=[。！？.!?])\s*/).filter(Boolean); }
 function short(text, limit) { const s = String(text || '').trim(); return s.length <= limit ? s : s.slice(0, limit - 1).replace(/[\s，。,.!?；;：:]+$/, '') + '…'; }
+function matchCase(replacement, sample) { if (sample === sample.toUpperCase()) return replacement.toUpperCase(); if (sample[0] === sample[0].toUpperCase()) return replacement.replace(/\b[a-z]/g, c => c.toUpperCase()); return replacement; }
+const NON_VISUAL_SECTION_RE = /^(?:references?|bibliography|sources?|further reading|footnotes?|appendix|acknowledg(?:e)?ments?|table of contents|contents|external links|citation notes|source notes?|notes?|related links|metadata|front\s*matter|seo|changelog|revision history|about the author|author note|disclaimer|read more|see also|share|subscribe|newsletter|comments?)$/i;
+const EXACT_VISIBLE_LABELS = [
+  [/^practical design takeaways?$/i, 'Design Rules'],
+  [/^key takeaways?$/i, 'Key Ideas'],
+  [/^takeaways?$/i, 'Key Ideas'],
+  [/^tldr$|^tl;dr$/i, 'Short Version'],
+  [/^references?$/i, 'Evidence'],
+  [/^bibliography$|^sources?$/i, 'Evidence'],
+  [/^further reading$/i, 'More Evidence'],
+  [/^appendix$/i, 'Details'],
+  [/^table of contents$|^contents$/i, 'Map'],
+  [/^summary$/i, 'What It Means'],
+  [/^conclusion$|^final thoughts$/i, 'What It Means'],
+  [/^overview$/i, 'Map'],
+  [/^abstract$/i, 'Core Idea'],
+  [/^introduction$|^intro$/i, 'Context'],
+  [/^background$/i, 'Context'],
+  [/^related work$/i, 'Prior Work'],
+  [/^discussion$/i, 'Implications'],
+  [/^limitations?$/i, 'Boundaries'],
+  [/^future work$/i, 'Next Questions'],
+  [/^implementation notes?$/i, 'Implementation'],
+  [/^concepts?$/i, 'Concept Map'],
+  [/^figure\s*\d*$/i, 'Diagram'],
+  [/^table\s*\d*$/i, 'Comparison'],
+  [/^section\s*\d*$/i, 'Part'],
+  [/^chapter\s*\d*$/i, 'Part']
+];
+function isNonVisualSectionHeading(heading) {
+  return NON_VISUAL_SECTION_RE.test(String(heading || '').replace(/[:：]+$/g, '').trim());
+}
+function sanitizeVisibleText(value) {
+  if (typeof value !== 'string') return value;
+  let text = value
+    .replace(/\[([^\]]+)]\([^)]+\)/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\bTL;DR\b|\bTLDR\b/gi, m => matchCase('short version', m))
+    .replace(/\bpractical design takeaways\b/gi, m => matchCase('design rules', m))
+    .replace(/\bkey takeaways\b/gi, m => matchCase('key ideas', m))
+    .replace(/\btakeaways\b/gi, m => matchCase('key ideas', m))
+    .replace(/\btakeaway\b/gi, m => matchCase('key idea', m))
+    .replace(/\bthis\s+(?:blog\s+)?(?:post|article|essay)\b/gi, m => matchCase('the work', m))
+    .replace(/\bthe\s+(?:blog\s+)?(?:post|article|essay)\b/gi, m => matchCase('the work', m))
+    .replace(/\bblog post\b/gi, m => matchCase('article', m))
+    .replace(/\breferences?\s+section\b/gi, m => matchCase('evidence', m))
+    .replace(/\bbibliography\b|\bsources\s+section\b|\bsource\s+list\b|\blist\s+of\s+sources\b/gi, m => matchCase('evidence', m))
+    .replace(/\bfurther reading\b/gi, m => matchCase('more evidence', m))
+    .replace(/\bappendix\b/gi, m => matchCase('details', m))
+    .replace(/\btable of contents\b/gi, m => matchCase('map', m))
+    .replace(/\b(?:the\s+)?abstract\s+section\b|\bthe\s+abstract\b/gi, m => matchCase('core idea', m))
+    .replace(/\b(?:the\s+)?introduction\s+section\b|\bthe\s+introduction\b/gi, m => matchCase('context', m))
+    .replace(/\b(?:the\s+)?related\s+work\s+section\b|\bthe\s+related\s+work\b/gi, m => matchCase('prior work', m))
+    .replace(/\b(?:the\s+)?discussion\s+section\b|\bthe\s+discussion\b/gi, m => matchCase('implications', m))
+    .replace(/\b(?:the\s+)?limitations?\s+section\b|\bthe\s+limitations?\b/gi, m => matchCase('boundaries', m))
+    .replace(/\b(?:the\s+)?future\s+work\s+section\b|\bfuture\s+work\b/gi, m => matchCase('next questions', m))
+    .replace(/\bfigure\s+\d+\b/gi, m => matchCase('diagram', m))
+    .replace(/\btable\s+\d+\b/gi, m => matchCase('comparison', m))
+    .replace(/\bsection\s+\d+\b/gi, m => matchCase('part', m))
+    .replace(/\bchapter\s+\d+\b/gi, m => matchCase('part', m))
+    .replace(/\bfront\s*matter\b|\bseo metadata\b|\bmetadata\b/gi, m => matchCase('publishing details', m))
+    .replace(/\bfinal thoughts\b/gi, m => matchCase('what it means', m))
+    .replace(/\bconclusion\b/gi, m => matchCase('what it means', m))
+    .replace(/\boverview\b/gi, m => matchCase('map', m));
+  text = text.replace(/\s+/g, ' ').trim();
+  for (const [pattern, replacement] of EXACT_VISIBLE_LABELS) if (pattern.test(text)) return replacement;
+  return text;
+}
+function sanitizeStoryboardText(storyboard) {
+  storyboard.title = sanitizeVisibleText(storyboard.title);
+  if (storyboard.visualDirection) {
+    storyboard.visualDirection.character = sanitizeVisibleText(storyboard.visualDirection.character);
+    storyboard.visualDirection.recurringMetaphor = sanitizeVisibleText(storyboard.visualDirection.recurringMetaphor);
+  }
+  for (const page of storyboard.pages || []) {
+    page.title = sanitizeVisibleText(page.title);
+    page.section = sanitizeVisibleText(page.section);
+    page.headline = sanitizeVisibleText(page.headline);
+    for (const node of page.nodes || []) {
+      node.label = sanitizeVisibleText(node.label);
+      node.caption = sanitizeVisibleText(node.caption);
+    }
+    for (const edge of page.edges || []) edge.label = sanitizeVisibleText(edge.label);
+    for (const group of page.groups || []) group.label = sanitizeVisibleText(group.label);
+  }
+  return storyboard;
+}
 
 function parseMarkdown(raw) {
   const lines = raw.replace(/\r/g, '').split('\n');
   let title = 'Untitled Article', heading = 'Overview', paragraphs = [], pages = [];
   const flush = () => {
     if (!paragraphs.length) return;
+    if (isNonVisualSectionHeading(heading)) { paragraphs = []; return; }
     const units = paragraphs.flatMap(p => sentences(p)).filter(Boolean);
     for (let i = 0; i < units.length; i += 4) {
       const group = units.slice(i, i + 4);
@@ -39,8 +139,8 @@ function parseMarkdown(raw) {
         section: slug(heading),
         pageLabel: String(Math.floor(i / 4) + 1),
         layout: 'linear-flow',
-        headline: short(`${heading}：${group[0] || ''}`, 54),
-        nodes: group.map((body, j) => ({ id: `n${j + 1}`, type: j === 0 ? 'input' : j === group.length - 1 ? 'result' : 'process', label: short(body, 24), caption: short(body, 64), visual: ['document', 'idea', 'schema', 'graph'][j % 4], shape: j === 0 || j === group.length - 1 ? 'illustration' : 'card' })),
+        headline: short(`${heading}: ${group[0] || ''}`, 54),
+        nodes: group.map((body, j) => ({ id: `n${j + 1}`, type: j === 0 ? 'input' : j === group.length - 1 ? 'result' : 'process', label: short(body, 24), caption: short(body, 64), visual: sharedIcons.semanticIconFor(`${heading} ${body}`, j), shape: j === 0 || j === group.length - 1 ? 'illustration' : 'card' })),
         edges: group.slice(1).map((_, j) => ({ from: `n${j + 1}`, to: `n${j + 2}`, label: '' }))
       });
     }
@@ -54,18 +154,18 @@ function parseMarkdown(raw) {
     } else if (line.trim()) paragraphs.push(line.replace(/^[-*]\s+/, '').trim());
   }
   flush();
-  return { version: 2, style: 'pastel-handdrawn', title, visualDirection: { character: 'friendly guide', recurringMetaphor: 'ideas becoming structure' }, pages };
+  return { version: 2, style: 'pastel-handdrawn', title, visualDirection: { character: 'article guide', recurringMetaphor: 'article concepts as a readable map' }, pages };
 }
 
 function normalizeStoryboard(sb) {
   if (sb.version === 2) return sb;
   return {
     version: 2, style: sb.style || 'pastel-handdrawn', title: sb.title,
-    visualDirection: { character: 'friendly guide', recurringMetaphor: 'ideas becoming structure' },
+    visualDirection: { character: 'article guide', recurringMetaphor: 'article concepts as a readable map' },
     pages: sb.pages.map((page, pageIndex) => ({
       title: page.title, section: page.section, pageLabel: page.pageLabel || String(pageIndex + 1),
       layout: 'linear-flow', headline: page.title,
-      nodes: page.cards.map((card, i) => ({ id: `n${i + 1}`, type: i === 0 ? 'input' : i === page.cards.length - 1 ? 'result' : 'process', label: card.title, caption: card.body, visual: ({chat:'chat-bubbles',brain:'agent',schema:'schema',graph:'graph'})[card.icon] || 'idea', shape: 'card' })),
+      nodes: page.cards.map((card, i) => ({ id: `n${i + 1}`, type: i === 0 ? 'input' : i === page.cards.length - 1 ? 'result' : 'process', label: card.title, caption: card.body, visual: sharedIcons.resolveIconName(card.icon, `${card.title || ''} ${card.body || ''}`, i), shape: 'card' })),
       edges: page.cards.slice(1).map((_, i) => ({ from: `n${i + 1}`, to: `n${i + 2}`, label: '' }))
     }))
   };
@@ -117,65 +217,14 @@ function drawLines(ctx, result, x, y, lineHeight, align = 'center') {
   result.lines.forEach((line, i) => ctx.fillText(line, x, y + i * lineHeight));
 }
 
-function icon(ctx, name, x, y, color, phase = 0) {
-  const a=phase*Math.PI*2,pulse=(Math.sin(a)+1)/2,wave=(1-Math.cos(a))/2;
-  const semanticColor=VISUAL_COLORS[name]||color,lively=new Set(['person','chat-bubbles','agent','graph','idea','gear']),breath=lively.has(name)?.045:.015;
-  ctx.save();ctx.translate(x,y);ctx.scale(1+breath*Math.sin(a),1+breath*Math.sin(a));x=0;y=0;
-  ctx.strokeStyle=semanticColor;ctx.fillStyle=semanticColor;ctx.lineWidth=4;ctx.lineCap='round';ctx.lineJoin='round';
-  if(name==='person'){
-    ctx.beginPath();ctx.arc(x,y-12,11,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.arc(x,y+18,22,Math.PI,0);ctx.stroke();
-    const blink=Math.abs(Math.sin(a*2))>.94?1:4;ctx.beginPath();ctx.moveTo(x-5,y-13);ctx.lineTo(x-1,y-13+blink);ctx.moveTo(x+5,y-13);ctx.lineTo(x+1,y-13+blink);ctx.stroke();
-  } else if(name==='chat-bubbles'){
-    const bob=Math.sin(a)*3;roundRect(ctx,x-28,y-20-bob,38,28,11);ctx.stroke();roundRect(ctx,x-7,y-5+bob,38,28,11);ctx.stroke();
-    [-1,0,1].forEach((d,i)=>{ctx.globalAlpha=.25+.75*(.5+.5*Math.sin(a-i*Math.PI*2/3));ctx.beginPath();ctx.arc(x+6+d*7,y+9+bob,2.5,0,Math.PI*2);ctx.fill();});
-  } else if(name==='agent'){
-    const colors=['#20bf8f','#45a8d8','#7561d8','#b56cc2','#4ec7a0','#6b86e8'];for(const[dx,dy,i]of[[-11,-8,0],[2,-12,1],[13,-6,2],[-14,5,3],[-3,9,4],[10,7,5]]){ctx.strokeStyle=colors[i];ctx.beginPath();ctx.arc(x+dx,y+dy,9+2*Math.sin(a+i),0,Math.PI*2);ctx.stroke();}
-    ctx.strokeStyle=semanticColor;ctx.fillStyle='#fff';roundRect(ctx,x-10,y-9,20,18,3);ctx.fill();ctx.stroke();ctx.fillStyle=semanticColor;ctx.font='700 10px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('AI',x,y);
-  } else if(name==='document'){
-    ctx.beginPath();ctx.moveTo(x-19,y-26);ctx.lineTo(x+10,y-26);ctx.lineTo(x+21,y-15);ctx.lineTo(x+21,y+26);ctx.lineTo(x-19,y+26);ctx.closePath();ctx.stroke();
-    [-8,2,12].forEach((dy,i)=>{const reveal=clamp(wave*4-i,0,1);ctx.beginPath();ctx.moveTo(x-10,y+dy);ctx.lineTo(x-10+22*reveal,y+dy);ctx.stroke();});
-  } else if(name==='database'){
-    [-17,0,17].forEach((dy,i)=>{ctx.globalAlpha=.35+.65*(.5+.5*Math.sin(a-i*Math.PI*2/3));ctx.beginPath();ctx.ellipse(x,y+dy,24,9,0,0,Math.PI*2);ctx.stroke();});ctx.globalAlpha=1;ctx.beginPath();ctx.moveTo(x-24,y-17);ctx.lineTo(x-24,y+17);ctx.moveTo(x+24,y-17);ctx.lineTo(x+24,y+17);ctx.stroke();
-  } else if(name==='search'){
-    const ox=Math.sin(a)*5,oy=Math.cos(a)*4;ctx.beginPath();ctx.arc(x-5+ox,y-5+oy,17,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(x+8+ox,y+8+oy);ctx.lineTo(x+25+ox,y+25+oy);ctx.stroke();
-  } else if(name==='merge'){
-    ctx.beginPath();ctx.moveTo(x-22,y-20);ctx.quadraticCurveTo(x-20,y+5,x,y+5);ctx.quadraticCurveTo(x+20,y+5,x+22,y+22);ctx.moveTo(x+22,y-20);ctx.quadraticCurveTo(x+20,y+5,x,y+5);ctx.stroke();
-    const d=18*(1-wave);[-1,1].forEach(side=>{ctx.beginPath();ctx.arc(x+side*d,y-12+wave*17,4,0,Math.PI*2);ctx.fill();});
-  } else if(name==='schema'){
-    const colors=['#249d8c','#e79b17','#557bd8'];[-15,0,15].forEach((dy,i)=>{ctx.strokeStyle=colors[i];ctx.globalAlpha=.35+.65*(.5+.5*Math.sin(a-i*Math.PI*2/3));roundRect(ctx,x-23,y+dy-5,46,10,5);ctx.stroke();});
-  } else if(name==='link'){
-    const d=3*Math.sin(a);ctx.beginPath();ctx.arc(x-11+d,y,15,-1.1,1.1);ctx.arc(x+11-d,y,15,2.05,4.25);ctx.stroke();
-  } else if(name==='clock'){
-    ctx.beginPath();ctx.arc(x,y,24,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+15*Math.sin(a),y-15*Math.cos(a));ctx.moveTo(x,y);ctx.lineTo(x+11*Math.sin(a/12),y-11*Math.cos(a/12));ctx.stroke();
-  } else if(name==='alert'){
-    ctx.strokeStyle='#df2f35';ctx.fillStyle='#df2f35';
-    ctx.globalAlpha=.55+.45*pulse;ctx.beginPath();ctx.moveTo(x,y-27);ctx.lineTo(x+25,y+22);ctx.lineTo(x-25,y+22);ctx.closePath();ctx.stroke();ctx.beginPath();ctx.moveTo(x,y-11);ctx.lineTo(x,y+8);ctx.stroke();ctx.beginPath();ctx.arc(x,y+16,2,0,Math.PI*2);ctx.fill();
-  } else if(name==='idea'){
-    ctx.beginPath();ctx.arc(x,y-6,20,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(x-8,y+15);ctx.lineTo(x-6,y+27);ctx.lineTo(x+7,y+27);ctx.lineTo(x+9,y+15);ctx.stroke();
-    for(let i=0;i<6;i++){const q=a+i*Math.PI/3,r=29+4*pulse;ctx.globalAlpha=.3+.7*((phase+i/6)%1);ctx.beginPath();ctx.moveTo(x+Math.cos(q)*r,y-6+Math.sin(q)*r);ctx.lineTo(x+Math.cos(q)*(r+6),y-6+Math.sin(q)*(r+6));ctx.stroke();}
-  } else if(name==='waveform'){
-    ctx.beginPath();for(let i=-22;i<=22;i+=4){const amp=5+13*(.5+.5*Math.sin(a+i*.35));const yy=Math.sin(i*.45+a)*amp;i===-22?ctx.moveTo(x+i,y+yy):ctx.lineTo(x+i,y+yy);}ctx.stroke();
-  } else if(name==='microphone'){
-    ctx.beginPath();ctx.roundRect(x-10,y-24,20,35,10);ctx.stroke();ctx.beginPath();ctx.arc(x,y-2,20,0,Math.PI);ctx.stroke();ctx.beginPath();ctx.moveTo(x,y+18);ctx.lineTo(x,y+27);ctx.moveTo(x-10,y+27);ctx.lineTo(x+10,y+27);ctx.stroke();
-  } else if(name==='headphones'){
-    const bob=Math.sin(a)*2;ctx.beginPath();ctx.arc(x,y+bob,23,Math.PI,0);ctx.stroke();roundRect(ctx,x-27,y-2+bob,10,24,5);ctx.stroke();roundRect(ctx,x+17,y-2+bob,10,24,5);ctx.stroke();
-  } else if(name==='music'){
-    const bob=Math.sin(a)*3;ctx.beginPath();ctx.moveTo(x-5,y-20+bob);ctx.lineTo(x-5,y+13+bob);ctx.lineTo(x+18,y+7+bob);ctx.lineTo(x+18,y-25+bob);ctx.lineTo(x-5,y-18+bob);ctx.stroke();ctx.beginPath();ctx.arc(x-12,y+16+bob,8,0,Math.PI*2);ctx.arc(x+11,y+10+bob,8,0,Math.PI*2);ctx.fill();
-  } else if(name==='globe'){
-    ctx.beginPath();ctx.arc(x,y,24,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.ellipse(x,y,10+2*Math.sin(a),24,0,0,Math.PI*2);ctx.moveTo(x-23,y);ctx.lineTo(x+23,y);ctx.moveTo(x-19,y-12);ctx.lineTo(x+19,y-12);ctx.moveTo(x-19,y+12);ctx.lineTo(x+19,y+12);ctx.stroke();
-  } else if(name==='shield'){
-    ctx.beginPath();ctx.moveTo(x,y-27);ctx.lineTo(x+22,y-18);ctx.lineTo(x+18,y+8);ctx.quadraticCurveTo(x,y+27,x,y+27);ctx.quadraticCurveTo(x-18,y+8,x-22,y-18);ctx.closePath();ctx.stroke();ctx.beginPath();ctx.moveTo(x-9,y);ctx.lineTo(x-2,y+8);ctx.lineTo(x+12,y-9);ctx.stroke();
-  } else if(name==='layers'){
-    const lift=3*Math.sin(a);[-1,0,1].forEach((k,i)=>{ctx.globalAlpha=.45+i*.25;ctx.beginPath();ctx.moveTo(x,y-18+k*12+lift*k);ctx.lineTo(x+25,y-5+k*12+lift*k);ctx.lineTo(x,y+8+k*12+lift*k);ctx.lineTo(x-25,y-5+k*12+lift*k);ctx.closePath();ctx.stroke();});
-  } else if(name==='mask'){
-    const slide=5*Math.sin(a);roundRect(ctx,x-26,y-17,52,34,14);ctx.stroke();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x-9+slide,y-2,7,0,Math.PI*2);ctx.arc(x+9+slide,y-2,7,0,Math.PI*2);ctx.fill();ctx.stroke();
-  } else if(name==='gear'){
-    ctx.rotate(a);ctx.beginPath();for(let i=0;i<16;i++){const q=i*Math.PI/8,r=i%2?20:26;i?ctx.lineTo(Math.cos(q)*r,Math.sin(q)*r):ctx.moveTo(Math.cos(q)*r,Math.sin(q)*r);}ctx.closePath();ctx.stroke();ctx.beginPath();ctx.arc(0,0,7,0,Math.PI*2);ctx.stroke();
-  } else {
-    const pts=[[-17,7],[-6,-14],[12,-10],[19,11],[1,18]],colors=['#38c99b','#7863d8','#f0b23e','#ed728c','#62a9dd'];ctx.beginPath();pts.forEach(([dx,dy],i)=>i?ctx.lineTo(x+dx,y+dy):ctx.moveTo(x+dx,y+dy));ctx.closePath();ctx.stroke();pts.forEach(([dx,dy],i)=>{ctx.fillStyle=colors[i];ctx.globalAlpha=.45+.55*Math.max(0,Math.sin(a+i));ctx.beginPath();ctx.arc(x+dx,y+dy,5,0,Math.PI*2);ctx.fill();});
-  }
-  ctx.restore();
+function textBlockHeight(result, lineHeight) {
+  return result.lines.length ? result.lines.length * lineHeight : 0;
 }
+
+function icon(ctx, name, x, y, color, phase = 0) {
+  return sharedIcons.drawCanvasIcon(ctx, name, x, y, color, phase);
+}
+
 
 function drawSemanticIcon(ctx, name, x, y, color, phase, scale, viewportW, viewportH) {
   ctx.save();ctx.beginPath();ctx.rect(x-viewportW/2,y-viewportH/2,viewportW,viewportH);ctx.clip();
@@ -199,25 +248,65 @@ function positions(layout, count) {
   return Array.from({length:count},(_,i)=>[145+i*(710/(count-1)),560]);
 }
 
+function layoutFrame(page, headerBottom) {
+  const wide=page.format==='wide';
+  return {
+    left:wide?52:46,
+    right:W-(wide?52:46),
+    top:Math.max(headerBottom+(wide?18:22),wide?168:190),
+    bottom:H-(wide?42:50)
+  };
+}
+
+function axisMapper(min, max, targetMin, targetMax, minSpan) {
+  const targetMid=(targetMin+targetMax)/2;
+  if(!Number.isFinite(min)||!Number.isFinite(max)||Math.abs(max-min)<.001)return()=>targetMid;
+  let span=Math.max(max-min,minSpan),mid=(min+max)/2,lo=mid-span/2,hi=mid+span/2;
+  if(lo<0){hi-=lo;lo=0;}if(hi>1){lo-=hi-1;hi=1;}
+  lo=clamp(lo,0,.999);hi=clamp(hi,lo+.001,1);
+  return v=>clamp(targetMin+((v-lo)/(hi-lo))*(targetMax-targetMin),targetMin,targetMax);
+}
+
+function semanticLayout(page, compact, frame) {
+  const wide=page.format==='wide',bounds=page.nodes.map(n=>nodeBounds(n,compact));
+  const maxHalfW=Math.max(...bounds.map(b=>b.halfW)),maxHalfH=Math.max(...bounds.map(b=>b.halfH));
+  let centerFrame={
+    left:frame.left+maxHalfW+(wide?28:24),
+    right:frame.right-maxHalfW-(wide?28:24),
+    top:frame.top+maxHalfH+(wide?24:34),
+    bottom:frame.bottom-maxHalfH-(wide?28:34)
+  };
+  if(centerFrame.left>centerFrame.right){const mid=(frame.left+frame.right)/2;centerFrame.left=centerFrame.right=mid;}
+  if(centerFrame.top>centerFrame.bottom){const mid=(frame.top+frame.bottom)/2;centerFrame.top=centerFrame.bottom=mid;}
+  const xs=page.nodes.map(n=>n.position.x),ys=page.nodes.map(n=>n.position.y);
+  const mapX=axisMapper(Math.min(...xs),Math.max(...xs),centerFrame.left,centerFrame.right,wide ? .44 : .36);
+  const mapY=axisMapper(Math.min(...ys),Math.max(...ys),centerFrame.top,centerFrame.bottom,wide ? .28 : .32);
+  return {
+    pts:page.nodes.map(n=>[mapX(n.position.x),mapY(n.position.y)]),
+    point:p=>[mapX(p.x),mapY(p.y)],
+    labelFrame:{left:frame.left+8,right:frame.right-8,top:frame.top+2,bottom:frame.bottom-8}
+  };
+}
+
 function edgeProgress(t, index, count) { return (t + index / Math.max(1, count)) % 1; }
 function nodeProgress() { return 1; }
 
 function nodeBounds(node, compact) {
   const shape=node.shape||'card';
-  if(shape==='illustration')return {halfW:105,halfH:120};
-  if(shape==='pill')return {halfW:120,halfH:58};
-  return {halfW:(compact?100:115),halfH:86};
+  if(shape==='illustration')return {halfW:118,halfH:128};
+  if(shape==='pill')return {halfW:130,halfH:64};
+  return {halfW:(compact?110:132),halfH:(compact?92:98)};
 }
 
 function nodeBodyMetrics(node, compact) {
   const shape=node.shape||'card';
-  if(shape==='illustration')return {width:172,maxLines:3,maxSize:15};
-  if(shape==='pill')return {width:152,maxLines:2,maxSize:14};
-  return {width:(compact?190:220)-28,maxLines:3,maxSize:16};
+  if(shape==='illustration')return {width:190,maxLines:3,maxSize:16};
+  if(shape==='pill')return {width:170,maxLines:2,maxSize:15};
+  return {width:(compact?210:250)-38,maxLines:3,maxSize:16};
 }
 
 function sharedBodyTypography(ctx, nodes, compact) {
-  const maxSize=Math.min(15,...nodes.map(n=>nodeBodyMetrics(n,compact).maxSize));
+  const maxSize=Math.min(16,...nodes.map(n=>nodeBodyMetrics(n,compact).maxSize));
   for(let size=maxSize;size>=11;size--){
     const fits=nodes.every(node=>{const m=nodeBodyMetrics(node,compact);ctx.font=`400 ${size}px "Comic Sans MS","Microsoft YaHei","Segoe UI",sans-serif`;return !wrapLines(ctx,node.caption,m.width,m.maxLines).overflow;});
     if(fits)return {bodySize:size};
@@ -252,16 +341,18 @@ function drawArrow(ctx, points, phase, relation='flow', groupStyle=null) {
   ctx.restore();
 }
 
-function groupGeometries(ctx, groups, map, compact) {
+function groupGeometries(ctx, groups, map, compact, frame) {
   const result=[];ctx.save();
   for(const group of groups||[]){
     const members=group.nodeIds.map(id=>map.get(id)).filter(Boolean);if(!members.length)continue;
     let left=Infinity,top=Infinity,right=-Infinity,bottom=-Infinity;
     for(const member of members){const b=nodeBounds(member.node,compact),[x,y]=member.point;left=Math.min(left,x-b.halfW);right=Math.max(right,x+b.halfW);top=Math.min(top,y-b.halfH);bottom=Math.max(bottom,y+b.halfH);}
-    left-=20;right+=20;top-=38;bottom+=20;
+    left-=22;right+=22;top-=44;bottom+=30;
+    const limits={left:frame?.left??12,right:frame?.right??W-12,top:frame?.top??140,bottom:frame?.bottom??H-18};
+    left=Math.max(limits.left,left);right=Math.min(limits.right,right);top=Math.max(limits.top,top);bottom=Math.min(limits.bottom,bottom);
     let labelSize=17;ctx.font=`700 ${labelSize}px "Microsoft YaHei","Segoe UI",sans-serif`;let labelWidth=ctx.measureText(group.label).width;
     const neededWidth=labelWidth+36,currentWidth=right-left;
-    if(currentWidth<neededWidth){const grow=(neededWidth-currentWidth)/2;left-=grow;right+=grow;if(left<12){right+=12-left;left=12;}if(right>W-12){left-=right-(W-12);right=W-12;}left=Math.max(12,left);}
+    if(currentWidth<neededWidth){const grow=(neededWidth-currentWidth)/2;left-=grow;right+=grow;if(left<limits.left){right+=limits.left-left;left=limits.left;}if(right>limits.right){left-=right-limits.right;right=limits.right;}left=Math.max(limits.left,left);}
     while(labelSize>12&&labelWidth>right-left-36){labelSize--;ctx.font=`700 ${labelSize}px "Microsoft YaHei","Segoe UI",sans-serif`;labelWidth=ctx.measureText(group.label).width;}
     const labelX=group.labelAlign==='right'?right-18:left+18,labelTop=top+20-labelSize/2-5,labelBottom=top+20+labelSize/2+5;
     result.push({group,left,top,right,bottom,labelX,labelSize,labelRect:{left:group.labelAlign==='right'?labelX-labelWidth-5:labelX-5,right:group.labelAlign==='right'?labelX+5:labelX+labelWidth+5,top:labelTop,bottom:labelBottom}});
@@ -283,7 +374,7 @@ function segmentHitsRect(a,b,r){
   return false;
 }
 
-function placeEdgeLabels(ctx, edgeSpecs, obstacles) {
+function placeEdgeLabels(ctx, edgeSpecs, obstacles, labelFrame={left:12,right:W-12,top:180,bottom:H-18}) {
   const placed=[],allSegments=edgeSpecs.flatMap(spec=>spec.points.slice(0,-1).map((a,i)=>[a,spec.points[i+1]]));
   const ranked=edgeSpecs.filter(spec=>spec.label).sort((a,b)=>(b.priority==='essential')-(a.priority==='essential'));
   for(const spec of ranked){
@@ -298,7 +389,7 @@ function placeEdgeLabels(ctx, edgeSpecs, obstacles) {
       for(const fraction of fractions)for(const side of [1,-1])for(const extra of extraOffsets){
         const offset=side*(clearance+extra),x=segment.a[0]+dx*fraction+nx*offset,y=segment.a[1]+dy*fraction+ny*offset;
         const rect={left:x-width/2-3,right:x+width/2+3,top:y-height/2-3,bottom:y+height/2+3};
-        if(rect.left<12||rect.right>W-12||rect.top<220||rect.bottom>H-18)continue;
+        if(rect.left<labelFrame.left||rect.right>labelFrame.right||rect.top<labelFrame.top||rect.bottom>labelFrame.bottom)continue;
         if(obstacles.some(o=>rectsOverlap(rect,o,5))||placed.some(p=>rectsOverlap(rect,p.rect,7)))continue;
         const lineRect={left:rect.left-4,right:rect.right+4,top:rect.top-4,bottom:rect.bottom+4};
         if(allSegments.some(([a,b])=>segmentHitsRect(a,b,lineRect)))continue;
@@ -317,22 +408,23 @@ function drawEdgeLabels(ctx, labels){
 }
 
 function drawNode(ctx, node, x, y, index, alpha, compact, phase, typography) {
-  const shape=node.shape||'card',w=shape==='pill'?230:(compact?190:220),h=shape==='pill'?104:162,accent=ACCENTS[index%ACCENTS.length];
+  const shape=node.shape||'card',w=shape==='pill'?250:(compact?210:250),h=shape==='pill'?112:(compact?170:178),accent=ACCENTS[index%ACCENTS.length];
+  const visualName=sharedIcons.resolveIconName(node.visual||node.icon,`${node.label||''} ${node.caption||''}`,index);
   ctx.save();ctx.globalAlpha=alpha;ctx.translate(x,y+(1-alpha)*22);const scale=.9+.1*alpha;ctx.scale(scale,scale);
   if(shape==='illustration'){
-    roundRect(ctx,-100,-91,200,202,24);ctx.fillStyle=PALETTE[index%PALETTE.length];ctx.fill();ctx.strokeStyle=accent;ctx.lineWidth=3;ctx.stroke();
-    drawSemanticIcon(ctx,node.visual||node.icon,0,-58,accent,phase,.90,72,58);
-    ctx.fillStyle=INK;const title=fittedText(ctx,node.label,176,2,21,15,700);drawLines(ctx,title,0,-19,title.size+4);
-    ctx.fillStyle=MUTED;const body=fittedText(ctx,node.caption,172,3,typography.bodySize,typography.bodySize,400);drawLines(ctx,body,0,30,body.size+3);ctx.restore();return;
+    roundRect(ctx,-110,-101,220,220,26);ctx.fillStyle=PALETTE[index%PALETTE.length];ctx.fill();ctx.strokeStyle=accent;ctx.lineWidth=3;ctx.stroke();
+    drawSemanticIcon(ctx,visualName,0,-66,accent,phase,.98,80,64);
+    ctx.fillStyle=INK;const title=fittedText(ctx,node.label,192,2,22,15,700),titleY=-27,titleLine=title.size+5;drawLines(ctx,title,0,titleY,titleLine);
+    ctx.fillStyle=MUTED;const body=fittedText(ctx,node.caption,190,3,typography.bodySize,typography.bodySize,400);drawLines(ctx,body,0,titleY+textBlockHeight(title,titleLine)+9,body.size+4);ctx.restore();return;
   }
   roundRect(ctx,-w/2,-h/2,w,h,24);ctx.fillStyle=PALETTE[index%PALETTE.length];ctx.fill();ctx.strokeStyle=accent;ctx.lineWidth=3;ctx.stroke();
-  const ix=shape==='pill'?-w/2+37:0,iy=shape==='pill'?0:-h/2+31,iconScale=shape==='pill'?.60:.75;drawSemanticIcon(ctx,node.visual||node.icon,ix,iy,accent,phase,iconScale,48,48);
+  const ix=shape==='pill'?-w/2+41:0,iy=shape==='pill'?0:-h/2+36,iconScale=shape==='pill'?.64:.82;drawSemanticIcon(ctx,visualName,ix,iy,accent,phase,iconScale,54,54);
   if(shape==='pill'){
-    ctx.fillStyle=INK;const title=fittedText(ctx,node.label,w-78,2,19,14,700);drawLines(ctx,title,-w/2+70,-30,title.size+4,'left');
-    ctx.fillStyle=MUTED;const body=fittedText(ctx,node.caption,w-78,2,typography.bodySize,typography.bodySize,400);drawLines(ctx,body,-w/2+70,18,body.size+3,'left');ctx.restore();return;
+    ctx.fillStyle=INK;const title=fittedText(ctx,node.label,w-88,2,20,14,700),titleY=-32,titleLine=title.size+5;drawLines(ctx,title,-w/2+80,titleY,titleLine,'left');
+    ctx.fillStyle=MUTED;const body=fittedText(ctx,node.caption,w-88,2,typography.bodySize,typography.bodySize,400);drawLines(ctx,body,-w/2+80,titleY+textBlockHeight(title,titleLine)+8,body.size+4,'left');ctx.restore();return;
   }
-  ctx.fillStyle=INK;const title=fittedText(ctx,node.label,w-24,2,20,15,700);drawLines(ctx,title,0,-h/2+64,title.size+5);
-  ctx.fillStyle=MUTED;const body=fittedText(ctx,node.caption,w-28,3,typography.bodySize,typography.bodySize,400);drawLines(ctx,body,0,-h/2+104,body.size+3);
+  ctx.fillStyle=INK;const title=fittedText(ctx,node.label,w-34,2,21,15,700),titleY=-h/2+72,titleLine=title.size+5;drawLines(ctx,title,0,titleY,titleLine);
+  ctx.fillStyle=MUTED;const body=fittedText(ctx,node.caption,w-38,3,typography.bodySize,typography.bodySize,400);drawLines(ctx,body,0,titleY+textBlockHeight(title,titleLine)+8,body.size+4);
   ctx.restore();
 }
 
@@ -340,14 +432,18 @@ function drawPage(ctx, page, direction, pageIndex, total, frame) {
   const t=frame/(FPS*DURATION);ctx.fillStyle=BG;ctx.fillRect(0,0,W,H);
   ctx.strokeStyle='rgba(68,86,130,.055)';ctx.lineWidth=1;for(let y=18;y<H;y+=24){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
   ctx.fillStyle=INK;
-  const title=fittedText(ctx,page.title,W-110,2,40,30,700);drawLines(ctx,title,55,25,title.size+7,'left');
-  ctx.fillStyle='#4053a0';const headline=fittedText(ctx,page.headline,W-150,2,26,19,700);drawLines(ctx,headline,W/2,145,headline.size+6);
-  const pts=page.layout==='semantic-map'?page.nodes.map(n=>[n.position.x*W,n.position.y*H]):positions(page.layout,page.nodes.length),compact=page.format==='wide'?false:page.nodes.length>4,map=new Map(page.nodes.map((n,i)=>[n.id,{point:pts[i],node:n}])),typography=sharedBodyTypography(ctx,page.nodes,compact);
-  const groups=groupGeometries(ctx,page.groups,map,compact);drawGroups(ctx,groups);
+  const wide=page.format==='wide',titleX=wide?55:48,titleY=wide?22:24,titleLineGap=7;
+  const title=fittedText(ctx,page.title,W-(wide?110:96),2,40,30,700),titleLine=title.size+titleLineGap;drawLines(ctx,title,titleX,titleY,titleLine,'left');
+  const titleBottom=titleY+textBlockHeight(title,titleLine),headlineY=Math.max(wide?116:132,titleBottom+(wide?28:26));
+  ctx.fillStyle='#4053a0';const headline=fittedText(ctx,page.headline,W-(wide?170:130),2,26,19,700),headlineLine=headline.size+6;drawLines(ctx,headline,W/2,headlineY,headlineLine);
+  const headlineBottom=headlineY+textBlockHeight(headline,headlineLine),content=layoutFrame(page,headlineBottom),compact=page.format==='wide'?false:page.nodes.length>4;
+  const layout=page.layout==='semantic-map'?semanticLayout(page,compact,content):{pts:positions(page.layout,page.nodes.length),point:p=>[p.x*W,p.y*H],labelFrame:{left:content.left+8,right:content.right-8,top:content.top+2,bottom:content.bottom-8}};
+  const pts=layout.pts,map=new Map(page.nodes.map((n,i)=>[n.id,{point:pts[i],node:n}])),typography=sharedBodyTypography(ctx,page.nodes,compact);
+  const groups=groupGeometries(ctx,page.groups,map,compact,content);drawGroups(ctx,groups);
   const edges=page.edges||[],showEdgeLabels=page.nodes.length<5||page.layout==='semantic-map'||page.layout==='staged-flow',groupStyles=new Map();
   const defaultFlowGroup=(page.layout==='linear-flow'||page.layout==='staged-flow')?'main-flow':null;
   for(const edge of edges){const key=edge.edgeGroup||defaultFlowGroup;if(key&&!groupStyles.has(key)){const color=EDGE_GROUP_COLORS[groupStyles.size%EDGE_GROUP_COLORS.length];groupStyles.set(key,{color,dash:[8,7],lineWidth:2.7});}}
-  const edgeSpecs=edges.map((e,i)=>{const groupKey=e.edgeGroup||defaultFlowGroup,pathStyle=e.pathStyle||(page.layout==='branching'?'curve':'straight'),bend=e.bend??(page.layout==='branching'?(i%2?.2:-.2):.24);return {label:showEdgeLabels?e.label:'',priority:e.labelPriority||'optional',relation:e.relation,groupStyle:groupKey?groupStyles.get(groupKey):null,points:edgePath(map.get(e.from),map.get(e.to),compact,(e.via||[]).map(p=>[p.x*W,p.y*H]),pathStyle,bend),phase:edgeProgress(t,i,Math.max(edges.length,page.nodes.length))};});
+  const edgeSpecs=edges.map((e,i)=>{const groupKey=e.edgeGroup||defaultFlowGroup,pathStyle=e.pathStyle||(page.layout==='branching'?'curve':'straight'),bend=e.bend??(page.layout==='branching'?(i%2?.2:-.2):.24);return {label:showEdgeLabels?e.label:'',priority:e.labelPriority||'optional',relation:e.relation,groupStyle:groupKey?groupStyles.get(groupKey):null,points:edgePath(map.get(e.from),map.get(e.to),compact,(e.via||[]).map(layout.point),pathStyle,bend),phase:edgeProgress(t,i,Math.max(edges.length,page.nodes.length))};});
   edgeSpecs.forEach(spec=>drawArrow(ctx,spec.points,spec.phase,spec.relation,spec.groupStyle));
   const nodeObstacles=page.nodes.map((n,i)=>{const b=nodeBounds(n,compact),[x,y]=pts[i];return {left:x-b.halfW-5,right:x+b.halfW+5,top:y-b.halfH-5,bottom:y+b.halfH+5};});
   const groupBorderObstacles=groups.flatMap(g=>[
@@ -356,7 +452,7 @@ function drawPage(ctx, page, direction, pageIndex, total, frame) {
     {left:g.left,right:g.right,top:g.top-4,bottom:g.top+4},
     {left:g.left,right:g.right,top:g.bottom-4,bottom:g.bottom+4}
   ]);
-  const edgeLabels=placeEdgeLabels(ctx,edgeSpecs,[...nodeObstacles,...groups.map(g=>g.labelRect),...groupBorderObstacles]);
+  const edgeLabels=placeEdgeLabels(ctx,edgeSpecs,[...nodeObstacles,...groups.map(g=>g.labelRect),...groupBorderObstacles],layout.labelFrame);
   page.nodes.forEach((n,i)=>drawNode(ctx,n,...pts[i],i,nodeProgress(t,i,page.nodes.length),compact,(t+i/page.nodes.length)%1,typography));
   drawEdgeLabels(ctx,edgeLabels);
 }
@@ -367,13 +463,37 @@ function renderGif(page, direction, index, total, outPath) {
   for(let f=0;f<FPS*DURATION;f++){drawPage(ctx,page,direction,index,total,f);gif.addFrame(ctx);}gif.finish();fs.writeFileSync(outPath,gif.out.getData());
 }
 
+function cleanStaleGifs(outDir, outputs) {
+  const keep = new Set(outputs);
+  for (const fileName of fs.readdirSync(outDir)) {
+    if (fileName.endsWith('.gif') && !keep.has(fileName)) fs.unlinkSync(path.join(outDir, fileName));
+  }
+}
+
 function main() {
-  const input=process.argv[2],outDir=path.resolve(process.argv[3]||'output');if(!input){usage();process.exit(1);}
-  const abs=path.resolve(input),raw=fs.readFileSync(abs,'utf8');let storyboard=path.extname(abs).toLowerCase()==='.json'?JSON.parse(raw):parseMarkdown(raw);
-  storyboard=normalizeStoryboard(storyboard);validateStoryboard(storyboard);fs.mkdirSync(outDir,{recursive:true});fs.writeFileSync(path.join(outDir,'storyboard.json'),JSON.stringify(storyboard,null,2));
-  const direction=storyboard.visualDirection||{character:'friendly guide',recurringMetaphor:'ideas becoming structure'},outputs=[];
-  storyboard.pages.forEach((page,i)=>{const name=`${String(i+1).padStart(2,'0')}-${slug(page.section)}.gif`;renderGif(page,direction,i,storyboard.pages.length,path.join(outDir,name));outputs.push(name);console.log(`Rendered ${name}`);});
-  fs.writeFileSync(path.join(outDir,'manifest.json'),JSON.stringify({source:path.basename(abs),title:storyboard.title,version:storyboard.version,pages:outputs},null,2));console.log(`Done: ${outputs.length} GIF(s) in ${outDir}`);
+  const args=parseArgs(process.argv.slice(2));if(args.help||!args.input){usage();process.exit(args.help?0:1);}
+  const abs=path.resolve(args.input),outDir=path.resolve(args.outDir),raw=fs.readFileSync(abs,'utf8');let storyboard=path.extname(abs).toLowerCase()==='.json'?JSON.parse(raw):parseMarkdown(raw);
+  storyboard=sanitizeStoryboardText(normalizeStoryboard(storyboard));validateStoryboard(storyboard);
+  if (args.page !== undefined) {
+    if (!Number.isInteger(args.page) || args.page < 1 || args.page > storyboard.pages.length) throw new Error(`--page must be between 1 and ${storyboard.pages.length}`);
+    storyboard.pages = [storyboard.pages[args.page - 1]];
+  }
+  fs.mkdirSync(outDir,{recursive:true});fs.writeFileSync(path.join(outDir,'storyboard.json'),JSON.stringify(storyboard,null,2));
+  const direction=storyboard.visualDirection||{character:'article guide',recurringMetaphor:'article concepts as a readable map'},outputs=[];
+  storyboard.pages.forEach((page,i)=>{const name=storyboard.pages.length===1?'01-article-summary.gif':`${String(i+1).padStart(2,'0')}-${slug(page.section)}.gif`;renderGif(page,direction,i,storyboard.pages.length,path.join(outDir,name));outputs.push(name);console.log(`Rendered ${name}`);});
+  cleanStaleGifs(outDir, outputs);
+  fs.writeFileSync(path.join(outDir,'manifest.json'),JSON.stringify({
+    pipeline:'ai-gif-pipeline-3',
+    source:path.basename(abs),
+    assetSlug:assetSlugFromOutputDir(outDir),
+    title:storyboard.title,
+    version:storyboard.version,
+    outputs:{
+      storyboard:'storyboard.json',
+      gifs:outputs
+    },
+    pages:outputs
+  },null,2));console.log(`Done: ${outputs.length} GIF(s) in ${outDir}`);
 }
 
 main();

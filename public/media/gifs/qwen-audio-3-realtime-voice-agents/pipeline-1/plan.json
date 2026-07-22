@@ -1,0 +1,202 @@
+{
+  "title": "Qwen-Audio-3.0-Realtime: A Field Guide for Voice Agents",
+  "language": "English",
+  "thesis": "Qwen-Audio-3.0-Realtime is a voice-agent runtime that combines realtime speech I/O, smart turn detection, streaming output, and function calling, enabling low-latency, tool-using voice products, but still requires application-level design for reliability, permissions, and observability.",
+  "audience": "Product builders, voice AI engineers, and technical decision-makers evaluating realtime speech models.",
+  "glossary": [
+    {
+      "term": "ASR",
+      "definition": "Automatic Speech Recognition – converts speech audio into text."
+    },
+    {
+      "term": "TTS",
+      "definition": "Text-to-Speech – converts text into spoken audio."
+    },
+    {
+      "term": "WebSocket",
+      "definition": "A persistent, full-duplex communication protocol used for realtime API connections."
+    },
+    {
+      "term": "Function Calling",
+      "definition": "A model capability to request external tool execution from the client."
+    },
+    {
+      "term": "Voice Activity Detection (VAD)",
+      "definition": "Acoustic detection of human speech presence to trigger turn boundaries."
+    },
+    {
+      "term": "smart_turn",
+      "definition": "A turn-detection mode combining acoustic and semantic signals to handle fillers, hesitation, and duplex behavior."
+    },
+    {
+      "term": "Duplex",
+      "definition": "Two-way simultaneous audio communication where both parties may speak at once."
+    },
+    {
+      "term": "Conversation Items",
+      "definition": "Structured units of content (messages, function calls, outputs) within a session."
+    },
+    {
+      "term": "Session",
+      "definition": "A configured stateful context for a realtime interaction, holding configuration and history."
+    },
+    {
+      "term": "Streaming Output",
+      "definition": "Incremental delivery of text or audio before the full response is ready."
+    },
+    {
+      "term": "Tool Gateway",
+      "definition": "The client-side layer that validates, executes, and audits function calls."
+    },
+    {
+      "term": "Context Limit",
+      "definition": "Maximum allowed turns or audio duration the model can keep in memory."
+    },
+    {
+      "term": "ARIA",
+      "definition": "Adaptive Rate Interleave Alignment – a technique aligning text and speech units for streaming speech generation."
+    },
+    {
+      "term": "Thinker-Talker Architecture",
+      "definition": "A model design separating reasoning (Thinker) and speech generation (Talker) components."
+    },
+    {
+      "term": "Hybrid Attention Mixture-of-Experts",
+      "definition": "An efficient model variant using a mix of attention experts for scaling."
+    },
+    {
+      "term": "Latency",
+      "definition": "The delay between input and the first audio/text response."
+    },
+    {
+      "term": "Interruption",
+      "definition": "The act of the user cutting off the model's playback to take over the turn."
+    },
+    {
+      "term": "Observability",
+      "definition": "Logging, metrics, and traces needed to debug realtime voice agent behavior."
+    },
+    {
+      "term": "Voice Clone",
+      "definition": "A synthetic voice generated to match a specific speaker's characteristics."
+    }
+  ],
+  "visual_style": {
+    "palette": "pastel hand-drawn",
+    "character": "none",
+    "recurring_metaphor": "voice-agent runtime"
+  },
+  "sections": [
+    {
+      "id": "voice-agent-runtime",
+      "heading": "The Voice-Agent Runtime",
+      "purpose": "Introduce Qwen-Audio-3.0-Realtime as a platform for realtime voice products.",
+      "key_points": [
+        "Combines realtime speech I/O, turn detection, streaming output, and function calling.",
+        "Not just a model endpoint—a product surface for assistants, companions, and enterprise workflows.",
+        "Enables conversational experiences instead of batch-style pipelines."
+      ]
+    },
+    {
+      "id": "api-state-machine",
+      "heading": "API Shape: More Than Endpoints",
+      "purpose": "Explain the WebSocket event-driven API and why state management is crucial for voice agents.",
+      "key_points": [
+        "Persistent WebSocket connection handles events like session.update, input_audio_buffer.append, and response.delta.",
+        "Event vocabulary reveals a state machine: sessions, configuration, audio streams, partial output, function calls, and conversation item management.",
+        "Voice agents fail in state—when playback continues after interruption, turn boundaries misfire, or stale context remains."
+      ]
+    },
+    {
+      "id": "turn-detection",
+      "heading": "Smart Turn Detection",
+      "purpose": "Detail the three interaction modes and why smart_turn is a critical product feature.",
+      "key_points": [
+        "server_vad: acoustic VAD triggers turns; best for simple, speed‑focused interactions.",
+        "smart_turn: combines acoustic and semantic sensing; ignores fillers like “uh” and handles duplex better.",
+        "push-to-talk: manual client control; ideal for noisy or high‑control settings.",
+        "smart_turn also supports speaker enhancement—locking onto a target speaker’s voice."
+      ]
+    },
+    {
+      "id": "function-calling-loop",
+      "heading": "Function Calling: Making Agents Useful",
+      "purpose": "Describe the tool-use loop and the risks that require a control plane.",
+      "key_points": [
+        "Loop: client registers tools → model emits function_call → client executes locally → sends function_call_output → triggers follow‑up response.",
+        "Enables workflows like calendar checks, shipment lookups, ticket creation, or weather‑based suggestions.",
+        "Risk: ambiguous speech, misheard audio, or partial turns may trigger unintended actions.",
+        "Requires a control plane: schema validation, user confirmation, permission checks, cancellation, and audit logs."
+      ]
+    },
+    {
+      "id": "plus-vs-flash",
+      "heading": "Model Variants: Plus vs Flash",
+      "purpose": "Clarify that model names are starting points; empirical evaluation is essential.",
+      "key_points": [
+        "Both offer WebSocket realtime, audio/text I/O, and function calling with identical documented limits (50 turns, 300s audio context).",
+        "Directional quality/latency tradeoff may exist, but blind trust in names is risky.",
+        "Evaluate on: first-audio latency, interruption speed, tool-call accuracy, noise robustness, cost, clarification frequency."
+      ]
+    },
+    {
+      "id": "qwen35-omni-context",
+      "heading": "The Bigger Picture: Qwen3.5-Omni",
+      "purpose": "Connect the API product to the broader technical architecture outlined in the Qwen3.5-Omni report.",
+      "key_points": [
+        "Qwen3.5-Omni uses Thinker-Talker architecture, Hybrid Attention MoE, and ARIA for streaming speech alignment.",
+        "Not all details map directly, but the paper signals a field shift: transcription → interactive systems.",
+        "Realtime interaction demands chunking, timing, event control, and tool use as native capabilities."
+      ]
+    },
+    {
+      "id": "use-case-fit",
+      "heading": "Where It Fits",
+      "purpose": "Guide builders on when to use this model vs conventional ASR or large audio-language models.",
+      "key_points": [
+        "Use conventional ASR: primary artifact is a transcript (captions, search, legal, minutes).",
+        "Use large audio-language models: tasks involving analysis, multi‑speaker reasoning, or long recordings.",
+        "Use Qwen-Audio-3.0-Realtime: live, low‑latency voice conversation with interruption, streaming, and tool use."
+      ]
+    },
+    {
+      "id": "demo-evaluation",
+      "heading": "Demo Evaluation Checklist",
+      "purpose": "Provide a practical checklist to critically assess voice agent demos.",
+      "key_points": [
+        "Does first audio arrive fast enough for conversational feel?",
+        "Does playback stop quickly on user interruption?",
+        "Does smart_turn ignore filler sounds?",
+        "Can it recover from revised commands?",
+        "Are function‑call arguments streamed and validated cleanly?",
+        "Does it ask for confirmation before risky actions?",
+        "Can old context be removed when irrelevant?",
+        "Is text output sufficient for logs and debugging?",
+        "How does it perform in varying acoustic environments (car, meeting, phone)?"
+      ]
+    },
+    {
+      "id": "builder-architecture",
+      "heading": "Practical Architecture for Builders",
+      "purpose": "Outline a layered stack for a reliable voice agent, emphasizing that the application owns policy.",
+      "key_points": [
+        "Audio Capture: microphone stream, chunking, codec—poor chunking hurts latency.",
+        "Turn Detection: VAD, smart_turn, or push‑to‑talk with interruption handling.",
+        "Realtime Model: speech input → text/audio output + function-call intent.",
+        "Tool Gateway: schema validation, execution, retries, permissions—external actions need control.",
+        "Conversation Memory: history injection and deletion to avoid stale context.",
+        "Observability: text streams, event logs, latency metrics for debugging."
+      ]
+    },
+    {
+      "id": "main-boundary",
+      "heading": "The Main Boundary",
+      "purpose": "Summarize capabilities and the remaining gaps where product design must take over.",
+      "key_points": [
+        "Strong evidence that voice agents are becoming practical product surfaces.",
+        "Does not remove the need for: UX design, tool permissions, transcript logging, fallback modes, domain evaluation, privacy review, production observability.",
+        "Study across layers: documentation, demos, related papers, and your own traces—that’s how a model release becomes a product decision."
+      ]
+    }
+  ]
+}

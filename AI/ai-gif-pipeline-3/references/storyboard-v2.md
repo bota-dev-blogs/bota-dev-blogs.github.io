@@ -52,7 +52,7 @@ Allowed layouts: `linear-flow`, `staged-flow`, `branching`, `before-after`, `cyc
 
 Allowed node types: `input`, `process`, `decision`, `evidence`, `result`, `context`.
 
-Allowed visuals: `person`, `chat-bubbles`, `agent`, `document`, `database`, `search`, `merge`, `schema`, `graph`, `link`, `clock`, `alert`, `idea`, `gear`, `waveform`, `microphone`, `headphones`, `music`, `globe`, `shield`, `layers`, `mask`.
+Allowed visuals: `person`, `chat-bubbles`, `agent`, `document`, `database`, `dataset`, `embedding`, `model`, `search`, `merge`, `schema`, `graph`, `link`, `clock`, `latency`, `alert`, `idea`, `gear`, `waveform`, `microphone`, `asr`, `tts`, `headphones`, `music`, `globe`, `shield`, `layers`, `mask`, `phone`, `edge-device`, `server`, `gpu`, `router`, `sensor`, `camera`, `room`, `speaker`, `subtitle`, `sliders`, `network`, `bot`, `cloud`, `chip`, `lock`, `ear`, `video`, `target`, `branch`, `filter`.
 
 Allowed shapes: `illustration`, `card`, `pill`.
 
@@ -63,6 +63,8 @@ Constraints:
 - The default single-canvas mode uses exactly one page; pass `--series` to the LLM generator only when section-level detail is desired.
 - Use 2-6 nodes and at most 12 edges per page. Six is a hard ceiling.
 - Require `position` on every `semantic-map` node. Use normalized x coordinates from 0.08 to 0.92 and y coordinates from 0.28 to 0.86.
+- Treat `semantic-map` positions as relative anchors. The renderer fits those anchors into the available content frame after the title and headline, so do not use coordinates to reserve header space or outer padding.
+- Do not use article-utility or internal editorial labels such as "takeaway", "TL;DR", "references", "appendix", "table of contents", "abstract", "introduction", "related work", "conclusion", "summary", "overview", "discussion", "limitations", "future work", "this article", "blog post", "section", "chapter", "figure", "table", "metadata", "read more", or "comments" in any visible text field. This includes `title`, `headline`, node `label`, node `caption`, edge `label`, and group `label`.
 - Use IDs matching `^[a-z][a-z0-9-]*$` and keep them unique per page.
 - Reference only IDs declared on the same page.
 - Keep labels within 28 characters, captions within 90 characters, and edge labels within 18 characters.

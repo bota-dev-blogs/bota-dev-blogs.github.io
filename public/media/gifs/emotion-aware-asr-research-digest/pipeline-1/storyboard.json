@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "style": "pastel-handdrawn",
+  "title": "Emotion-Aware ASR",
+  "pages": [
+    {
+      "title": "Emotion-Aware ASR",
+      "section": "Design Questions",
+      "pageLabel": "1",
+      "kicker": "Do not turn affect into a single transcript label",
+      "cards": [
+        {
+          "title": "Define the construct",
+          "body": "Choose arousal, valence, frustration, laughter, sentiment, or risk before choosing a model.",
+          "icon": "target"
+        },
+        {
+          "title": "Pick the time scale",
+          "body": "Frame, utterance, speaker turn, and conversation labels answer different research questions.",
+          "icon": "clock"
+        },
+        {
+          "title": "Constrain the action",
+          "body": "Use calibrated affect as evidence for safe behavior, not as a claim about a person.",
+          "icon": "shield"
+        }
+      ],
+      "fileSlug": "design-questions"
+    }
+  ]
+}

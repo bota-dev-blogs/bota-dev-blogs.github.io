@@ -1,0 +1,13 @@
+{
+  "pipeline": "ai-gif-pipeline-2",
+  "source": "qwen-audio-3-realtime-voice-agents.md",
+  "assetSlug": "qwen-audio-3-realtime-voice-agents",
+  "outputs": {
+    "diagram": "diagram.json",
+    "preview": "diagram.html",
+    "gif": "01-qwen-audio-3-0-realtime-voice-agent-loop.gif"
+  },
+  "pages": [
+    "01-qwen-audio-3-0-realtime-voice-agent-loop.gif"
+  ]
+}

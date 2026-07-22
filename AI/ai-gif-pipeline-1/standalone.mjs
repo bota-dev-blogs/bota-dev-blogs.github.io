@@ -16,6 +16,7 @@ Options:
   --input <path>   Required. Markdown, MDX-normalized Markdown, TXT, or storyboard JSON for --local.
   --out <dir>      Optional. Defaults to output/<input-name>.
   --local          Skip LLM and render a heuristic storyboard.
+  --page <n>       Local/storyboard renders only. Render one storyboard page.
   --plan-only      Save plan.json only.
   --no-render      Save plan.json and storyboard.json without GIF rendering.`);
 }
@@ -29,6 +30,7 @@ function parseArgs(argv) {
     else if (arg === "--local") args.local = true;
     else if (arg === "--plan-only") args.planOnly = true;
     else if (arg === "--no-render") args.noRender = true;
+    else if (arg === "--page") args.page = argv[++index];
     else if (arg.startsWith("--")) {
       const key = arg.slice(2).replace(/-([a-z])/g, (_, char) => char.toUpperCase());
       args[key] = argv[index + 1];
@@ -83,6 +85,7 @@ function main() {
   const commandArgs = args.local
     ? ["comic_pipeline.js", inputPath, outDir]
     : ["generate_with_llm.mjs", inputPath, outDir];
+  if (args.local && args.page) commandArgs.push("--page", args.page);
   if (!args.local && args.planOnly) commandArgs.push("--plan-only");
   if (!args.local && args.noRender) commandArgs.push("--no-render");
 

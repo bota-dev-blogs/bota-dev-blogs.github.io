@@ -1,0 +1,15 @@
+{
+  "pipeline": "ai-gif-pipeline-1",
+  "source": "storyboard.json",
+  "assetSlug": "realtime-speech-ai-control-stack",
+  "title": "Realtime Speech AI",
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-design-questions.gif"
+    ]
+  },
+  "pages": [
+    "01-design-questions.gif"
+  ]
+}

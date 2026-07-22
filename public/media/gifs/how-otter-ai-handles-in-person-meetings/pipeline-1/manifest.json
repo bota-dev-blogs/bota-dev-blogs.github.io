@@ -1,8 +1,8 @@
 {
   "pipeline": "ai-gif-pipeline-1",
-  "source": "how-otter-ai-handles-in-person-meetings.md",
+  "source": "storyboard.json",
   "assetSlug": "how-otter-ai-handles-in-person-meetings",
-  "title": "How Otter.ai Handles In-Person Meetings (And What's Missing)",
+  "title": "In-Person Meeting Capture",
   "outputs": {
     "storyboard": "storyboard.json",
     "gifs": [

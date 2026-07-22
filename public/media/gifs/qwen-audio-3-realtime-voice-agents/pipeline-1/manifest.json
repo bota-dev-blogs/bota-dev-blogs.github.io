@@ -1,0 +1,15 @@
+{
+  "pipeline": "ai-gif-pipeline-1",
+  "source": "storyboard.json",
+  "assetSlug": "qwen-audio-3-realtime-voice-agents",
+  "title": "Qwen-Audio-3.0-Realtime: A Field Guide for Voice Agents",
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-demo-evaluation-checklist.gif"
+    ]
+  },
+  "pages": [
+    "01-demo-evaluation-checklist.gif"
+  ]
+}

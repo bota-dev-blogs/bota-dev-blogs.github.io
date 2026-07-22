@@ -76,6 +76,30 @@ function assetSlugFromOutputDir(outputDir) {
   return assetSlugFor(candidate);
 }
 
+function outputFileSlug(value, fallback = "method-diagram") {
+  return String(value || fallback)
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fff]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 48) || fallback;
+}
+
+function pipeline2GifName(diagramPath) {
+  try {
+    const diagram = JSON.parse(fs.readFileSync(diagramPath, "utf8"));
+    return `01-${outputFileSlug(diagram.title, "method-diagram")}.gif`;
+  } catch {
+    return "01-method-diagram.gif";
+  }
+}
+
+function cleanStaleGifs(outDir, keepFileNames) {
+  const keep = new Set(keepFileNames);
+  for (const fileName of fs.readdirSync(outDir)) {
+    if (fileName.endsWith(".gif") && !keep.has(fileName)) fs.unlinkSync(path.join(outDir, fileName));
+  }
+}
+
 function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help || !args.input) {
@@ -93,19 +117,25 @@ function main() {
   const diagramPath = path.join(outDir, "diagram.json");
   const htmlPath = path.join(outDir, "diagram.html");
   const framesDir = path.join(outDir, ".frames");
-  const gifPath = path.join(outDir, "diagram.gif");
 
   if (path.extname(inputPath).toLowerCase() === ".json") {
-    fs.copyFileSync(inputPath, diagramPath);
+    if (path.resolve(inputPath) !== path.resolve(diagramPath)) fs.copyFileSync(inputPath, diagramPath);
   } else {
     run(process.execPath, ["src/extract-diagram.js", inputPath, diagramPath], { cwd: pipelineDir, env });
   }
+  run(process.execPath, ["src/sanitize-diagram.js", diagramPath, diagramPath], { cwd: pipelineDir, env });
 
+  const gifName = pipeline2GifName(diagramPath);
+  const gifPath = path.join(outDir, gifName);
   run(process.execPath, ["src/build-html.js", diagramPath, htmlPath], { cwd: pipelineDir, env });
 
   if (!args.noRender) {
-    run(process.execPath, ["src/render-gif.js", diagramPath, htmlPath, framesDir, gifPath], { cwd: pipelineDir, env });
-    if (!args.keepFrames) fs.rmSync(framesDir, { recursive: true, force: true });
+    try {
+      run(process.execPath, ["src/render-gif.js", diagramPath, htmlPath, framesDir, gifPath], { cwd: pipelineDir, env });
+    } finally {
+      if (!args.keepFrames) fs.rmSync(framesDir, { recursive: true, force: true });
+    }
+    cleanStaleGifs(outDir, [gifName]);
   }
 
   fs.writeFileSync(path.join(outDir, "manifest.json"), `${JSON.stringify({
@@ -115,8 +145,9 @@ function main() {
     outputs: {
       diagram: "diagram.json",
       preview: "diagram.html",
-      gif: args.noRender ? null : "diagram.gif"
-    }
+      gif: args.noRender ? null : gifName
+    },
+    pages: args.noRender ? [] : [gifName]
   }, null, 2)}\n`);
 
   console.log(`\nOutput written to: ${outDir}`);

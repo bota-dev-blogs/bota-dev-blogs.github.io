@@ -5,35 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Animated paper diagram</title>
   <style>
-    :root { --bg: #f7f8f4; --ink: #1d2a2d; --muted: #718083; --line: #9aa9a4; }
+    :root { --bg: #fffdf8; --ink: #30324d; --muted: #686c80; --line: #505365; }
     * { box-sizing: border-box; }
-    html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; }
+    html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Comic Sans MS", "Microsoft YaHei", "Segoe UI", sans-serif; }
     body { width: var(--canvas-width); height: var(--canvas-height); overflow: hidden; }
     svg { display: block; width: 100%; height: 100%; }
-    .title { font-size: 30px; font-weight: 760; letter-spacing: -0.03em; }
-    .subtitle { font-size: 16px; fill: var(--muted); }
+    .title { font-size: 34px; font-weight: 700; letter-spacing: 0; fill: var(--ink); }
+    .subtitle { font-size: 17px; fill: var(--muted); }
     .node { opacity: 1; transform-box: fill-box; transform-origin: center; }
-    .node.highlighting .node-box { stroke: #ef785c; }
-    .node-box { stroke: var(--ink); stroke-width: 3; rx: 22; filter: drop-shadow(0 5px 0 rgba(29,42,45,.08)); }
-    .kind-input .node-box { fill: #dff3ef; }
-    .kind-method .node-box { fill: #fff0b8; }
-    .kind-output .node-box { fill: #e5e5fb; }
-    .node-label { font-size: 20px; font-weight: 730; text-anchor: middle; }
-    .node-description { font-size: 13px; fill: #5b6b6e; text-anchor: middle; }
-    .edge { fill: none; stroke: var(--line); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow); opacity: 1; }
-    .edge.flowing { stroke: #ef785c; stroke-dasharray: 10 14; marker-end: url(#arrow-active); }
+    .node.highlighting .node-box { stroke: #ad67a7; }
+    .node-box { stroke-width: 3; rx: 24; filter: drop-shadow(0 5px 0 rgba(48,50,77,.08)); }
+    .kind-input .node-box { fill: #dff4ee; stroke: #259d8f; }
+    .kind-method .node-box { fill: #fff0cf; stroke: #e99b1c; }
+    .kind-output .node-box { fill: #e5eafe; stroke: #557bd8; }
+    .node-label { font-size: 20px; font-weight: 700; text-anchor: start; fill: var(--ink); }
+    .node-description { font-size: 14px; fill: var(--muted); text-anchor: start; }
+    .node-icon-bg { fill: #fff; stroke-width: 2; }
+    .node-icon-line { fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .edge { fill: none; stroke: var(--edge-color, var(--line)); stroke-width: 2.7; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 8 7; opacity: .98; }
+    .edge.flowing { opacity: 1; }
     .edge-label-bg { fill: var(--bg); opacity: .96; }
-    .edge-label { font-size: 12px; font-weight: 650; fill: var(--muted); text-anchor: middle; }
-    .grain { opacity: .12; }
+    .edge-label { font-size: 13px; font-weight: 600; fill: var(--muted); text-anchor: middle; }
+    .grain { opacity: .11; }
     .node-box { transition: stroke .08s linear; }
   </style>
 </head>
 <body>
 <svg id="diagram" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Animated technical diagram">
   <defs>
-    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#9aa9a4" /></marker>
-    <marker id="arrow-active" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 Z" fill="#ef785c" /></marker>
-    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#aebbb4" stroke-width="1" /></pattern>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#445682" stroke-width="1" /></pattern>
   </defs>
   <rect id="background" fill="var(--bg)" />
   <rect id="grain" class="grain" fill="url(#grid)" />
@@ -55,11 +55,189 @@
   document.body.style.setProperty('--canvas-height', `${diagram.height}px`);
 
   const ns = 'http://www.w3.org/2000/svg';
+  const EDGE_COLORS = ['#505365', '#397c72', '#6858b5', '#b87918', '#b84f63'];
   const el = (name, attrs = {}, text = '') => {
     const node = document.createElementNS(ns, name);
     Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
     if (text) node.textContent = text;
     return node;
+  };
+  const NODE_ACCENT = { input: '#259d8f', method: '#e99b1c', output: '#557bd8' };
+  const drawKindIcon = (parent, node) => {
+    const color = NODE_ACCENT[node.kind] || '#557bd8';
+    const x = node.x + 16;
+    const y = node.y + 18;
+    const cx = x + 17;
+    const cy = y + 17;
+    const iconName = node.icon || (node.kind === 'input' ? 'document' : node.kind === 'output' ? 'check' : 'layers');
+    const group = el('g', { 'aria-hidden': 'true' });
+    const path = (d) => group.append(el('path', { class: 'node-icon-line', stroke: color, d }));
+    const line = (x1, y1, x2, y2) => path(`M ${x1} ${y1} L ${x2} ${y2}`);
+    const circle = (attrs) => group.append(el('circle', { ...attrs, stroke: color, class: attrs.fill ? '' : 'node-icon-line' }));
+    const frame = (attrs) => group.append(el('rect', { class: 'node-icon-line', stroke: color, fill: 'none', ...attrs }));
+    parent.append(group);
+    group.append(el('rect', { class: 'node-icon-bg', x, y, width: 34, height: 34, rx: 10, stroke: color }));
+    if (iconName === 'person') {
+      circle({ cx, cy: cy - 7, r: 5 });
+      path(`M ${cx - 10} ${cy + 12} Q ${cx} ${cy + 3} ${cx + 10} ${cy + 12}`);
+    } else if (iconName === 'chat-bubbles') {
+      frame({ x: cx - 13, y: cy - 11, width: 18, height: 14, rx: 5 });
+      frame({ x: cx - 3, y: cy - 1, width: 18, height: 13, rx: 5 });
+      [cx + 3, cx + 8, cx + 13].forEach((px) => group.append(el('circle', { cx: px, cy: cy + 6, r: 1.2, fill: color })));
+    } else if (['microphone', 'asr'].includes(iconName)) {
+      frame({ x: cx - 5, y: cy - 12, width: 10, height: 18, rx: 5 });
+      path(`M ${cx - 10} ${cy - 1} A 10 10 0 0 0 ${cx + 10} ${cy - 1} M ${cx} ${cy + 9} V ${cy + 13} M ${cx - 6} ${cy + 13} H ${cx + 6}`);
+      if (iconName === 'asr') path(`M ${cx + 10} ${cy - 7} H ${cx + 14} M ${cx + 10} ${cy - 1} H ${cx + 15} M ${cx + 10} ${cy + 5} H ${cx + 13}`);
+    } else if (['waveform', 'sensor'].includes(iconName)) {
+      path(`M ${x + 6} ${cy} C ${x + 9} ${y + 7}, ${x + 12} ${y + 27}, ${x + 15} ${cy} S ${x + 21} ${y + 7}, ${x + 24} ${cy} S ${x + 29} ${y + 27}, ${x + 31} ${cy}`);
+      if (iconName === 'sensor') circle({ cx, cy, r: 4 });
+    } else if (['speaker', 'tts'].includes(iconName)) {
+      path(`M ${cx - 12} ${cy - 5} H ${cx - 6} L ${cx + 2} ${cy - 11} V ${cy + 11} L ${cx - 6} ${cy + 5} H ${cx - 12} Z`);
+      path(`M ${cx + 5} ${cy - 5} Q ${cx + 11} ${cy} ${cx + 5} ${cy + 5}`);
+    } else if (['database', 'dataset'].includes(iconName)) {
+      if (iconName === 'dataset') {
+        frame({ x: cx - 11, y: cy - 12, width: 22, height: 24, rx: 3 });
+        [cy - 6, cy, cy + 6].forEach((yy) => line(cx - 5, yy, cx + 8, yy));
+      } else {
+        [10, 17, 24].forEach((yy) => group.append(el('ellipse', { class: 'node-icon-line', stroke: color, fill: 'none', cx, cy: y + yy, rx: 11, ry: 4 })));
+        line(cx - 11, y + 10, cx - 11, y + 24); line(cx + 11, y + 10, cx + 11, y + 24);
+      }
+    } else if (['agent', 'model', 'embedding'].includes(iconName)) {
+      [[cx - 10, cy - 7], [cx + 10, cy - 8], [cx - 9, cy + 9], [cx + 10, cy + 8]].forEach(([px, py]) => line(cx, cy, px, py));
+      if (iconName === 'agent') group.append(el('rect', { class: 'node-icon-line', stroke: color, fill: '#fff', x: cx - 6, y: cy - 6, width: 12, height: 12, rx: 4 }));
+      else circle({ cx, cy, r: 4 });
+      [[cx - 10, cy - 7], [cx + 10, cy - 8], [cx - 9, cy + 9], [cx + 10, cy + 8]].forEach(([px, py]) => group.append(el('circle', { cx: px, cy: py, r: 2.1, fill: color })));
+    } else if (iconName === 'schema') {
+      [cy - 8, cy, cy + 8].forEach((yy) => group.append(el('rect', { class: 'node-icon-line', stroke: color, fill: 'none', x: cx - 11, y: yy - 2.5, width: 22, height: 5, rx: 2.5 })));
+    } else if (iconName === 'graph') {
+      const pts = [[cx - 11, cy + 7], [cx - 4, cy - 9], [cx + 6, cy - 4], [cx + 12, cy + 9]];
+      path(`M ${pts.map((p) => p.join(' ')).join(' L ')}`);
+      pts.forEach(([px, py]) => group.append(el('circle', { cx: px, cy: py, r: 2.4, fill: color })));
+    } else if (iconName === 'search') {
+      group.append(el('circle', { class: 'node-icon-line', stroke: color, fill: 'none', cx: cx - 3, cy: cy - 3, r: 7 }));
+      line(cx + 3, cy + 3, cx + 12, cy + 12);
+    } else if (iconName === 'globe') {
+      circle({ cx, cy, r: 12 });
+      path(`M ${cx - 11} ${cy} H ${cx + 11} M ${cx - 8} ${cy - 6} H ${cx + 8} M ${cx - 8} ${cy + 6} H ${cx + 8}`);
+      path(`M ${cx} ${cy - 12} Q ${cx + 6} ${cy} ${cx} ${cy + 12} Q ${cx - 6} ${cy} ${cx} ${cy - 12}`);
+    } else if (iconName === 'translate') {
+      frame({ x: cx - 14, y: cy - 10, width: 13, height: 16, rx: 3 });
+      frame({ x: cx + 1, y: cy - 6, width: 13, height: 16, rx: 3 });
+      path(`M ${cx - 1} ${cy - 13} Q ${cx + 6} ${cy - 17}, ${cx + 13} ${cy - 11} M ${cx + 1} ${cy + 14} Q ${cx - 6} ${cy + 17}, ${cx - 13} ${cy + 11}`);
+    } else if (iconName === 'layers') {
+      [-5, 0, 5].forEach((dy) => path(`M ${cx} ${cy - 10 + dy} L ${cx + 12} ${cy - 4 + dy} L ${cx} ${cy + 2 + dy} L ${cx - 12} ${cy - 4 + dy} Z`));
+    } else if (iconName === 'gate') {
+      frame({ x: cx - 13, y: cy - 13, width: 5, height: 26, rx: 2 });
+      frame({ x: cx + 8, y: cy - 13, width: 5, height: 26, rx: 2 });
+      [cy - 6, cy, cy + 6].forEach((yy) => group.append(el('circle', { cx, cy: yy, r: 1.9, fill: color })));
+    } else if (iconName === 'filter') {
+      path(`M ${cx - 12} ${cy - 11} H ${cx + 12} L ${cx + 4} ${cy} V ${cy + 11} H ${cx - 4} V ${cy} Z`);
+    } else if (iconName === 'target') {
+      [11, 6, 2].forEach((r) => group.append(el('circle', { class: 'node-icon-line', stroke: color, fill: 'none', cx, cy, r })));
+    } else if (['lock', 'shield'].includes(iconName)) {
+      if (iconName === 'shield') path(`M ${cx} ${cy - 12} L ${cx + 12} ${cy - 7} L ${cx + 9} ${cy + 5} Q ${cx} ${cy + 13} ${cx - 9} ${cy + 5} L ${cx - 12} ${cy - 7} Z`);
+      else {
+        path(`M ${cx - 7} ${cy - 2} V ${cy - 7} A 7 7 0 0 1 ${cx + 7} ${cy - 7} V ${cy - 2}`);
+        frame({ x: cx - 10, y: cy - 2, width: 20, height: 15, rx: 4 });
+      }
+    } else if (iconName === 'document') {
+      path(`M ${cx - 9} ${cy - 13} H ${cx + 4} L ${cx + 10} ${cy - 7} V ${cy + 13} H ${cx - 9} Z M ${cx + 4} ${cy - 13} V ${cy - 7} H ${cx + 10}`);
+      line(cx - 4, cy - 1, cx + 5, cy - 1); line(cx - 4, cy + 5, cx + 6, cy + 5);
+    } else if (iconName === 'subtitle') {
+      frame({ x: cx - 13, y: cy - 9, width: 26, height: 18, rx: 4 });
+      line(cx - 8, cy - 1, cx + 8, cy - 1); line(cx - 8, cy + 5, cx + 5, cy + 5);
+    } else if (iconName === 'alert') {
+      path(`M ${cx} ${cy - 13} L ${cx + 13} ${cy + 11} H ${cx - 13} Z M ${cx} ${cy - 4} V ${cy + 4}`);
+      group.append(el('circle', { cx, cy: cy + 8, r: 1.7, fill: color }));
+    } else if (iconName === 'check') {
+      group.append(el('circle', { class: 'node-icon-line', stroke: color, fill: 'none', cx, cy, r: 12 }));
+      path(`M ${cx - 7} ${cy} L ${cx - 2} ${cy + 6} L ${cx + 8} ${cy - 7}`);
+    } else if (['phone', 'edge-device'].includes(iconName)) {
+      frame({ x: cx - 7, y: cy - 13, width: 14, height: 26, rx: 4 });
+      iconName === 'edge-device' ? frame({ x: cx - 3, y: cy - 3, width: 6, height: 6, rx: 1 }) : line(cx - 3, cy + 9, cx + 3, cy + 9);
+    } else if (['chip', 'gpu'].includes(iconName)) {
+      frame({ x: cx - 8, y: cy - 8, width: 16, height: 16, rx: 3 });
+      line(cx - 13, cy - 5, cx - 8, cy - 5); line(cx + 8, cy - 5, cx + 13, cy - 5); line(cx - 13, cy + 5, cx - 8, cy + 5); line(cx + 8, cy + 5, cx + 13, cy + 5);
+      if (iconName === 'gpu') circle({ cx, cy, r: 4 });
+    } else if (iconName === 'server') {
+      [cy - 7, cy, cy + 7].forEach((yy) => {
+        frame({ x: cx - 12, y: yy - 3, width: 24, height: 6, rx: 2 });
+        group.append(el('circle', { cx: cx + 8, cy: yy, r: 1.1, fill: color }));
+      });
+    } else if (['router', 'cloud', 'network'].includes(iconName)) {
+      if (iconName === 'cloud') path(`M ${cx - 13} ${cy + 4} Q ${cx - 12} ${cy - 5} ${cx - 4} ${cy - 4} Q ${cx} ${cy - 12} ${cx + 8} ${cy - 4} Q ${cx + 14} ${cy - 3} ${cx + 13} ${cy + 4} Z`);
+      else if (iconName === 'router') {
+        frame({ x: cx - 10, y: cy + 5, width: 20, height: 6, rx: 2 });
+        path(`M ${cx - 8} ${cy + 5} L ${cx - 12} ${cy - 10} M ${cx + 8} ${cy + 5} L ${cx + 12} ${cy - 10} M ${cx - 8} ${cy - 4} Q ${cx} ${cy - 12} ${cx + 8} ${cy - 4}`);
+      } else {
+        [[cx - 9, cy - 7], [cx + 9, cy - 8], [cx, cy + 9]].forEach(([px, py]) => group.append(el('circle', { cx: px, cy: py, r: 2.2, fill: color })));
+        path(`M ${cx - 9} ${cy - 7} L ${cx + 9} ${cy - 8} L ${cx} ${cy + 9} Z`);
+      }
+    } else if (['clock', 'latency'].includes(iconName)) {
+      group.append(el('circle', { class: 'node-icon-line', stroke: color, fill: 'none', cx, cy, r: 10 }));
+      path(`M ${cx} ${cy} V ${cy - 6} M ${cx} ${cy} L ${cx + 6} ${cy + 3}`);
+      if (iconName === 'latency') path(`M ${cx - 10} ${cy + 14} H ${cx - 4} L ${cx} ${cy + 9} L ${cx + 5} ${cy + 14} H ${cx + 12}`);
+    } else if (iconName === 'camera') {
+      frame({ x: cx - 12, y: cy - 7, width: 24, height: 16, rx: 3 });
+      group.append(el('circle', { class: 'node-icon-line', stroke: color, fill: 'none', cx, cy: cy + 1, r: 4 }));
+    } else if (iconName === 'video') {
+      frame({ x: cx - 12, y: cy - 8, width: 24, height: 17, rx: 3 });
+      path(`M ${cx - 3} ${cy - 4} L ${cx + 6} ${cy} L ${cx - 3} ${cy + 5} Z`);
+    } else if (iconName === 'room') {
+      frame({ x: cx - 13, y: cy - 3, width: 26, height: 10, rx: 5 });
+      line(cx - 9, cy + 7, cx - 12, cy + 13); line(cx + 9, cy + 7, cx + 12, cy + 13);
+      [[cx, cy - 11], [cx - 14, cy], [cx + 14, cy]].forEach(([px, py]) => group.append(el('circle', { cx: px, cy: py, r: 1.9, fill: color })));
+    } else if (iconName === 'bot') {
+      frame({ x: cx - 12, y: cy - 8, width: 24, height: 17, rx: 5 });
+      line(cx, cy - 8, cx, cy - 14);
+      group.append(el('circle', { cx, cy: cy - 15, r: 1.5, fill: color }));
+      group.append(el('circle', { cx: cx - 5, cy, r: 1.7, fill: color }));
+      group.append(el('circle', { cx: cx + 5, cy, r: 1.7, fill: color }));
+      line(cx - 5, cy + 6, cx + 5, cy + 6);
+    } else if (iconName === 'ear') {
+      path(`M ${cx + 2} ${cy + 13} Q ${cx - 6} ${cy + 8} ${cx - 4} ${cy} Q ${cx - 2} ${cy - 11} ${cx + 6} ${cy - 10} Q ${cx + 13} ${cy - 9} ${cx + 12} ${cy - 1} Q ${cx + 12} ${cy + 5} ${cx + 5} ${cy + 7}`);
+      path(`M ${cx + 4} ${cy - 2} Q ${cx + 8} ${cy - 3} ${cx + 8} ${cy + 2}`);
+      path(`M ${cx - 12} ${cy - 4} Q ${cx - 18} ${cy} ${cx - 12} ${cy + 4}`);
+    } else if (iconName === 'headphones') {
+      path(`M ${cx - 12} ${cy + 1} A 12 12 0 0 1 ${cx + 12} ${cy + 1}`);
+      frame({ x: cx - 15, y: cy, width: 6, height: 12, rx: 3 });
+      frame({ x: cx + 9, y: cy, width: 6, height: 12, rx: 3 });
+    } else if (iconName === 'link') {
+      path(`M ${cx - 2} ${cy - 7} Q ${cx - 9} ${cy - 13} ${cx - 14} ${cy - 6} Q ${cx - 19} ${cy + 1} ${cx - 10} ${cy + 5}`);
+      path(`M ${cx + 2} ${cy + 7} Q ${cx + 9} ${cy + 13} ${cx + 14} ${cy + 6} Q ${cx + 19} ${cy - 1} ${cx + 10} ${cy - 5}`);
+      line(cx - 7, cy + 3, cx + 7, cy - 3);
+    } else if (iconName === 'branch') {
+      path(`M ${cx - 10} ${cy - 9} Q ${cx - 1} ${cy - 8} ${cx + 6} ${cy} Q ${cx - 1} ${cy + 8} ${cx - 10} ${cy + 9} M ${cx + 6} ${cy} H ${cx + 13}`);
+      [[cx - 12, cy - 9], [cx - 12, cy + 9], [cx + 13, cy]].forEach(([px, py]) => group.append(el('circle', { cx: px, cy: py, r: 2.2, fill: color })));
+    } else if (iconName === 'merge') {
+      path(`M ${cx - 13} ${cy - 9} Q ${cx - 3} ${cy - 9} ${cx + 2} ${cy} Q ${cx - 3} ${cy + 9} ${cx - 13} ${cy + 9} M ${cx + 2} ${cy} H ${cx + 13}`);
+      [[cx - 13, cy - 9], [cx - 13, cy + 9], [cx + 13, cy]].forEach(([px, py]) => group.append(el('circle', { cx: px, cy: py, r: 2.2, fill: color })));
+    } else if (iconName === 'sliders') {
+      [cx - 8, cx, cx + 8].forEach((px, index) => {
+        line(px, cy - 12, px, cy + 12);
+        group.append(el('circle', { cx: px, cy: cy + [-5, 5, -1][index], r: 2.5, fill: color }));
+      });
+    } else if (iconName === 'idea') {
+      circle({ cx, cy: cy - 4, r: 8 });
+      path(`M ${cx - 4} ${cy + 6} H ${cx + 4} M ${cx - 3} ${cy + 10} H ${cx + 3}`);
+      line(cx, cy - 15, cx, cy - 18); line(cx - 10, cy - 12, cx - 13, cy - 15); line(cx + 10, cy - 12, cx + 13, cy - 15);
+    } else if (iconName === 'music') {
+      path(`M ${cx - 1} ${cy - 12} V ${cy + 6} L ${cx + 10} ${cy + 3} V ${cy - 14} L ${cx - 1} ${cy - 11}`);
+      group.append(el('circle', { cx: cx - 6, cy: cy + 8, r: 4, fill: color }));
+      group.append(el('circle', { cx: cx + 7, cy: cy + 5, r: 4, fill: color }));
+    } else if (iconName === 'mask') {
+      frame({ x: cx - 13, y: cy - 8, width: 26, height: 16, rx: 8 });
+      group.append(el('circle', { cx: cx - 5, cy, r: 2.2, fill: color }));
+      group.append(el('circle', { cx: cx + 5, cy, r: 2.2, fill: color }));
+    } else if (iconName === 'gear') {
+      group.append(el('circle', { class: 'node-icon-line', stroke: color, fill: 'none', cx, cy, r: 7 }));
+      for (let i = 0; i < 8; i++) {
+        const a = i * Math.PI / 4;
+        line(cx + Math.cos(a) * 11, cy + Math.sin(a) * 11, cx + Math.cos(a) * 15, cy + Math.sin(a) * 15);
+      }
+    } else {
+      [-5, 0, 5].forEach((dy) => path(`M ${cx} ${cy - 10 + dy} L ${cx + 12} ${cy - 4 + dy} L ${cx} ${cy + 2 + dy} L ${cx - 12} ${cy - 4 + dy} Z`));
+    }
   };
   const wrapText = (parent, className, x, y, text, maxWidth, lineHeight, maxLines) => {
     const textNode = el('text', { class: className, x, y });
@@ -107,7 +285,7 @@
   const maxNodeBottom = Math.max(...diagram.nodes.map((node) => node.y + node.height));
   let upperTrack = minNodeY - 38;
   let lowerTrack = maxNodeBottom + 38;
-  diagram.edges.forEach((edge) => {
+  diagram.edges.forEach((edge, index) => {
     const from = byId[edge.from]; const to = byId[edge.to];
     if (!from || !to) return;
     const x1 = from.x + from.width; const y1 = from.y + from.height / 2;
@@ -131,7 +309,7 @@
       const routeY = Math.max(startY, endY) + 36;
       pathData = `M ${startX} ${startY} C ${startX} ${routeY}, ${endX} ${routeY}, ${endX} ${endY}`;
     }
-    const path = el('path', { id: edge.id, class: 'edge', d: pathData });
+    const path = el('path', { id: edge.id, class: 'edge', d: pathData, style: `--edge-color: ${EDGE_COLORS[index % EDGE_COLORS.length]}` });
     edgeNodes[edge.id] = path;
     edgeLabelSpecs.push({ edge, path });
     content.append(path);
@@ -186,9 +364,11 @@
     const group = el('g', { id: node.id, class: `node kind-${node.kind}` });
     content.append(group);
     group.append(el('rect', { class: 'node-box', x: node.x, y: node.y, width: node.width, height: node.height }));
-    const centerX = node.x + node.width / 2;
-    const labelLines = wrapText(group, 'node-label', centerX, node.y + 42, node.label, node.width - 24, 24, 2);
-    wrapText(group, 'node-description', centerX, node.y + 68 + (labelLines - 1) * 22, node.description || '', node.width - 24, 17, 3);
+    drawKindIcon(group, node);
+    const textX = node.x + 64;
+    const textWidth = node.width - 78;
+    const labelLines = wrapText(group, 'node-label', textX, node.y + 32, node.label, textWidth, 23, 2);
+    wrapText(group, 'node-description', textX, node.y + 60 + (labelLines - 1) * 21, node.description || '', textWidth, 17, 3);
     nodeGroups[node.id] = group;
   });
 

@@ -42,6 +42,7 @@ Render an existing storyboard without another LLM call:
 
 ```bash
 npm run local -- --input storyboard.json --out output/rerendered
+npm run local -- --input storyboard.json --out output/rerendered --page 1
 ```
 
 Planning and storyboard-only commands:
@@ -56,11 +57,28 @@ npm run storyboard -- --input article.mdx
 - Default schema enforces exactly one page; `--series` enables multiple pages.
 - Uses 4–6 compound nodes, one main reading path, and at most one key detour.
 - Supports square and wide semantic layouts, straight and curved arrows, and staged two-row flows.
+- Fits semantic-map positions into the available post-header content frame so output uses the canvas instead of preserving storyboard margin.
+- Uses larger node bounds and adaptive text spacing so cards feel less cramped without needing longer captions.
 - `edgeGroup` keeps related dashed lines consistent.
 - Optional edge labels are removed when no collision-free position exists.
 - Captions share one page-level maximum feasible font size.
 - Group frames expand to contain their measured headings.
-- Semantic icons animate at 20 FPS in a seamless two-second loop.
+- Semantic icons animate at 20 FPS in a seamless two-second loop, with voice
+  and product-specific visuals such as ASR, TTS, microphone, waveform, phone,
+  edge device, chip, GPU, server, router, dataset, embedding, model, room,
+  speaker, subtitle, sliders, network, bot, cloud, lock, ear, video, target,
+  branch, filter, merge, globe, translate, document, search, alert, check,
+  music, mask, and latency available when they fit the source. The shared
+  fallback list intentionally excludes weak abstract icons. Canvas glyphs come
+  from `AI/shared/semantic-icons.cjs`; update that shared module rather than
+  copying icon code into this pipeline.
+- Visible canvas text never uses article-utility or internal editorial labels
+  such as "takeaway", "TL;DR", "references", "appendix", "table of contents",
+  "abstract", "introduction", "related work", "conclusion", "summary",
+  "overview", "discussion", "limitations", "future work", "this article",
+  "blog post", "metadata", "read more", or "comments"; use the actual concept
+  label instead.
+- Local storyboard renders support `--page <n>` and clean stale `.gif` files after a successful render.
 
 Content and layout rules are documented in `SKILL.md` and `references/`.
 

@@ -17,6 +17,13 @@ const pipelines = [
     dir: path.join(rootDir, "AI", "ai-gif-pipeline-2"),
     setup: "npm run gif:setup:2",
     needsFfmpeg: true
+  },
+  {
+    id: "3",
+    name: "Pipeline 3 article summary GIF",
+    dir: path.join(rootDir, "AI", "ai-gif-pipeline-3"),
+    setup: "npm run gif:setup:3",
+    needsFfmpeg: false
   }
 ];
 
@@ -46,6 +53,16 @@ function commandExists(command, args = ["--version"]) {
   return result.status === 0;
 }
 
+function chromiumExecutableExists(pipelineDir) {
+  if (!exists(path.join(pipelineDir, "node_modules", "playwright"))) return false;
+  const result = spawnSync(process.execPath, [
+    "-e",
+    "const { chromium } = require('playwright'); process.stdout.write(chromium.executablePath());"
+  ], { cwd: pipelineDir, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], shell: false });
+  const executablePath = result.stdout?.trim();
+  return result.status === 0 && Boolean(executablePath) && fs.existsSync(executablePath);
+}
+
 let hasMiss = false;
 
 console.log("GIF pipeline doctor\n");
@@ -67,6 +84,7 @@ for (const pipeline of pipelines) {
   if (pipeline.id === "2") {
     hasMiss = !status(commandExists("ffmpeg", ["-version"]), "ffmpeg", "required for rendering diagram GIFs") || hasMiss;
     hasMiss = !status(exists(path.join(pipeline.dir, "node_modules", "playwright")), "playwright package", pipeline.setup) || hasMiss;
+    hasMiss = !status(chromiumExecutableExists(pipeline.dir), "playwright chromium", "npm run gif:setup:2") || hasMiss;
   }
   console.log("");
 }
@@ -74,9 +92,11 @@ for (const pipeline of pipelines) {
 console.log("Integrated commands:");
 console.log("  npm run gif -- 1 --input src/content/blog/<slug>.mdx");
 console.log("  npm run gif -- 2 --input .tmp/papers/<paper>.pdf --slug <slug>");
+console.log("  npm run gif -- 3 --input src/content/blog/<slug>.mdx");
 console.log("\nStandalone commands:");
 console.log("  cd AI/ai-gif-pipeline-1 && npm run generate -- --input article.md");
 console.log("  cd AI/ai-gif-pipeline-2 && npm run generate -- --input paper.pdf");
+console.log("  cd AI/ai-gif-pipeline-3 && npm run generate -- --input ../../src/content/blog/<slug>.mdx");
 
 if (hasMiss) {
   console.log("\nSome required pieces are missing. Run npm run gif:setup, or the per-pipeline setup command shown above.");

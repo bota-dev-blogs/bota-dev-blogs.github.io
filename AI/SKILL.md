@@ -24,7 +24,7 @@ Use pipeline 1 for article-based comic/explainer GIF sequences.
 
 Use pipeline 2 for audio AI paper diagrams and method/architecture GIFs.
 
-Use pipeline 3 for one concise article-wide animated summary. Pipeline 3 is standalone until the repository-root wrapper explicitly adds selector `3`.
+Use pipeline 3 for one concise article-wide animated summary or a manually curated research map/checklist. Pipeline 3 is available through the repository-root wrapper as selector `3`.
 
 ## Output Rule
 
@@ -39,6 +39,10 @@ public/media/gifs/<asset-slug>/pipeline-3/
 Do not put generated frames under `public/`; temporary frames belong in `.tmp/gif-frames/`. Standalone pipeline outputs stay in `AI/ai-gif-pipeline-*/output/` until selected files are intentionally moved into `public/media/`.
 
 Only create a pipeline output folder when that pipeline has actual outputs. Empty pipeline folders are unnecessary.
+
+Run `npm run gif:clean -- --all` when local test fixtures, standalone outputs, or old visual-audit scratch folders accumulate. This cleanup is designed to leave `.env` files and `node_modules/` alone.
+
+The three pipelines share semantic icon matching through `AI/shared/semantic-icons.cjs`. Prefer concrete AI/audio/mobile/edge/computing glyphs over generic idea or agent symbols, and keep icons wordless. Keep fallback icons concrete and narrow; when adding an icon, update shared Canvas drawing plus the pipeline-2 SVG template in the same change.
 
 ## Secrets
 

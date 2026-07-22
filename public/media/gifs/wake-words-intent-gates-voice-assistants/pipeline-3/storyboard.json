@@ -1,0 +1,552 @@
+{
+  "version": 2,
+  "style": "pastel-handdrawn",
+  "title": "Wake Word Detection Is Becoming Intent Gating",
+  "visualDirection": {
+    "character": "survey map for voice-interface researchers",
+    "recurringMetaphor": "small acoustic gates opening into larger reasoning systems"
+  },
+  "pages": [
+    {
+      "title": "Wake Word Research Map",
+      "section": "article-summary",
+      "pageLabel": "1",
+      "format": "wide",
+      "layout": "semantic-map",
+      "headline": "From fixed triggers to layered intent gates",
+      "nodes": [
+        {
+          "id": "classic",
+          "type": "context",
+          "label": "Classic KWS",
+          "caption": "Templates, HMMs, MFCCs, and phrase-specific detection",
+          "visual": "document",
+          "shape": "card",
+          "position": {
+            "x": 0.12,
+            "y": 0.56
+          }
+        },
+        {
+          "id": "small",
+          "type": "process",
+          "label": "Small neural KWS",
+          "caption": "Compact DNN and CNN models run before ASR",
+          "visual": "gear",
+          "shape": "card",
+          "position": {
+            "x": 0.33,
+            "y": 0.56
+          }
+        },
+        {
+          "id": "gate",
+          "type": "decision",
+          "label": "Intent gate",
+          "caption": "Wake evidence combines with speaker and context",
+          "visual": "shield",
+          "shape": "illustration",
+          "position": {
+            "x": 0.55,
+            "y": 0.64
+          }
+        },
+        {
+          "id": "frontier",
+          "type": "evidence",
+          "label": "Research frontier",
+          "caption": "Zero-shot KWS, DDSD, distillation, semantic VAD",
+          "visual": "layers",
+          "shape": "card",
+          "position": {
+            "x": 0.55,
+            "y": 0.36
+          }
+        },
+        {
+          "id": "agent",
+          "type": "result",
+          "label": "Voice agent",
+          "caption": "ASR, LLM, tools, and TTS wake after confidence",
+          "visual": "agent",
+          "shape": "illustration",
+          "position": {
+            "x": 0.82,
+            "y": 0.56
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "classic",
+          "to": "small",
+          "label": "2010s shift",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "history",
+          "pathStyle": "straight"
+        },
+        {
+          "from": "small",
+          "to": "gate",
+          "label": "candidate",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "history",
+          "pathStyle": "straight"
+        },
+        {
+          "from": "frontier",
+          "to": "gate",
+          "label": "soft evidence",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "frontier",
+          "pathStyle": "curve",
+          "bend": 0.22
+        },
+        {
+          "from": "gate",
+          "to": "agent",
+          "label": "approved",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "history",
+          "pathStyle": "straight"
+        }
+      ],
+      "groups": [
+        {
+          "id": "old-new",
+          "label": "Detection lineage",
+          "nodeIds": [
+            "classic",
+            "small"
+          ],
+          "color": "teal",
+          "labelAlign": "left"
+        },
+        {
+          "id": "gating",
+          "label": "Contextual gating",
+          "nodeIds": [
+            "frontier",
+            "gate"
+          ],
+          "color": "blue",
+          "labelAlign": "right"
+        }
+      ]
+    },
+    {
+      "title": "Operating Point",
+      "section": "operating-point",
+      "pageLabel": "2",
+      "format": "wide",
+      "layout": "semantic-map",
+      "headline": "Wake systems are tuned around FAR, FRR, power, and risk",
+      "nodes": [
+        {
+          "id": "threshold",
+          "type": "decision",
+          "label": "Threshold",
+          "caption": "One score creates two different failure modes",
+          "visual": "graph",
+          "shape": "illustration",
+          "position": {
+            "x": 0.18,
+            "y": 0.52
+          }
+        },
+        {
+          "id": "far",
+          "type": "result",
+          "label": "False accepts",
+          "caption": "Background speech wakes the assistant by mistake",
+          "visual": "alert",
+          "shape": "card",
+          "position": {
+            "x": 0.42,
+            "y": 0.34
+          }
+        },
+        {
+          "id": "frr",
+          "type": "result",
+          "label": "False rejects",
+          "caption": "The user says the phrase and gets ignored",
+          "visual": "mask",
+          "shape": "card",
+          "position": {
+            "x": 0.42,
+            "y": 0.7
+          }
+        },
+        {
+          "id": "device",
+          "type": "context",
+          "label": "Device class",
+          "caption": "Speaker, car, phone, watch, earbud, wearable",
+          "visual": "headphones",
+          "shape": "card",
+          "position": {
+            "x": 0.64,
+            "y": 0.52
+          }
+        },
+        {
+          "id": "policy",
+          "type": "result",
+          "label": "Product policy",
+          "caption": "Low-risk actions differ from private or costly ones",
+          "visual": "shield",
+          "shape": "illustration",
+          "position": {
+            "x": 0.84,
+            "y": 0.52
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "threshold",
+          "to": "far",
+          "label": "too loose",
+          "labelPriority": "essential",
+          "relation": "contrast",
+          "edgeGroup": "tradeoff",
+          "pathStyle": "curve",
+          "bend": -0.2
+        },
+        {
+          "from": "threshold",
+          "to": "frr",
+          "label": "too strict",
+          "labelPriority": "essential",
+          "relation": "contrast",
+          "edgeGroup": "tradeoff",
+          "pathStyle": "curve",
+          "bend": 0.2
+        },
+        {
+          "from": "far",
+          "to": "device",
+          "label": "",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "context",
+          "pathStyle": "curve",
+          "bend": 0.15
+        },
+        {
+          "from": "frr",
+          "to": "device",
+          "label": "",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "context",
+          "pathStyle": "curve",
+          "bend": -0.15
+        },
+        {
+          "from": "device",
+          "to": "policy",
+          "label": "tune",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "context",
+          "pathStyle": "straight"
+        }
+      ],
+      "groups": [
+        {
+          "id": "errors",
+          "label": "Detection errors",
+          "nodeIds": [
+            "far",
+            "frr"
+          ],
+          "color": "orange",
+          "labelAlign": "right"
+        }
+      ]
+    },
+    {
+      "title": "Research Frontier",
+      "section": "research-frontier",
+      "pageLabel": "3",
+      "format": "wide",
+      "layout": "semantic-map",
+      "headline": "The frontier adds new words, new speakers, and softer gates",
+      "nodes": [
+        {
+          "id": "zero",
+          "type": "process",
+          "label": "Zero-shot KWS",
+          "caption": "Match new phrases without phrase-specific retraining",
+          "visual": "search",
+          "shape": "card",
+          "position": {
+            "x": 0.18,
+            "y": 0.34
+          }
+        },
+        {
+          "id": "personal",
+          "type": "process",
+          "label": "Personalization",
+          "caption": "Use phonemes, prosody, and speaker information",
+          "visual": "person",
+          "shape": "card",
+          "position": {
+            "x": 0.18,
+            "y": 0.7
+          }
+        },
+        {
+          "id": "distill",
+          "type": "method",
+          "label": "Distillation",
+          "caption": "Compress teacher behavior into edge students",
+          "visual": "merge",
+          "shape": "illustration",
+          "position": {
+            "x": 0.47,
+            "y": 0.52
+          }
+        },
+        {
+          "id": "dds",
+          "type": "decision",
+          "label": "DDSD",
+          "caption": "Decide whether speech is addressed to the device",
+          "visual": "microphone",
+          "shape": "card",
+          "position": {
+            "x": 0.7,
+            "y": 0.34
+          }
+        },
+        {
+          "id": "turn",
+          "type": "decision",
+          "label": "Semantic VAD",
+          "caption": "Estimate whether it is the assistant's turn",
+          "visual": "clock",
+          "shape": "card",
+          "position": {
+            "x": 0.7,
+            "y": 0.7
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "zero",
+          "to": "distill",
+          "label": "scale",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "edge",
+          "pathStyle": "curve",
+          "bend": 0.15
+        },
+        {
+          "from": "personal",
+          "to": "distill",
+          "label": "adapt",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "edge",
+          "pathStyle": "curve",
+          "bend": -0.15
+        },
+        {
+          "from": "distill",
+          "to": "dds",
+          "label": "deploy",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "edge",
+          "pathStyle": "curve",
+          "bend": -0.1
+        },
+        {
+          "from": "distill",
+          "to": "turn",
+          "label": "deploy",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "edge",
+          "pathStyle": "curve",
+          "bend": 0.1
+        }
+      ],
+      "groups": [
+        {
+          "id": "custom",
+          "label": "Custom words",
+          "nodeIds": [
+            "zero",
+            "personal"
+          ],
+          "color": "teal",
+          "labelAlign": "left"
+        },
+        {
+          "id": "soft",
+          "label": "Soft gates",
+          "nodeIds": [
+            "dds",
+            "turn"
+          ],
+          "color": "purple",
+          "labelAlign": "right"
+        }
+      ]
+    },
+    {
+      "title": "Wake Strategy Checklist",
+      "section": "design-checklist",
+      "pageLabel": "4",
+      "format": "wide",
+      "layout": "semantic-map",
+      "headline": "A voice-entry policy should be designed like a safety system",
+      "nodes": [
+        {
+          "id": "budget",
+          "type": "input",
+          "label": "Always-on budget",
+          "caption": "Define which sensing layer can run continuously",
+          "visual": "gear",
+          "shape": "card",
+          "position": {
+            "x": 0.14,
+            "y": 0.5
+          }
+        },
+        {
+          "id": "curve",
+          "type": "evidence",
+          "label": "Operating curve",
+          "caption": "Measure FAR and FRR across real environments",
+          "visual": "graph",
+          "shape": "card",
+          "position": {
+            "x": 0.33,
+            "y": 0.5
+          }
+        },
+        {
+          "id": "escalate",
+          "type": "process",
+          "label": "Escalation path",
+          "caption": "Move from VAD to KWS to intent checks",
+          "visual": "layers",
+          "shape": "illustration",
+          "position": {
+            "x": 0.52,
+            "y": 0.5
+          }
+        },
+        {
+          "id": "risk",
+          "type": "decision",
+          "label": "Risk tiers",
+          "caption": "Require explicit confirmation for sensitive actions",
+          "visual": "alert",
+          "shape": "card",
+          "position": {
+            "x": 0.7,
+            "y": 0.34
+          }
+        },
+        {
+          "id": "privacy",
+          "type": "result",
+          "label": "Visible privacy",
+          "caption": "Show listening, upload, mute, and deletion states",
+          "visual": "shield",
+          "shape": "illustration",
+          "position": {
+            "x": 0.84,
+            "y": 0.62
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "budget",
+          "to": "curve",
+          "label": "",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "check",
+          "pathStyle": "straight"
+        },
+        {
+          "from": "curve",
+          "to": "escalate",
+          "label": "",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "check",
+          "pathStyle": "straight"
+        },
+        {
+          "from": "escalate",
+          "to": "risk",
+          "label": "policy",
+          "labelPriority": "optional",
+          "relation": "constraint",
+          "edgeGroup": "check",
+          "pathStyle": "curve",
+          "bend": -0.16
+        },
+        {
+          "from": "risk",
+          "to": "privacy",
+          "label": "explain",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "check",
+          "pathStyle": "curve",
+          "bend": 0.18
+        },
+        {
+          "from": "escalate",
+          "to": "privacy",
+          "label": "fallback",
+          "labelPriority": "optional",
+          "relation": "constraint",
+          "edgeGroup": "privacy",
+          "pathStyle": "curve",
+          "bend": 0.32
+        }
+      ],
+      "groups": [
+        {
+          "id": "policy",
+          "label": "Entry policy",
+          "nodeIds": [
+            "budget",
+            "curve",
+            "escalate"
+          ],
+          "color": "green",
+          "labelAlign": "left"
+        },
+        {
+          "id": "safety",
+          "label": "Safety boundary",
+          "nodeIds": [
+            "risk",
+            "privacy"
+          ],
+          "color": "orange",
+          "labelAlign": "right"
+        }
+      ]
+    }
+  ]
+}

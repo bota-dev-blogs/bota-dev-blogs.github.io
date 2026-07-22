@@ -1,0 +1,15 @@
+{
+  "pipeline": "ai-gif-pipeline-1",
+  "source": "storyboard.json",
+  "assetSlug": "wake-words-intent-gates-voice-assistants",
+  "title": "Layered Voice Intent Gate",
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-layered-gate.gif"
+    ]
+  },
+  "pages": [
+    "01-layered-gate.gif"
+  ]
+}

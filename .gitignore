@@ -21,4 +21,7 @@ AI/**/test-results/
 AI/**/linkedin_reference.gif
 AI/**/diagram.complex.json
 public/media/gifs/**/frames/
+public/media/gifs/**/.frames/
 prompt.txt
+pdf-papers/
+.env-*

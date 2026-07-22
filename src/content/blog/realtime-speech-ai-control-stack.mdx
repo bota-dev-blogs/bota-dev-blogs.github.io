@@ -1,0 +1,263 @@
+---
+title: "ASR Is Not Dead: Realtime Voice Agents Need a New Speech AI Stack"
+slug: "realtime-speech-ai-control-stack"
+description: "ASR is not being replaced by large audio language models. This guide maps ASR, LALMs, realtime speech-to-speech models, live translation, and control planes for reliable voice agents."
+authors: ["Editorial Team"]
+date: "2026-07-22"
+modifiedDate: "2026-07-22"
+readTime: "12 min read"
+contentType: "research-digest"
+tags:
+  - "Research Digest"
+  - "Audio AI"
+  - "ASR"
+  - "LALM"
+  - "Speech-to-Speech"
+  - "Voice Agents"
+keywords:
+  - "ASR is not dead"
+  - "realtime voice agents"
+  - "speech AI stack"
+  - "automatic speech recognition"
+  - "large audio language model"
+  - "LALM"
+  - "speech-to-speech AI"
+  - "realtime speech AI"
+  - "Qwen3.5-Omni"
+  - "Qwen3.5-LiveTranslate"
+  - "Audio Flamingo Next"
+  - "MOSS-Audio-8B-Instruct"
+cover:
+  src: "/media/realtime-speech-ai-control-stack/featured.png"
+  alt: "Research map of ASR, audio language models, realtime speech, and voice-agent control"
+  width: 1600
+  height: 900
+  fit: "cover"
+media:
+  - title: "Realtime speech AI stack"
+    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-3/01-article-summary.gif"
+    type: "image"
+    note: "Animated map of recognition, audio reasoning, realtime response, and policy control."
+  - title: "Model family map"
+    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-3/02-model-family-map.gif"
+    type: "image"
+    note: "How ASR, audio-text LALMs, live translation, and speech-to-speech systems differ."
+  - title: "Realtime speech control plane"
+    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-2/01-realtime-speech-control-plane.gif"
+    type: "image"
+    note: "A practical architecture for combining ASR, LALM reasoning, voice generation, and tool safety."
+  - title: "Design questions for voice agents"
+    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-1/01-design-questions.gif"
+    type: "image"
+    note: "Three product questions before choosing an end-to-end voice model."
+---
+
+## The Short Answer
+
+The most useful way to think about modern speech AI is not "ASR versus audio LLMs." It is **transcription versus interaction**.
+
+[Automatic speech recognition](https://en.wikipedia.org/wiki/Speech_recognition), or ASR, is still the layer that turns speech into searchable, auditable text. Large audio language models, often called LALMs, add the ability to reason over sound, speakers, music, noise, and timing. Realtime speech-to-speech systems go further: they decide when to listen, when to interrupt, when to speak, and how to keep a live conversation moving.
+
+That is why ASR is not dead. It is becoming one layer inside a larger voice-agent stack.
+
+![Realtime speech AI stack](/media/gifs/realtime-speech-ai-control-stack/pipeline-3/01-article-summary.gif)
+
+This article maps that stack through several public reference points: Alibaba Cloud Model Studio's [speech-to-text model documentation](https://www.alibabacloud.com/help/en/model-studio/asr-model/), the [Qwen-Audio realtime voice model](https://www.alibabacloud.com/help/en/model-studio/qwen-audio-realtime-user-guides), NVIDIA's [Audio Flamingo Next](https://huggingface.co/nvidia/audio-flamingo-next-hf), OpenMOSS [MOSS-Audio-8B-Instruct](https://ai.gitcode.com/OpenMOSS/MOSS-Audio-8B-Instruct), Qwen's [Qwen3.5-LiveTranslate](https://qwen.ai/blog?id=qwen3.5-livetranslate), and the [Qwen3.5-Omni technical report](https://arxiv.org/abs/2604.15804).
+
+The goal is not to rank models. The goal is to answer a product question: **if you are building a voice agent, which layer should own recognition, audio understanding, response timing, and real-world action?**
+
+## Why This Debate Is Suddenly Confusing
+
+Voice AI used to have a clean pipeline:
+
+1. ASR transcribes audio.
+2. A text LLM reasons over the transcript.
+3. [Text-to-speech](https://en.wikipedia.org/wiki/Speech_synthesis) speaks the answer.
+
+That pipeline is easy to debug. It also exposes useful artifacts: transcript text, timestamps, prompts, tool arguments, and generated speech.
+
+Newer systems blur those boundaries. A realtime model may receive audio directly, maintain conversation state, generate text and speech events, perform turn detection, and call tools through an event loop. A large audio-language model may answer questions about a recording without first producing a full transcript. A live translation model may combine speech, vision, terminology hints, speaker identity, and speech synthesis in one streaming system.
+
+The result is a tempting but misleading narrative: if a model can hear, maybe ASR disappears.
+
+It does not. What disappears is the assumption that a transcript is the whole product.
+
+## Four Layers, Four Different Jobs
+
+Speech products often compress everything into the phrase "voice AI." That hides the real engineering choices.
+
+<dl className="concept-grid" aria-label="Core layers in a realtime speech AI stack">
+  <div className="concept-card">
+    <dt><a href="https://en.wikipedia.org/wiki/Speech_recognition">ASR</a></dt>
+    <dd><span>Job</span> Convert speech into text, timestamps, confidence, and sometimes speaker or language metadata.</dd>
+    <dd><span>Best for</span> Search, subtitles, meeting notes, audit logs, compliance, and retrieval.</dd>
+  </div>
+  <div className="concept-card">
+    <dt>LALM</dt>
+    <dd><span>Job</span> Reason over audio, text, and sometimes other modalities such as images or video.</dd>
+    <dd><span>Best for</span> Audio QA, sound understanding, long recordings, multi-speaker reasoning, and paralinguistic signals.</dd>
+  </div>
+  <div className="concept-card">
+    <dt>Realtime S2S</dt>
+    <dd><span>Job</span> Manage a live speech loop: listening, turn-taking, interruption, generation, and playback.</dd>
+    <dd><span>Best for</span> Voice agents, interpreters, tutors, copilots, companions, and hands-free interfaces.</dd>
+  </div>
+  <div className="concept-card">
+    <dt>Control Plane</dt>
+    <dd><span>Job</span> Decide what the model is allowed to do, what needs confirmation, and what must be logged.</dd>
+    <dd><span>Best for</span> Tools, payments, scheduling, enterprise workflows, device control, and safety-critical actions.</dd>
+  </div>
+</dl>
+
+ASR answers: **what was said?**
+
+A LALM answers: **what does this audio mean?**
+
+A realtime speech model answers: **how should the system participate right now?**
+
+A control plane answers: **what is the assistant allowed to execute?**
+
+Those are separate jobs. Treating them as one model choice is where many voice-agent designs get weak.
+
+## ASR Is The Precision Layer
+
+ASR remains the right center of gravity when the output needs to be a durable record. Meeting transcription, call analysis, captions, subtitle editing, searchable archives, legal review, accessibility, and customer support QA all need explicit text.
+
+Alibaba Cloud's current speech-to-text model page makes this distinction visible. It lists realtime and offline recognition models, including `fun-asr-realtime`, `fun-asr`, and Qwen omni speech models, with differences across API mode, hotwords, speaker diarization, language coverage, emotion recognition, and maximum audio duration.
+
+Those details matter more than model hype. A practical ASR layer gives a product:
+
+- Searchable transcripts.
+- Sentence and word timestamps.
+- Domain vocabulary or hotword control.
+- Speaker diarization when the product needs "who said what."
+- Confidence and alternatives for review.
+- A text artifact that can be stored, edited, cited, and audited.
+
+The weakness is also clear. Text is a lossy compression of speech. It drops timing, hesitation, overlap, laughter, breath, accent, room noise, sarcasm, urgency, and vocal emotion. The transcript can say "fine" while the audio clearly says something else.
+
+So the useful claim is not "ASR solves voice." The useful claim is: **ASR is the evidence layer when exact words matter.**
+
+## LALMs Are The Interpretation Layer
+
+Audio Flamingo Next is a useful reference because it is released as an [audio-text-to-text](https://huggingface.co/tasks/audio-text-to-text) model. Its model card frames it around audio understanding, instruction following, audio QA, long-form audio, timestamp-aware prompts, speech, environmental sounds, and music.
+
+That is a different product surface from conventional ASR. A user may ask:
+
+- "What happened before the alarm?"
+- "Which speaker sounds far from the microphone?"
+- "Summarize the argument in this meeting and point to rough timestamps."
+- "What changes between these two recordings?"
+- "Is this audio mostly speech, music, noise, or mixed?"
+
+A transcript alone is too narrow for those questions.
+
+MOSS-Audio-8B-Instruct sits in a similar category from an open audio-model direction. Its public page describes speech recognition, environmental sound analysis, music understanding, audio captioning, and time-aware question answering. Whether a builder chooses that exact model is less important than the pattern: audio models are becoming general-purpose listening engines.
+
+![Model family map](/media/gifs/realtime-speech-ai-control-stack/pipeline-3/02-model-family-map.gif)
+
+The boundary is output and timing. If a model takes audio and returns text, it may be excellent for analysis, but it is not automatically a realtime voice agent. Something else still has to decide how to speak, when to stop, whether to revise, and what to do when the user interrupts.
+
+## Live Translation Shows Why Realtime Is Hard
+
+Qwen3.5-LiveTranslate is interesting because simultaneous interpretation exposes the core realtime problem.
+
+Translation is not just ASR plus machine translation plus TTS. A live interpreter has to decide how long to wait, which partial phrase is stable, how to handle cross-language word order, whether to revise displayed text, how to preserve terminology, and when speech output should begin.
+
+The Qwen3.5-LiveTranslate announcement describes a model built on Qwen3.5-Omni, with expanded language coverage, low-latency streaming, voice cloning, hotword handling, visual context, and a "Readable Unit" approach for more stable simultaneous output. The product lesson is broader than translation: **realtime speech systems need pacing rules, not just better recognition.**
+
+If the system waits too long, latency feels broken. If it speaks too soon, it may mistranslate because the sentence has not resolved. If it revises constantly, the interface jitters. If it never revises, early errors become permanent.
+
+That is why live translation belongs in this discussion. It makes the hidden control problem visible.
+
+## Speech-To-Speech Moves Timing Into The Model Loop
+
+The [Qwen3.5-Omni technical report](https://arxiv.org/abs/2604.15804) is a useful design reference because it describes an omni model rather than a narrow transcription system. The public abstract highlights 256k context, large-scale audio-visual training, a Hybrid Attention Mixture-of-Experts framework, long audio/video understanding, and a Thinker-Talker architecture.
+
+The important idea for builders is the separation of responsibilities.
+
+The Thinker handles multimodal understanding and text-level reasoning. The Talker handles streaming speech generation. Qwen3.5-Omni also introduces ARIA, or Adaptive Rate Interleave Alignment, to dynamically align text and speech units when tokenization rates do not naturally match.
+
+That sounds technical because it is technical. But the product implication is simple: speech-to-speech AI is a **rate-control system**. It has to keep words, meaning, prosody, and audio playback synchronized while the user is still talking.
+
+A native speech model can therefore feel more natural than ASR -> LLM -> TTS. It can use timing, [prosody](https://en.wikipedia.org/wiki/Prosody_(linguistics)), interruptions, and conversation state inside the same loop.
+
+The tradeoff is observability. A modular pipeline exposes intermediate artifacts. A native realtime model may be smoother but harder to debug. In production, that usually argues for a hybrid stack rather than a single magical endpoint.
+
+## The Missing Layer Is The Control Plane
+
+A realtime voice agent is not only a listener and a speaker. It can act.
+
+It may schedule a meeting, send a message, update a CRM, change a device setting, summarize a call, buy a ticket, modify a workflow, or route a support case. At that point, the model's interpretation is no longer just language. It becomes authority.
+
+This is where many demos are misleading. A demo can let a model speak fluently. A product needs to decide whether the model is allowed to do anything.
+
+![Realtime speech control plane](/media/gifs/realtime-speech-ai-control-stack/pipeline-2/01-realtime-speech-control-plane.gif)
+
+A practical control plane should keep three channels separate:
+
+| Channel | What It Tracks | Why It Matters |
+| --- | --- | --- |
+| Evidence | Transcript, audio timing, model confidence, retrieved context | Prevents uncertain recognition from becoming confident action |
+| Timing | Turns, pauses, overlap, interruption, cancellation | Keeps the assistant responsive without acting too early |
+| Authority | Tool schemas, permissions, confirmations, logs | Separates model intent from real-world execution |
+
+Alibaba Cloud's Qwen-Audio realtime guide makes this API shape concrete: realtime audio systems use persistent WebSocket sessions, streaming audio input, streaming text/audio output, turn detection modes, response cancellation, conversation context, and function calling. That is not a normal request-response transcript API. It is an event-driven state machine with a model inside it.
+
+## How To Choose The Right Speech AI Pattern
+
+The best architecture depends on the product's primary risk.
+
+| Product Goal | Better Starting Point | Reason |
+| --- | --- | --- |
+| Captions, transcripts, search, compliance | ASR-first | The durable artifact is text with timing and reviewability |
+| Audio QA, long recording analysis, sound understanding | LALM-first | The product needs to reason over more than words |
+| Live interpreter, tutor, assistant, companion | Realtime speech-to-speech | The user experience depends on timing, turn-taking, and speech output |
+| Calendar, payments, devices, enterprise workflows | Hybrid stack with control plane | The model can affect external state and needs authorization |
+
+This is the key SEO-friendly answer: **ASR is still essential for voice agents, but it should no longer be the only layer.**
+
+## Evaluation Should Match The Stack
+
+If a benchmark collapses the whole system into one score, it hides failure modes.
+
+ASR should be evaluated on [word error rate](https://en.wikipedia.org/wiki/Word_error_rate), timestamp drift, hotword accuracy, endpointing, accents, noise, multilingual behavior, and [speaker diarization](https://en.wikipedia.org/wiki/Speaker_diarisation).
+
+Audio understanding should be evaluated on grounded audio QA, event timing, long-audio memory, multi-speaker reasoning, paralinguistic cues, and hallucination under ambiguous sound.
+
+Realtime speech should be evaluated on first-audio latency, interruption stop time, barge-in recovery, duplex behavior, partial response stability, and latency under load.
+
+Tool-using voice agents should be evaluated on argument validity, permission violations, confirmation behavior, audit logs, and recovery after uncertainty.
+
+One metric deserves more attention: abstention. A voice agent that says "I did not catch that" at the right time is often safer than a fluent model that turns weak audio into a confident command.
+
+## What Builders Should Take Away
+
+![Design questions for voice agents](/media/gifs/realtime-speech-ai-control-stack/pipeline-1/01-design-questions.gif)
+
+The near-term winning architecture is probably not "one model replaces everything." It is a layered system with clear boundaries.
+
+Use ASR when exact words, timestamps, search, accessibility, audit, and review matter.
+
+Use audio-language models when the product needs to understand sound as sound, not just words as text.
+
+Use realtime speech-to-speech when latency, interruption, tone, and conversational timing are part of the task.
+
+Use a control plane whenever the assistant can call tools or change external state.
+
+The future of voice AI is not ASR disappearing. It is ASR becoming one evidence channel inside a broader realtime speech system.
+
+That is a less dramatic story than "speech models killed transcription." It is also the story that serious voice-agent products will need.
+
+## References
+
+- Alibaba Cloud Model Studio. [Speech-to-text models](https://www.alibabacloud.com/help/en/model-studio/asr-model/).
+- Alibaba Cloud Model Studio. [Non-real-time speech recognition](https://www.alibabacloud.com/help/en/model-studio/non-realtime-speech-recognition-user-guide).
+- Alibaba Cloud Model Studio. [Improve recognition accuracy](https://www.alibabacloud.com/help/en/model-studio/improve-asr-accuracy).
+- Alibaba Cloud Model Studio. [Qwen-Audio realtime voice model](https://www.alibabacloud.com/help/en/model-studio/qwen-audio-realtime-user-guides).
+- NVIDIA. [Audio Flamingo Next model card](https://huggingface.co/nvidia/audio-flamingo-next-hf).
+- OpenMOSS. [MOSS-Audio-8B-Instruct](https://ai.gitcode.com/OpenMOSS/MOSS-Audio-8B-Instruct).
+- Qwen Team. [Qwen3.5-LiveTranslate announcement](https://qwen.ai/blog?id=qwen3.5-livetranslate).
+- Qwen Team. [Qwen3.5-Omni Technical Report](https://arxiv.org/abs/2604.15804).
+- Wenqian Cui et al. [Recent Advances in Speech Language Models: A Survey](https://arxiv.org/abs/2410.03751).
+- Alec Radford et al. [Robust Speech Recognition via Large-Scale Weak Supervision](https://arxiv.org/abs/2212.04356).

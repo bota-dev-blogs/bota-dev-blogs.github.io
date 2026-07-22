@@ -1,0 +1,145 @@
+{
+  "title": "Affect-Aware ASR Stack",
+  "subtitle": "Keep words, acoustic affect, context, and policy as separate channels.",
+  "width": 1080,
+  "height": 650,
+  "duration": 6,
+  "fps": 15,
+  "theme": "light",
+  "nodes": [
+    {
+      "id": "front-end",
+      "kind": "input",
+      "label": "Speech Front End",
+      "description": "VAD, denoising, segmentation, diarization, and audio quality flags.",
+      "x": 70,
+      "y": 250,
+      "width": 210,
+      "height": 120,
+      "evidence": "Research digest: The Affect-Aware ASR Stack"
+    },
+    {
+      "id": "asr",
+      "kind": "method",
+      "label": "ASR Branch",
+      "description": "Text, timestamps, confidence, word errors, and n-best alternatives.",
+      "x": 335,
+      "y": 125,
+      "width": 220,
+      "height": 120,
+      "evidence": "Research digest: Why Emotion Belongs Next To ASR"
+    },
+    {
+      "id": "affect",
+      "kind": "method",
+      "label": "Acoustic Affect",
+      "description": "Prosody, arousal, valence, categorical probabilities, and uncertainty.",
+      "x": 335,
+      "y": 375,
+      "width": 220,
+      "height": 120,
+      "evidence": "Research digest: What Each Signal Can And Cannot Tell You"
+    },
+    {
+      "id": "fusion",
+      "kind": "method",
+      "label": "Context Fusion",
+      "description": "Combine audio, transcript, turn history, speaker context, and confidence.",
+      "x": 620,
+      "y": 250,
+      "width": 220,
+      "height": 120,
+      "evidence": "Research digest: A Useful Architecture Pattern"
+    },
+    {
+      "id": "policy",
+      "kind": "output",
+      "label": "Policy Layer",
+      "description": "Decide whether to expose, store, aggregate, suppress, or abstain.",
+      "x": 875,
+      "y": 250,
+      "width": 170,
+      "height": 120,
+      "evidence": "Research digest: Practical Design Questions"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-front-asr",
+      "from": "front-end",
+      "to": "asr",
+      "label": "words",
+      "evidence": "ASR produces lexical content and confidence."
+    },
+    {
+      "id": "e-front-affect",
+      "from": "front-end",
+      "to": "affect",
+      "label": "voice cues",
+      "evidence": "Affect also lives in prosody and voice quality."
+    },
+    {
+      "id": "e-asr-fusion",
+      "from": "asr",
+      "to": "fusion",
+      "label": "text evidence",
+      "evidence": "Transcript features help only when ASR uncertainty is preserved."
+    },
+    {
+      "id": "e-affect-fusion",
+      "from": "affect",
+      "to": "fusion",
+      "label": "acoustic evidence",
+      "evidence": "Acoustic affect should stay separate from text."
+    },
+    {
+      "id": "e-fusion-policy",
+      "from": "fusion",
+      "to": "policy",
+      "label": "calibrated signal",
+      "evidence": "Policy decides safe downstream use."
+    }
+  ],
+  "animation": [
+    {
+      "target": "e-front-asr",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e-front-affect",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e-asr-fusion",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e-affect-fusion",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    },
+    {
+      "target": "e-fusion-policy",
+      "effect": "flow",
+      "at": 0,
+      "loop": true,
+      "speed": 24,
+      "period": 1.8
+    }
+  ]
+}
