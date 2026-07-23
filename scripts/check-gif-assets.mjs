@@ -1,10 +1,22 @@
 import fs from "node:fs";
 import path from "node:path";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const {
+  ICON_NAMES,
+  FALLBACK_ICON_NAMES,
+  CANVAS_ICON_MOTION,
+  VISUAL_COLORS
+} = require("../AI/shared/semantic-icons.cjs");
 
 const rootDir = process.cwd();
 const gifsDir = path.join(rootDir, "public", "media", "gifs");
 const blogDir = path.join(rootDir, "src", "content", "blog");
 const allowedPipelineDirs = new Set(["pipeline-1", "pipeline-2", "pipeline-3"]);
+const allowedIconNames = new Set(ICON_NAMES);
+const sharedIconsPath = path.join(rootDir, "AI", "shared", "semantic-icons.cjs");
+const pipeline2TemplatePath = path.join(rootDir, "AI", "ai-gif-pipeline-2", "templates", "diagram.html");
 
 function fail(message, errors) {
   errors.push(message);
@@ -68,6 +80,96 @@ function checkGifList(pipelineDirName, pipelineDir, manifest, errors) {
   }
 }
 
+function checkIconValue(value, location, errors) {
+  if (typeof value !== "string" || !value.trim()) {
+    fail(`${location} must define an explicit semantic icon`, errors);
+  } else if (!allowedIconNames.has(value)) {
+    fail(`${location} uses unknown icon "${value}"`, errors);
+  }
+}
+
+function rendererIconNames(source) {
+  const names = new Set();
+  for (const match of source.matchAll(/iconName\s*===\s*'([^']+)'/g)) names.add(match[1]);
+  for (const match of source.matchAll(/\[([^\]]+)\]\.includes\(iconName\)/g)) {
+    for (const nameMatch of match[1].matchAll(/'([^']+)'/g)) names.add(nameMatch[1]);
+  }
+  return names;
+}
+
+function checkSharedIconCoverage(errors) {
+  if (!CANVAS_ICON_MOTION || CANVAS_ICON_MOTION.scaleAmplitude < 0.025) {
+    fail("Canvas icons must have a perceptible global scale animation", errors);
+  }
+  if (!CANVAS_ICON_MOTION || CANVAS_ICON_MOTION.driftPx < 0.8) {
+    fail("Canvas icons must have a perceptible global drift animation", errors);
+  }
+
+  for (const iconName of ICON_NAMES) {
+    if (!Object.hasOwn(VISUAL_COLORS, iconName)) fail(`semantic icon "${iconName}" is missing a visual color`, errors);
+  }
+  for (const iconName of FALLBACK_ICON_NAMES) {
+    if (!allowedIconNames.has(iconName)) fail(`fallback icon "${iconName}" is not canonical`, errors);
+  }
+
+  const renderers = [
+    ["Canvas", sharedIconsPath],
+    ["Pipeline 2 SVG", pipeline2TemplatePath]
+  ];
+  for (const [label, filePath] of renderers) {
+    if (!fs.existsSync(filePath)) {
+      fail(`${label} icon renderer is missing: ${path.relative(rootDir, filePath)}`, errors);
+      continue;
+    }
+    const covered = rendererIconNames(fs.readFileSync(filePath, "utf8"));
+    for (const iconName of ICON_NAMES) {
+      if (!covered.has(iconName)) fail(`${label} renderer does not implement semantic icon "${iconName}"`, errors);
+    }
+  }
+
+  const pipeline2Source = fs.readFileSync(pipeline2TemplatePath, "utf8");
+  if (!pipeline2Source.includes("class: 'node-icon'")) {
+    fail("Pipeline 2 must assign every icon to a node-icon animation group", errors);
+  }
+  if (!pipeline2Source.includes("iconGroup.style.transform =")) {
+    fail("Pipeline 2 must animate each node-icon group independently", errors);
+  }
+  const pipeline2Motion = pipeline2Source.match(/ICON_MOTION\s*=\s*Object\.freeze\(\{\s*scaleAmplitude:\s*([\d.]+),\s*driftPx:\s*([\d.]+),[\s\S]*?targetPeriodSeconds:\s*([\d.]+)/);
+  if (!pipeline2Motion || Number(pipeline2Motion[1]) < 0.025 || Number(pipeline2Motion[2]) < 0.8) {
+    fail("Pipeline 2 icon motion must remain perceptible", errors);
+  }
+  if (!pipeline2Motion || Number(pipeline2Motion[3]) > 2.5) {
+    fail("Pipeline 2 icon motion period must remain visibly active", errors);
+  }
+}
+
+function checkIntermediateIcons(pipelineDirName, pipelineDir, errors) {
+  const fileName = pipelineDirName === "pipeline-2" ? "diagram.json" : "storyboard.json";
+  const filePath = path.join(pipelineDir, fileName);
+  if (!fs.existsSync(filePath)) return;
+  const intermediate = readJson(filePath, errors);
+  if (!intermediate) return;
+  const relativePath = path.relative(rootDir, filePath);
+
+  if (pipelineDirName === "pipeline-1") {
+    for (const [pageIndex, page] of (intermediate.pages || []).entries()) {
+      for (const [cardIndex, card] of (page.cards || []).entries()) {
+        checkIconValue(card.icon, `${relativePath} page ${pageIndex + 1}, card ${cardIndex + 1}`, errors);
+      }
+    }
+  } else if (pipelineDirName === "pipeline-2") {
+    for (const [nodeIndex, node] of (intermediate.nodes || []).entries()) {
+      checkIconValue(node.icon, `${relativePath} node ${nodeIndex + 1}`, errors);
+    }
+  } else {
+    for (const [pageIndex, page] of (intermediate.pages || []).entries()) {
+      for (const [nodeIndex, node] of (page.nodes || []).entries()) {
+        checkIconValue(node.visual, `${relativePath} page ${pageIndex + 1}, node ${nodeIndex + 1}`, errors);
+      }
+    }
+  }
+}
+
 function checkPipelineDir(assetSlug, pipelineDirName, pipelineDir, errors) {
   const expectedPipeline = `ai-gif-pipeline-${pipelineDirName.replace("pipeline-", "")}`;
   const manifestPath = path.join(pipelineDir, "manifest.json");
@@ -88,6 +190,7 @@ function checkPipelineDir(assetSlug, pipelineDirName, pipelineDir, errors) {
   }
 
   checkNoFrameDirs(pipelineDir, errors);
+  checkIntermediateIcons(pipelineDirName, pipelineDir, errors);
 
   if (pipelineDirName === "pipeline-1") {
     if (!fs.existsSync(path.join(pipelineDir, "storyboard.json"))) {
@@ -149,6 +252,7 @@ function checkBlogGifReferences(errors) {
 
 function main() {
   const errors = [];
+  checkSharedIconCoverage(errors);
   if (!fs.existsSync(gifsDir)) {
     console.log("No public/media/gifs directory yet.");
     return;

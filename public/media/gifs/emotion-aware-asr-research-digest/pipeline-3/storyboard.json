@@ -32,7 +32,7 @@
           "type": "process",
           "label": "ASR transcript",
           "caption": "Text, timing, confidence, and alternatives",
-          "visual": "document",
+          "visual": "asr",
           "shape": "card",
           "position": {
             "x": 0.34,
@@ -44,7 +44,7 @@
           "type": "process",
           "label": "Affect encoder",
           "caption": "Arousal, valence, emotion probabilities, uncertainty",
-          "visual": "microphone",
+          "visual": "model",
           "shape": "card",
           "position": {
             "x": 0.34,
@@ -186,7 +186,7 @@
           "type": "process",
           "label": "SSL encoders",
           "caption": "wav2vec 2.0, HuBERT, WavLM, SUPERB",
-          "visual": "layers",
+          "visual": "model",
           "shape": "illustration",
           "position": {
             "x": 0.53,
@@ -198,7 +198,7 @@
           "type": "process",
           "label": "Emotion SSL",
           "caption": "emotion2vec trains transfer around affect",
-          "visual": "idea",
+          "visual": "emotion",
           "shape": "card",
           "position": {
             "x": 0.72,
@@ -210,7 +210,7 @@
           "type": "result",
           "label": "Unified models",
           "caption": "ASR, SER, language ID, and audio events",
-          "visual": "agent",
+          "visual": "layers",
           "shape": "illustration",
           "position": {
             "x": 0.83,
@@ -304,7 +304,7 @@
           "type": "input",
           "label": "Benchmarks",
           "caption": "IEMOCAP, MSP-Podcast, MELD, local data",
-          "visual": "database",
+          "visual": "dataset",
           "shape": "illustration",
           "position": {
             "x": 0.13,
@@ -352,7 +352,7 @@
           "type": "result",
           "label": "Validation",
           "caption": "Held-out local audio, abstention, drift checks",
-          "visual": "shield",
+          "visual": "check",
           "shape": "illustration",
           "position": {
             "x": 0.82,
@@ -447,7 +447,7 @@
           "type": "input",
           "label": "Quality segments",
           "caption": "Score only clean turns with timing and speaker context",
-          "visual": "clock",
+          "visual": "filter",
           "shape": "card",
           "position": {
             "x": 0.12,
@@ -471,7 +471,7 @@
           "type": "process",
           "label": "Calibrate",
           "caption": "Expose confidence, abstain, and track drift",
-          "visual": "graph",
+          "visual": "sliders",
           "shape": "illustration",
           "position": {
             "x": 0.54,
@@ -483,7 +483,7 @@
           "type": "constraint",
           "label": "Consent boundary",
           "caption": "Make storage, personalization, and sharing visible",
-          "visual": "shield",
+          "visual": "lock",
           "shape": "card",
           "position": {
             "x": 0.72,
@@ -495,7 +495,7 @@
           "type": "result",
           "label": "Safe actions",
           "caption": "Adapt UX without claiming internal emotional truth",
-          "visual": "agent",
+          "visual": "gate",
           "shape": "illustration",
           "position": {
             "x": 0.84,

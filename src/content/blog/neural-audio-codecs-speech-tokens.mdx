@@ -1,0 +1,201 @@
+---
+title: "Neural Audio Codecs: How Speech Tokens Power Voice AI"
+slug: "neural-audio-codecs-speech-tokens"
+description: "How neural audio codecs create semantic and acoustic speech tokens, and why token rate shapes latency, quality, and real-time voice AI."
+authors: ["Editorial Team"]
+date: "2026-07-14"
+modifiedDate: "2026-07-23"
+readTime: "12 min read"
+contentType: "research-digest"
+tags:
+  - "Research Digest"
+  - "Neural Audio Codecs"
+  - "Speech Tokens"
+  - "Voice AI"
+  - "Generative Audio"
+keywords:
+  - "neural audio codec"
+  - "speech tokens"
+  - "semantic audio tokens"
+  - "acoustic audio tokens"
+  - "residual vector quantization"
+  - "Mimi codec"
+  - "Moshi speech model"
+  - "speech-to-speech AI"
+cover:
+  src: "/media/neural-audio-codecs-speech-tokens/featured.png"
+  alt: "Technical map of a neural audio codec converting speech waveforms into semantic and acoustic tokens"
+  width: 1600
+  height: 900
+  fit: "cover"
+media:
+  - title: "Neural audio codec and speech-token map"
+    src: "/media/gifs/neural-audio-codecs-speech-tokens/pipeline-3/01-article-summary.gif"
+    type: "image"
+    note: "A graphical abstract of waveform encoding, semantic and acoustic codebooks, token modeling, and speech reconstruction."
+  - title: "Speech codec release gate"
+    src: "/media/gifs/neural-audio-codecs-speech-tokens/pipeline-3/02-codec-evaluation.gif"
+    type: "image"
+    note: "A practical evaluation map connecting reconstruction quality, intelligibility, identity, prosody, and streaming behavior."
+---
+
+## Speech Models Needed An Alphabet Between Waveforms And Words
+
+A second of speech contains thousands of audio samples. A transcript may reduce that second to only a few text tokens. Neither representation is ideal for a model that must listen, reason, preserve timing, and speak.
+
+Raw waveforms are expressive but computationally expensive. Text is compact but discards pitch, rhythm, laughter, hesitation, background sound, and many cues that make a voice recognizable. Neural audio codecs create a useful middle layer: they compress audio into short sequences of discrete symbols that a language-model-like system can predict.
+
+Those symbols are usually called **audio tokens**, **speech tokens**, or **codec tokens**. They are one of the main reasons recent speech-to-speech systems can generate playable audio without first reducing every utterance to text.
+
+![Neural audio codec and speech-token map](/media/gifs/neural-audio-codecs-speech-tokens/pipeline-3/01-article-summary.gif)
+
+The central design question is not simply whether a codec reconstructs pleasant audio. It is whether its tokens preserve the right information, at the right rate, for the model and product built on top of them.
+
+These representations become product-visible in [speech-to-speech translation](/blogs/speech-to-speech-translation-live-voice/) and real-time voice models such as [Qwen-Audio-3.0-Realtime](/blogs/qwen-audio-3-realtime-voice-agents/).
+
+## What A Neural Audio Codec Actually Does
+
+A conventional audio codec compresses a waveform for storage or transmission. A neural codec learns that compression process from data.
+
+A typical system has three parts:
+
+1. An **encoder** converts waveform segments into a lower-rate continuous representation.
+2. A **quantizer** replaces those continuous vectors with entries from one or more learned codebooks.
+3. A **decoder** reconstructs the waveform from the selected codebook entries.
+
+The discrete codebook indices are the audio tokens. Because they are integers from a finite vocabulary, a transformer can model them in much the same way that a text model predicts subword tokens.
+
+The difficult step is [vector quantization](https://en.wikipedia.org/wiki/Vector_quantization). Mapping a continuous signal to a finite codebook creates a bottleneck. A narrow bottleneck reduces token rate and compute, but may erase phonetic detail, speaker characteristics, or subtle timing. A wide bottleneck preserves more audio but produces longer, more expensive sequences.
+
+## Why Residual Vector Quantization Uses Several Codebooks
+
+Systems such as [SoundStream](https://arxiv.org/abs/2107.03312) and [EnCodec](https://arxiv.org/abs/2210.13438) use variants of **residual vector quantization**, or RVQ.
+
+The first codebook approximates the encoder output. A second codebook encodes what the first one missed. Later codebooks continue refining the residual. This creates a coarse-to-fine representation: early codebooks carry a large share of the signal, while later ones restore detail.
+
+RVQ has two useful properties.
+
+First, the codec can support multiple bitrates by using fewer or more codebooks. Second, the representation gives downstream researchers an opportunity to separate broad content from fine acoustics, even though that separation is never perfect.
+
+This is why diagrams of modern speech models often show several parallel token streams. They are not duplicate transcripts. They are successive layers of acoustic description.
+
+## Semantic Tokens And Acoustic Tokens
+
+The terms **semantic** and **acoustic** are convenient, but they can be misleading if treated as a clean scientific boundary.
+
+A semantic token stream is encouraged to preserve information related to linguistic content: phones, syllables, and word identity. An acoustic stream carries more of the remaining signal: timbre, prosody, recording conditions, and fine waveform detail.
+
+[SpeechTokenizer](https://arxiv.org/abs/2308.16692) made this hierarchy explicit by distilling semantic information into the first RVQ layer while allowing later layers to encode acoustic detail. Kyutai's [Mimi codec](https://huggingface.co/kyutai/mimi), used by [Moshi](https://arxiv.org/abs/2410.00037), similarly combines a low-rate representation with a semantic distillation objective for real-time dialogue.
+
+But content leaks into acoustic layers, and speaker or prosodic information can remain in semantic layers. The codebooks are learned statistical representations, not human-authored channels with guaranteed meanings.
+
+That matters for controllability. A product cannot assume that dropping an acoustic codebook anonymizes a speaker, or that editing a semantic stream changes only the words.
+
+## Token Rate Is A Product Parameter
+
+Text models may use a handful of tokens per second of speech. Neural codec representations can require dozens or hundreds of token predictions per second once all codebooks are counted.
+
+Token rate affects:
+
+- **Latency:** how often the model can emit enough information for the decoder to play the next audio segment.
+- **Context length:** how many seconds or minutes fit inside a fixed token window.
+- **Generation cost:** how many autoregressive decisions are required.
+- **Robustness:** how much damage one missing or incorrect token can cause.
+- **Editability:** how precisely the system can change timing or local acoustic detail.
+
+Lower is not automatically better. Very low-rate tokens may be efficient but make speech brittle, flatten prosody, or couple multiple attributes into each decision. Very high-rate tokens preserve detail but turn a short conversation into a long sequence.
+
+Mimi is notable partly because it operates at a low frame rate suited to Moshi's streaming design. The architecture is a reminder that the codec and the language model must be co-designed. A codec optimized only for offline reconstruction may be a poor interface for duplex conversation.
+
+## Three Ways Speech Tokens Enter A Model
+
+### Tokens As An Output Vocabulary
+
+The model consumes text, audio, or both, then predicts codec tokens that a decoder turns into speech. This is the pattern behind many text-to-speech and voice-cloning systems. [VALL-E](https://arxiv.org/abs/2301.02111), for example, framed TTS as language modeling over neural codec codes.
+
+### Tokens As Both Input And Output
+
+A speech-to-speech model can ingest tokens from a user's audio and generate tokens for the response. This preserves non-textual information and supports direct audio interaction. It also makes the sequence longer and forces the system to decide how user and assistant audio should be interleaved.
+
+### Tokens Alongside Text
+
+Hybrid systems keep ASR text as an explicit reasoning and audit artifact while using audio tokens for perception or synthesis. This can be operationally attractive: text remains searchable and correctable, while the codec path retains voice and timing.
+
+The hybrid design also makes failures easier to diagnose. Teams can ask whether an error came from recognition, language reasoning, token generation, or waveform decoding.
+
+## Full-Duplex Dialogue Raises The Stakes
+
+Offline speech generation can wait until an entire response is known. A real-time voice system cannot.
+
+In [full-duplex](https://en.wikipedia.org/wiki/Duplex_(telecommunications)) dialogue, listening and speaking may overlap. The model must process incoming user tokens while producing assistant tokens, react to interruptions, preserve causal timing, and avoid generating audio faster than it can be played.
+
+Moshi is an important public research example because its architecture treats dialogue as synchronized audio streams rather than alternating text turns. The codec's low frame rate helps make that synchronization tractable.
+
+This does not mean a token-native model automatically solves turn-taking. Endpointing, interruption policy, echo cancellation, packet loss, and tool authorization still belong to the larger real-time system.
+
+## The Codec Can Become The Hidden Failure Source
+
+When a generated voice sounds wrong, teams often blame the language model or vocoder. The codec interface can be the real source.
+
+**Phonetic deletion** occurs when compression removes a consonant or short syllable that sounded perceptually minor during training but changes a word.
+
+**Prosody flattening** occurs when the token bottleneck underrepresents pitch movement, stress, or pause structure.
+
+**Speaker drift** occurs when identity cues are reconstructed inconsistently across a long response.
+
+**Out-of-domain collapse** appears with unusual microphones, singing, tonal languages, whispered speech, strong reverberation, or non-speech events not represented in training.
+
+**Streaming discontinuity** occurs when packet boundaries, lost tokens, or decoder state resets create clicks, repetition, or timing jumps.
+
+**Privacy leakage** occurs when tokens assumed to be abstract still preserve identifiable voice information.
+
+These failures can survive a conventional codec score. A reconstruction may sound broadly natural while changing a name, number, emotional cue, or speaker.
+
+## Evaluate The Interface, Not Just The Waveform
+
+Codec research commonly reports perceptual audio quality, bitrate, and reconstruction metrics. A speech-model team needs a wider release gate.
+
+![Speech codec release gate](/media/gifs/neural-audio-codecs-speech-tokens/pipeline-3/02-codec-evaluation.gif)
+
+Useful tests include:
+
+- Run a strong ASR model on original and reconstructed speech, then compare word and entity errors.
+- Measure speaker-verification similarity without assuming that high similarity is always desirable.
+- Test pitch, duration, pause, laughter, and emphasis preservation.
+- Evaluate clean speech, far-field audio, telephone bandwidth, packet loss, and multilingual speech separately.
+- Measure end-to-end first-audio latency and interruption recovery, not only codec runtime.
+- Probe whether sensitive attributes or speaker identity remain recoverable from intermediate tokens.
+- Compare generated-token errors with pure reconstruction errors; the model will not produce perfectly valid codec sequences at inference time.
+
+The correct operating point depends on the product. A meeting archive may favor intelligibility and compact storage. A conversational assistant may prioritize low frame rate and stable streaming. A creative voice tool may spend more tokens on timbre and prosody.
+
+## What This Changes For Voice AI
+
+Audio tokens are becoming an internal API between listening, reasoning, and speaking. That API determines what information remains available to the model and what can be reconstructed for the user.
+
+The most interesting research is therefore moving beyond "does the codec sound good?" toward sharper questions:
+
+- Can semantic and acoustic information be controlled independently?
+- How low can token rate go before dialogue quality breaks?
+- Can one codec represent speech, music, and environmental sounds without sacrificing each domain?
+- Can token streams survive network loss and state resets?
+- Can a model revise upcoming speech without corrupting audio already played?
+- Can intermediate representations be governed as sensitive biometric data?
+
+The winning codec will not necessarily be the one with the highest listening score. It will be the one whose representation makes the intended model easier to train, faster to run, safer to inspect, and predictable under deployment conditions.
+
+## Closing View
+
+Text tokens gave language models a compact alphabet for writing. Neural audio codecs are attempting something harder: an alphabet that preserves enough sound to listen and speak.
+
+That alphabet is still unsettled. Semantic and acoustic channels are porous, compression changes model behavior, and a pleasant reconstruction can hide task-critical errors. Yet the direction is clear. For real-time speech AI, the codec is no longer only a compression component. It is part of the model architecture and part of the product contract.
+
+## References
+
+- Neil Zeghidour et al., [SoundStream: An End-to-End Neural Audio Codec](https://arxiv.org/abs/2107.03312).
+- Alexandre Defossez et al., [High Fidelity Neural Audio Compression](https://arxiv.org/abs/2210.13438).
+- Xin Zhang et al., [SpeechTokenizer: Unified Speech Tokenizer for Speech Large Language Models](https://arxiv.org/abs/2308.16692).
+- Alexandre Defossez et al., [Moshi: A Speech-Text Foundation Model for Real-Time Dialogue](https://arxiv.org/abs/2410.00037).
+- Kyutai, [Mimi neural audio codec model card](https://huggingface.co/kyutai/mimi).
+- Zalan Borsos et al., [AudioLM: A Language Modeling Approach to Audio Generation](https://arxiv.org/abs/2209.03143).
+- Chengyi Wang et al., [Neural Codec Language Models Are Zero-Shot Text to Speech Synthesizers](https://arxiv.org/abs/2301.02111).

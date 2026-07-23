@@ -20,7 +20,7 @@
           "type": "input",
           "label": "Audio stream",
           "caption": "Speech, timing, prosody, noise, and speaker cues",
-          "visual": "waveform",
+          "visual": "stream",
           "shape": "illustration",
           "position": {
             "x": 0.1,
@@ -44,7 +44,7 @@
           "type": "process",
           "label": "Audio reasoning",
           "caption": "Sound events, intent, context, and uncertainty",
-          "visual": "model",
+          "visual": "reasoning",
           "shape": "card",
           "position": {
             "x": 0.32,
@@ -68,7 +68,7 @@
           "type": "decision",
           "label": "Control plane",
           "caption": "Permissions, confirmations, schemas, and audit",
-          "visual": "gate",
+          "visual": "guardrail",
           "shape": "card",
           "position": {
             "x": 0.78,
@@ -80,7 +80,7 @@
           "type": "result",
           "label": "Safe output",
           "caption": "Speech reply, translated media, or verified tool action",
-          "visual": "check",
+          "visual": "shield",
           "shape": "card",
           "position": {
             "x": 0.86,
@@ -207,7 +207,7 @@
           "type": "process",
           "label": "Audio-text LALMs",
           "caption": "Reason over speech, music, environment, and long audio",
-          "visual": "headphones",
+          "visual": "model",
           "shape": "illustration",
           "position": {
             "x": 0.34,
@@ -231,7 +231,7 @@
           "type": "process",
           "label": "Omni speech",
           "caption": "Connect listening, reasoning, talking, and interruption",
-          "visual": "tts",
+          "visual": "omni",
           "shape": "illustration",
           "position": {
             "x": 0.69,
@@ -243,7 +243,7 @@
           "type": "result",
           "label": "Voice agents",
           "caption": "Need tool gates, confirmations, logging, and rollback",
-          "visual": "shield",
+          "visual": "agent",
           "shape": "card",
           "position": {
             "x": 0.87,

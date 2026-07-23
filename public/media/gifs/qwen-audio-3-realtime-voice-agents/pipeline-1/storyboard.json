@@ -16,12 +16,12 @@
         {
           "title": "First Audio Latency",
           "body": "Does the first audio arrive fast enough for a natural conversational flow?",
-          "icon": "clock"
+          "icon": "latency"
         },
         {
           "title": "Interruption Speed",
           "body": "Does playback stop instantly when the user interrupts, or does it bleed over?",
-          "icon": "alert"
+          "icon": "interruption"
         },
         {
           "title": "Filler Handling",

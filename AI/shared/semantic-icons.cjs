@@ -1,11 +1,18 @@
 const ICON_NAMES = [
-  'chat-bubbles', 'agent', 'schema', 'graph', 'microphone', 'waveform',
-  'shield', 'gate', 'layers', 'globe', 'translate', 'document', 'clock',
-  'database', 'search', 'check', 'alert', 'gear', 'link', 'headphones',
+  'chat-bubbles', 'agent', 'schema', 'graph', 'microphone', 'waveform', 'noise',
+  'diarization', 'codec', 'audio-token', 'stream', 'prosody', 'emotion', 'voiceprint',
+  'alignment', 'interruption', 'phoneme', 'language',
+  'shield', 'gate', 'layers', 'context', 'globe', 'translate', 'document', 'clock',
+  'event', 'heartbeat', 'database', 'search', 'check', 'alert', 'miss', 'gear', 'link', 'headphones',
   'idea', 'phone', 'room', 'speaker', 'subtitle', 'sliders', 'network',
-  'bot', 'cloud', 'chip', 'lock', 'ear', 'video', 'target', 'branch',
-  'filter', 'merge', 'music', 'mask', 'person', 'asr', 'tts', 'model',
-  'embedding', 'dataset', 'server', 'gpu', 'edge-device', 'router',
+  'bot', 'cloud', 'chip', 'lock', 'ear', 'video', 'target', 'branch', 'bluetooth', 'wifi',
+  'cellular', 'api', 'sdk', 'wearable', 'upload', 'function-call',
+  'transformer', 'attention', 'memory', 'retrieval', 'reasoning', 'confidence',
+  'workflow', 'guardrail', 'battery', 'storage', 'firmware', 'provisioning',
+  'sync', 'webhook', 'websocket', 'credential', 'telemetry', 'version', 'audit',
+  'queue', 'retry', 'checksum',
+  'filter', 'merge', 'music', 'mask', 'person', 'asr', 'tts', 'model', 'omni',
+  'embedding', 'dataset', 'server', 'gpu', 'edge-device', 'fleet', 'router',
   'sensor', 'camera', 'latency'
 ];
 
@@ -14,10 +21,10 @@ const FALLBACK_ICON_NAMES = [
   'filter', 'clock', 'network', 'model', 'server', 'check', 'branch', 'gear'
 ];
 
-const SOFT_ICON_NAMES = new Set([
-  'agent', 'bot', 'chat-bubbles', 'check', 'document', 'gear', 'graph',
-  'idea', 'person', 'schema'
-]);
+const CANVAS_ICON_MOTION = Object.freeze({
+  scaleAmplitude: 0.04,
+  driftPx: 1.6
+});
 
 const ICON_ALIASES = {
   ai: 'model',
@@ -47,8 +54,20 @@ const ICON_ALIASES = {
   edge: 'edge-device',
   'on-device': 'edge-device',
   embedded: 'edge-device',
-  wifi: 'router',
-  bluetooth: 'router',
+  ble: 'bluetooth',
+  '4g': 'cellular',
+  'mobile-network': 'cellular',
+  'function_call': 'function-call',
+  ser: 'emotion',
+  'speaker-id': 'voiceprint',
+  'speaker-identification': 'voiceprint',
+  'speaker-diarization': 'diarization',
+  'audio-codec': 'codec',
+  'speech-token': 'audio-token',
+  'barge-in': 'interruption',
+  reconnect: 'retry',
+  'web-socket': 'websocket',
+  auth: 'credential',
   backend: 'server',
   privacy: 'lock',
   security: 'shield',
@@ -70,17 +89,33 @@ const VISUAL_COLORS = {
   graph: '#6f58c9',
   microphone: '#7656c8',
   waveform: '#2f9f9a',
+  noise: '#c84550',
+  diarization: '#477bd1',
+  codec: '#805ac4',
+  'audio-token': '#6f58c9',
+  stream: '#2d76d6',
+  prosody: '#d85f91',
+  emotion: '#d95672',
+  voiceprint: '#7656c8',
+  alignment: '#35a65b',
+  interruption: '#df2f35',
+  phoneme: '#e2962d',
+  language: '#3c9b78',
   shield: '#4d8d68',
   gate: '#2b8f82',
   layers: '#e2962d',
+  context: '#d37b26',
   globe: '#3c9b78',
   translate: '#477bd1',
   document: '#1769c2',
   clock: '#ee6688',
+  event: '#e07d34',
+  heartbeat: '#d95672',
   database: '#7354c7',
   search: '#2d76d6',
   check: '#35a65b',
   alert: '#df2f35',
+  miss: '#c84550',
   gear: '#5d963f',
   link: '#ed9f12',
   headphones: '#477bd1',
@@ -99,6 +134,36 @@ const VISUAL_COLORS = {
   video: '#d85f91',
   target: '#e99b1c',
   branch: '#2b8f82',
+  bluetooth: '#3b73c4',
+  wifi: '#2d76d6',
+  cellular: '#3e8c9b',
+  api: '#557bd8',
+  sdk: '#6f58c9',
+  wearable: '#2b8f82',
+  upload: '#e2962d',
+  'function-call': '#805ac4',
+  transformer: '#7354c7',
+  attention: '#6f58c9',
+  memory: '#d37b26',
+  retrieval: '#2d76d6',
+  reasoning: '#805ac4',
+  confidence: '#e99b1c',
+  workflow: '#2b8f82',
+  guardrail: '#4d8d68',
+  battery: '#35a65b',
+  storage: '#557bd8',
+  firmware: '#6f67bc',
+  provisioning: '#3e8c9b',
+  sync: '#2f9f9a',
+  webhook: '#e07d34',
+  websocket: '#248fc4',
+  credential: '#4d8d68',
+  telemetry: '#3e8c9b',
+  version: '#d37b26',
+  audit: '#1769c2',
+  queue: '#997143',
+  retry: '#e2962d',
+  checksum: '#35a65b',
   filter: '#805ac4',
   merge: '#35a65b',
   music: '#d85f91',
@@ -106,11 +171,13 @@ const VISUAL_COLORS = {
   asr: '#7656c8',
   tts: '#d85f91',
   model: '#7354c7',
+  omni: '#5b67c8',
   embedding: '#6f58c9',
   dataset: '#1769c2',
   server: '#557bd8',
   gpu: '#805ac4',
   'edge-device': '#2b8f82',
+  fleet: '#3e8c9b',
   router: '#2d76d6',
   sensor: '#2f9f9a',
   camera: '#d85f91',
@@ -129,22 +196,74 @@ function matchSemanticIcon(text) {
   const value = String(text || '').toLowerCase();
   if (!value.trim()) return null;
   const rules = [
+    [/false reject|missed detection|missed trigger|missed wake/, 'miss'],
+    [/function call|tool call|external action|invoke tool/, 'function-call'],
+    [/background noise|noise suppression|denois|noisy recording|noise floor/, 'noise'],
+    [/speaker diar|diarization|speaker turns|who spoke/, 'diarization'],
+    [/codec|compression|compressed audio|bitrate/, 'codec'],
+    [/audio token|speech token|codec token|discrete audio token/, 'audio-token'],
+    [/token stream|streaming output|streaming response|streaming transport|chunk stream|streaming generation/, 'stream'],
+    [/prosody|pitch contour|intonation|speaking rate|rhythm of speech/, 'prosody'],
+    [/emotion|affect|arousal|valence|laughter|acoustic emotion/, 'emotion'],
+    [/voiceprint|voice identity|speaker identity|speaker embedding|familiar speaker/, 'voiceprint'],
+    [/alignment|timestamp alignment|time[- ]aligned|forced alignment/, 'alignment'],
+    [/interruption|barge[- ]?in|turn[- ]?taking|interrupt/, 'interruption'],
+    [/phoneme|phonology|pronunciation|vowel|consonant|g2p/, 'phoneme'],
+    [/language id|language identification|spoken language|language coverage|low[- ]resource language/, 'language'],
+    [/cross[- ]attention|self[- ]attention|attention map|attention weights/, 'attention'],
+    [/transformer|attention block|encoder[- ]decoder block/, 'transformer'],
+    [/working memory|long[- ]term memory|context window|memory layer|memory store/, 'memory'],
+    [/retrieval|\brag\b|evidence retrieval|vector search|retrieve evidence/, 'retrieval'],
+    [/reasoning|chain of thought|planning step|inference trace/, 'reasoning'],
+    [/confidence|uncertainty|confidence score|confidence estimate/, 'confidence'],
+    [/workflow|workflow object|business workflow|operating workflow|next action/, 'workflow'],
+    [/guardrail|guardrails|policy boundary|safety boundary/, 'guardrail'],
+    [/battery|power budget|power state|battery life|energy budget/, 'battery'],
+    [/local storage|object storage|storage layer|stored audio|storage credential/, 'storage'],
+    [/firmware|ota update|device software update/, 'firmware'],
+    [/provisioning|provision|pairing grant|device binding|network credentials/, 'provisioning'],
+    [/sync|synchroni[sz]|resumable transfer/, 'sync'],
+    [/webhook|web hook/, 'webhook'],
+    [/websocket|web socket|ws connection/, 'websocket'],
+    [/credential|device token|api key|access token|secret/, 'credential'],
+    [/telemetry|device health|device status|health signal/, 'telemetry'],
+    [/version|versioned|schema version|release/, 'version'],
+    [/audit|audit trail|audit log|review history/, 'audit'],
+    [/queue|upload queue|retry queue|backlog/, 'queue'],
+    [/retry|retries|retryable|backoff/, 'retry'],
+    [/checksum|hash|integrity check|sha[- ]?/, 'checksum'],
+    [/bluetooth|\bble\b|nearby radio|radio pairing/, 'bluetooth'],
+    [/wi-?fi|wireless lan|wireless network|access point/, 'wifi'],
+    [/cellular|\b4g\b|\b5g\b|mobile network/, 'cellular'],
+    [/developer api|recording api|audio api|api endpoint|rest api/, 'api'],
+    [/mobile sdk|react native sdk|developer kit|client sdk/, 'sdk'],
+    [/wearable|body-worn|worn device|lapel device|pin device/, 'wearable'],
+    [/upload|pre[- ]?signed|put audio|transfer audio|resumable transfer/, 'upload'],
+    [/heartbeat|liveness/, 'heartbeat'],
+    [/webhook event|application event|lifecycle event|event stream/, 'event'],
+    [/device fleet|fleet operations|fleet management/, 'fleet'],
+    [/omni speech|omni model|multimodal audio model/, 'omni'],
+    [/context object|versioned context|agent context|session context|governed context/, 'context'],
     [/wake word|hotword|always[- ]on|listener|listening|voice trigger/, 'ear'],
     [/automatic speech recognition|\basr\b|speech[- ]?to[- ]?text|speech recognition|transcrib|transcription/, 'asr'],
     [/text[- ]?to[- ]?speech|\btts\b|speech synthesis|synthesi[sz]ed speech|voice generation/, 'tts'],
-    [/\bser\b|speech emotion recognition|emotion recognition|paralinguistic|affective computing/, 'waveform'],
-    [/vad|voice activity|speech segment|utterance|speech|audio capture|microphone/, 'microphone'],
-    [/emotion|affect|arousal|valence|prosody|laughter|acoustic|wave/, 'waveform'],
-    [/speaker identity|speaker diar|diari[sz]ation|familiar speaker|voice identity|who spoke/, 'speaker'],
+    [/affect encoder|emotion encoder|emotion model|emotion ssl|ser model/, 'model'],
+    [/\bser\b|speech emotion recognition|emotion recognition|paralinguistic|affective computing/, 'emotion'],
+    [/microphone|mic input|audio capture|voice capture|source speech/, 'microphone'],
+    [/raw audio|speech audio|audio stream|streaming audio|audio chunks|waveform|signal/, 'waveform'],
+    [/vad|voice activity|speech segment|utterance/, 'microphone'],
+    [/acoustic|waveform|signal shape|raw signal/, 'waveform'],
+    [/speaker label|speaker channel|speaker track|speaker panel/, 'speaker'],
     [/caption|subtitle|transcript|timed text|segment text/, 'subtitle'],
     [/phone|mobile|handset|app/, 'phone'],
     [/meeting room|conference room|in[- ]person|physical room|room capture|tabletop/, 'room'],
-    [/bot joins|meeting bot|virtual meeting|online meeting|assistant joins|voice assistant|copilot|otter/, 'bot'],
+    [/voice agent|agent system|agentic|planner|tool use|tool-using assistant/, 'agent'],
+    [/bot joins|meeting bot|assistant joins|copilot|otter/, 'bot'],
     [/human|user|operator|participant|customer|speaker panel/, 'person'],
     [/camera|webcam|vision capture|frame capture/, 'camera'],
-    [/router|wi[- ]?fi|bluetooth|network adapter|access point/, 'router'],
-    [/cloud|remote|web stream|online stream|audio stream|connectivity/, 'cloud'],
-    [/on[- ]device|edge device|edge ai|embedded|wearable|tinyml|microcontroller|local model|mobile inference/, 'edge-device'],
+    [/router|network adapter/, 'router'],
+    [/cloud|remote service|web stream|online stream/, 'cloud'],
+    [/on[- ]device|edge device|edge ai|embedded|tinyml|microcontroller|local model|mobile inference/, 'edge-device'],
     [/gpu|accelerator|cuda|tensor core|parallel compute/, 'gpu'],
     [/server|backend|datacenter|data center|cluster|hosted service|deployment/, 'server'],
     [/chip|cpu|processor|silicon|npu|microchip/, 'chip'],
@@ -165,7 +284,6 @@ function matchSemanticIcon(text) {
     [/dataset|corpus|benchmark|annotation|labels?|training data|label store|gold set/, 'dataset'],
     [/database|memory|storage|warehouse/, 'database'],
     [/model|classifier|reasoning|llm|inference|neural network|foundation model|encoder|decoder|transformer/, 'model'],
-    [/agent system|agentic|planner|tool use/, 'agent'],
     [/schema|ontology|structured|field|constraint|format/, 'schema'],
     [/graph|relation|node|entity|network map/, 'graph'],
     [/api|integration|route|routing|connect|network/, 'network'],
@@ -193,7 +311,6 @@ function resolveIconName(name, text = '', index = 0, fallbackName = '') {
   const fallback = ICON_NAMES.includes(fallbackAlias) ? fallbackAlias : fallbackIconFor(index);
   const semantic = matchSemanticIcon(text);
   if (!explicit || !ICON_NAMES.includes(explicit)) return semantic || fallback;
-  if (SOFT_ICON_NAMES.has(explicit)) return semantic || fallback;
   return explicit;
 }
 
@@ -211,11 +328,13 @@ function drawCanvasIcon(ctx, name, x, y, color, phase = 0, options = {}) {
   const a = phase * Math.PI * 2;
   const pulse = (Math.sin(a) + 1) / 2;
   const wave = (1 - Math.cos(a)) / 2;
-  const breath = options.breath ?? (['person', 'chat-bubbles', 'agent', 'graph', 'gear'].includes(iconName) ? 0.035 : 0.014);
+  const scaleAmplitude = options.breath ?? options.scaleAmplitude ?? CANVAS_ICON_MOTION.scaleAmplitude;
+  const driftPx = options.driftPx ?? CANVAS_ICON_MOTION.driftPx;
+  const scale = 1 + scaleAmplitude * Math.sin(a);
 
   ctx.save();
-  ctx.translate(x, y);
-  ctx.scale(1 + breath * Math.sin(a), 1 + breath * Math.sin(a));
+  ctx.translate(x, y + driftPx * Math.cos(a));
+  ctx.scale(scale, scale);
   ctx.strokeStyle = semanticColor;
   ctx.fillStyle = semanticColor;
   ctx.lineWidth = options.lineWidth || 4;
@@ -295,6 +414,186 @@ function drawCanvasIcon(ctx, name, x, y, color, phase = 0, options = {}) {
       i === -24 ? ctx.moveTo(i, yy) : ctx.lineTo(i, yy);
     }
     ctx.stroke();
+  } else if (iconName === 'noise') {
+    ctx.beginPath();
+    for (let i = -27; i <= 27; i += 3) {
+      const yy = Math.sin(i * 1.7 + a * 2.2) * (5 + 8 * pulse);
+      i === -27 ? ctx.moveTo(i, yy) : ctx.lineTo(i, yy);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 0.55 + 0.45 * pulse;
+    ctx.beginPath(); ctx.moveTo(-24, 23); ctx.lineTo(24, -23); ctx.stroke();
+  } else if (iconName === 'diarization') {
+    [-15, 15].forEach((dx, i) => {
+      ctx.globalAlpha = 0.5 + 0.5 * (0.5 + 0.5 * Math.sin(a + i));
+      ctx.beginPath(); ctx.arc(dx, -12, 7, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(dx, 15, 13, Math.PI, 0); ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.moveTo(0, -25); ctx.lineTo(0, 25); ctx.stroke();
+  } else if (iconName === 'codec') {
+    ctx.beginPath(); ctx.moveTo(-29, 0); ctx.lineTo(-18, 0); ctx.lineTo(-12, -14); ctx.lineTo(-6, 14); ctx.lineTo(0, 0); ctx.stroke();
+    roundRect(ctx, -4, -20, 16, 40, 5); ctx.stroke();
+    [15, 22, 29].forEach((dx, i) => {
+      ctx.globalAlpha = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(a - i));
+      roundRect(ctx, dx - 2, -8 + i * 4, 5, 16 - i * 3, 2); ctx.stroke();
+    });
+  } else if (iconName === 'audio-token') {
+    [-22, -8, 6, 20].forEach((dx, i) => {
+      const lift = i === Math.floor(wave * 4) ? -4 : 0;
+      ctx.globalAlpha = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(a + i));
+      roundRect(ctx, dx - 5, -10 + lift, 10, 20 - lift, 3); ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.moveTo(-27, 17); ctx.lineTo(25, 17); ctx.stroke();
+  } else if (iconName === 'stream') {
+    ctx.beginPath(); ctx.moveTo(-28, 0); ctx.lineTo(28, 0); ctx.stroke();
+    [-20, -7, 7, 20].forEach((dx, i) => {
+      ctx.globalAlpha = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(a * 1.4 + i));
+      ctx.beginPath(); ctx.arc(dx, Math.sin(a * 1.4 + i) * 5, 5, 0, Math.PI * 2); ctx.fill();
+    });
+  } else if (iconName === 'prosody') {
+    ctx.beginPath();
+    for (let i = -26; i <= 26; i += 4) {
+      const yy = Math.sin(i * 0.28 + a) * (5 + 7 * (0.5 + 0.5 * Math.sin(i * 0.11)));
+      i === -26 ? ctx.moveTo(i, yy + 9) : ctx.lineTo(i, yy + 9);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 0.55 + 0.45 * pulse;
+    ctx.beginPath(); ctx.moveTo(-25, 14); ctx.quadraticCurveTo(-5, -22, 26, -8); ctx.stroke();
+  } else if (iconName === 'emotion') {
+    ctx.beginPath();
+    ctx.moveTo(-23, -7); ctx.bezierCurveTo(-15, -20, -3, -9, 0, -1);
+    ctx.bezierCurveTo(3, -9, 15, -20, 23, -7); ctx.bezierCurveTo(26, 5, 10, 17, 0, 25);
+    ctx.bezierCurveTo(-10, 17, -26, 5, -23, -7); ctx.stroke();
+    ctx.globalAlpha = 0.5 + 0.5 * pulse;
+    ctx.beginPath(); ctx.moveTo(-12, 3); ctx.lineTo(-5, -1); ctx.lineTo(2, 5); ctx.lineTo(10, -3); ctx.stroke();
+  } else if (iconName === 'voiceprint') {
+    [8, 14, 20, 26].forEach((r, i) => {
+      ctx.globalAlpha = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(a - i));
+      ctx.beginPath(); ctx.arc(0, 0, r, -1.15, 1.15); ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, 0, r, Math.PI - 1.15, Math.PI + 1.15); ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.moveTo(0, -5); ctx.lineTo(0, 5); ctx.stroke();
+  } else if (iconName === 'alignment') {
+    [-12, 12].forEach((dy, i) => {
+      ctx.globalAlpha = 0.5 + 0.5 * (0.5 + 0.5 * Math.sin(a + i));
+      ctx.beginPath(); ctx.moveTo(-27, dy); ctx.lineTo(27, dy); ctx.stroke();
+      [-18, -4, 11, 23].forEach((dx) => {
+        ctx.beginPath(); ctx.arc(dx, dy, 3, 0, Math.PI * 2); ctx.fill();
+      });
+    });
+    ctx.globalAlpha = 0.7;
+    [-18, -4, 11, 23].forEach((dx) => { ctx.beginPath(); ctx.moveTo(dx, -9); ctx.lineTo(dx, 9); ctx.stroke(); });
+  } else if (iconName === 'interruption') {
+    ctx.beginPath(); ctx.moveTo(-28, -12); ctx.lineTo(-20, -12); ctx.lineTo(-15, -22); ctx.lineTo(-7, -2); ctx.lineTo(-2, -12); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(2, 12); ctx.lineTo(7, 12); ctx.lineTo(14, 2); ctx.lineTo(20, 20); ctx.lineTo(28, 12); ctx.stroke();
+    ctx.globalAlpha = 0.75; ctx.beginPath(); ctx.moveTo(-2, -25); ctx.lineTo(2, 25); ctx.stroke();
+  } else if (iconName === 'phoneme') {
+    roundRect(ctx, -28, -13, 56, 26, 13); ctx.stroke();
+    ctx.beginPath(); ctx.arc(-10, -1, 3, 0, Math.PI * 2); ctx.arc(0, 2, 3, 0, Math.PI * 2); ctx.arc(10, -1, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 0.5 + 0.5 * pulse;
+    ctx.beginPath(); ctx.moveTo(-18, 18); ctx.lineTo(-8, 24); ctx.lineTo(8, 24); ctx.lineTo(18, 18); ctx.stroke();
+  } else if (iconName === 'language') {
+    ctx.beginPath(); ctx.arc(0, 0, 23, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(0, 0, 10 + 2 * Math.sin(a), 23, 0, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-21, 0); ctx.lineTo(21, 0); ctx.stroke();
+    roundRect(ctx, -29, -27, 18, 13, 5); ctx.stroke();
+    roundRect(ctx, 11, 14, 18, 13, 5); ctx.stroke();
+  } else if (iconName === 'transformer') {
+    [-19, 0, 19].forEach((dy, i) => {
+      ctx.globalAlpha = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a + i));
+      roundRect(ctx, -18, dy - 6, 36, 12, 4); ctx.stroke();
+    });
+    ctx.globalAlpha = 0.7;
+    ctx.beginPath(); ctx.moveTo(-25, -19); ctx.lineTo(25, 19); ctx.moveTo(25, -19); ctx.lineTo(-25, 19); ctx.stroke();
+  } else if (iconName === 'attention') {
+    const pts = [[-22, -13], [0, -20], [21, -9], [-12, 16], [14, 17]];
+    ctx.beginPath(); pts.forEach(([dx, dy]) => { ctx.moveTo(0, 0); ctx.lineTo(dx, dy); }); ctx.stroke();
+    pts.forEach(([dx, dy], i) => {
+      ctx.globalAlpha = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(a + i));
+      ctx.beginPath(); ctx.arc(dx, dy, 4.5, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.globalAlpha = 1; ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI * 2); ctx.stroke();
+  } else if (iconName === 'memory') {
+    [-12, 0, 12].forEach((dy, i) => {
+      ctx.globalAlpha = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a - i));
+      roundRect(ctx, -25 + i * 3, dy - 6, 50 - i * 6, 12, 4); ctx.stroke();
+    });
+  } else if (iconName === 'retrieval') {
+    ctx.beginPath(); ctx.ellipse(-5, -13, 18, 7, 0, 0, Math.PI * 2); ctx.moveTo(-23, -13); ctx.lineTo(-23, 5); ctx.ellipse(-5, 5, 18, 7, 0, 0, Math.PI); ctx.moveTo(13, -13); ctx.lineTo(13, 5); ctx.stroke();
+    ctx.beginPath(); ctx.arc(15, 12, 9, 0, Math.PI * 2); ctx.stroke(); ctx.moveTo(21, 18); ctx.lineTo(28, 25); ctx.stroke();
+  } else if (iconName === 'reasoning') {
+    ctx.beginPath(); ctx.moveTo(-23, -14); ctx.quadraticCurveTo(-5, -14, 0, 0); ctx.quadraticCurveTo(5, 14, 23, 14); ctx.stroke();
+    [-23, 0, 23].forEach((dx, i) => {
+      ctx.globalAlpha = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a + i));
+      ctx.beginPath(); ctx.arc(dx, i === 1 ? 0 : i === 0 ? -14 : 14, 5, 0, Math.PI * 2); ctx.fill();
+    });
+  } else if (iconName === 'confidence') {
+    ctx.beginPath(); ctx.arc(0, 8, 24, Math.PI, 0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, 8); ctx.lineTo(15 * Math.cos(-Math.PI + pulse * Math.PI), 8 + 15 * Math.sin(-Math.PI + pulse * Math.PI)); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 8, 4, 0, Math.PI * 2); ctx.fill();
+  } else if (iconName === 'workflow') {
+    const boxes = [[-25, -14], [0, 14], [25, -14]];
+    ctx.beginPath(); ctx.moveTo(-15, -14); ctx.lineTo(-10, -14); ctx.moveTo(10, 14); ctx.lineTo(15, 14); ctx.stroke();
+    boxes.forEach(([dx, dy], i) => { ctx.globalAlpha = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a + i)); roundRect(ctx, dx - 7, dy - 7, 14, 14, 3); ctx.stroke(); });
+  } else if (iconName === 'guardrail') {
+    ctx.beginPath(); ctx.moveTo(-22, -25); ctx.lineTo(-22, 25); ctx.moveTo(22, -25); ctx.lineTo(22, 25); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-16, 17); ctx.quadraticCurveTo(0, -17, 16, 17); ctx.stroke();
+    ctx.globalAlpha = 0.45 + 0.55 * pulse; ctx.beginPath(); ctx.arc(0, -3, 4, 0, Math.PI * 2); ctx.fill();
+  } else if (iconName === 'battery') {
+    roundRect(ctx, -26, -17, 48, 34, 6); ctx.stroke(); ctx.beginPath(); ctx.moveTo(22, -7); ctx.lineTo(28, -7); ctx.lineTo(28, 7); ctx.lineTo(22, 7); ctx.stroke();
+    ctx.globalAlpha = 0.4 + 0.6 * pulse; roundRect(ctx, -20, -10, 28 * pulse, 20, 3); ctx.stroke();
+  } else if (iconName === 'storage') {
+    roundRect(ctx, -26, -18, 52, 36, 6); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-17, -3); ctx.lineTo(17, -3); ctx.moveTo(-17, 7); ctx.lineTo(17, 7); ctx.stroke();
+    ctx.globalAlpha = 0.45 + 0.55 * pulse; ctx.beginPath(); ctx.arc(17, -11, 2.5, 0, Math.PI * 2); ctx.fill();
+  } else if (iconName === 'firmware') {
+    roundRect(ctx, -17, -17, 34, 34, 5); ctx.stroke();
+    for (let i = -11; i <= 11; i += 11) { ctx.beginPath(); ctx.moveTo(-25, i); ctx.lineTo(-17, i); ctx.moveTo(17, i); ctx.lineTo(25, i); ctx.moveTo(i, -25); ctx.lineTo(i, -17); ctx.moveTo(i, 17); ctx.lineTo(i, 25); ctx.stroke(); }
+    ctx.beginPath(); ctx.arc(0, 0, 7, 0, Math.PI * 2); ctx.stroke(); ctx.moveTo(0, -12); ctx.lineTo(0, 12); ctx.stroke();
+  } else if (iconName === 'provisioning') {
+    roundRect(ctx, -25, -19, 28, 38, 6); ctx.stroke();
+    ctx.beginPath(); ctx.arc(11, -1, 10, Math.PI * 0.25, Math.PI * 1.75); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(16, 8); ctx.lineTo(25, 17); ctx.lineTo(29, 13); ctx.stroke();
+    ctx.globalAlpha = 0.5 + 0.5 * pulse; ctx.beginPath(); ctx.arc(-11, -1, 3, 0, Math.PI * 2); ctx.fill();
+  } else if (iconName === 'sync') {
+    ctx.beginPath(); ctx.arc(0, 0, 22, -2.5, 0.35); ctx.stroke(); ctx.moveTo(15, -17); ctx.lineTo(24, -15); ctx.lineTo(21, -6);
+    ctx.arc(0, 0, 22, 0.65, 3.5); ctx.stroke(); ctx.moveTo(-15, 17); ctx.lineTo(-24, 15); ctx.lineTo(-21, 6); ctx.stroke();
+  } else if (iconName === 'webhook') {
+    ctx.beginPath(); ctx.moveTo(-22, -16); ctx.quadraticCurveTo(-6, -16, -6, 0); ctx.quadraticCurveTo(-6, 16, 10, 16); ctx.lineTo(21, 16); ctx.stroke();
+    ctx.beginPath(); ctx.arc(21, 16, 4, 0, Math.PI * 2); ctx.fill();
+    [-12, 0, 12].forEach((dy, i) => { ctx.globalAlpha = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(a + i)); ctx.beginPath(); ctx.moveTo(6, dy - 3); ctx.lineTo(12, dy - 3); ctx.stroke(); });
+  } else if (iconName === 'websocket') {
+    ctx.beginPath(); ctx.moveTo(-27, -12); ctx.lineTo(-13, -12); ctx.lineTo(-7, -20); ctx.lineTo(2, -4); ctx.lineTo(10, -12); ctx.lineTo(27, -12); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-27, 12); ctx.lineTo(-10, 12); ctx.lineTo(-2, 4); ctx.lineTo(7, 20); ctx.lineTo(13, 12); ctx.lineTo(27, 12); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-27, -12); ctx.lineTo(-20, -17); ctx.moveTo(27, 12); ctx.lineTo(20, 17); ctx.stroke();
+  } else if (iconName === 'credential') {
+    roundRect(ctx, -27, -17, 54, 34, 6); ctx.stroke();
+    ctx.beginPath(); ctx.arc(-10, 0, 6, 0, Math.PI * 2); ctx.stroke(); ctx.moveTo(-4, 0); ctx.lineTo(10, 0); ctx.lineTo(14, 5); ctx.stroke();
+    ctx.globalAlpha = 0.5 + 0.5 * pulse; ctx.beginPath(); ctx.arc(17, -8, 2.5, 0, Math.PI * 2); ctx.fill();
+  } else if (iconName === 'telemetry') {
+    roundRect(ctx, -27, -20, 54, 40, 6); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-19, 9); ctx.lineTo(-10, 2); ctx.lineTo(-3, 6); ctx.lineTo(7, -11); ctx.lineTo(18, -3); ctx.stroke();
+    ctx.globalAlpha = 0.45 + 0.55 * pulse; ctx.beginPath(); ctx.arc(7, -11, 4, 0, Math.PI * 2); ctx.fill();
+  } else if (iconName === 'version') {
+    roundRect(ctx, -22, -24, 34, 36, 5); ctx.stroke(); roundRect(ctx, -12, -12, 34, 36, 5); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-14, -12); ctx.lineTo(3, -12); ctx.moveTo(-4, 0); ctx.lineTo(13, 0); ctx.stroke();
+    ctx.globalAlpha = 0.55 + 0.45 * pulse; ctx.beginPath(); ctx.arc(18, 14, 4, 0, Math.PI * 2); ctx.fill();
+  } else if (iconName === 'audit') {
+    ctx.beginPath(); ctx.moveTo(-22, -25); ctx.lineTo(8, -25); ctx.lineTo(20, -13); ctx.lineTo(20, 25); ctx.lineTo(-22, 25); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-13, -5); ctx.lineTo(6, -5); ctx.moveTo(-13, 5); ctx.lineTo(4, 5); ctx.stroke();
+    ctx.beginPath(); ctx.arc(8, 9, 8, 0, Math.PI * 2); ctx.stroke(); ctx.moveTo(14, 15); ctx.lineTo(21, 22); ctx.stroke();
+  } else if (iconName === 'queue') {
+    [-16, 0, 16].forEach((dy, i) => { ctx.globalAlpha = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(a - i)); roundRect(ctx, -22 + i * 4, dy - 5, 44 - i * 8, 10, 4); ctx.stroke(); });
+  } else if (iconName === 'retry') {
+    ctx.beginPath(); ctx.arc(0, 0, 23, -2.5, 0.8); ctx.stroke(); ctx.moveTo(16, -17); ctx.lineTo(24, -16); ctx.lineTo(21, -8); ctx.stroke();
+    ctx.globalAlpha = 0.5 + 0.5 * pulse; ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI * 2); ctx.fill();
+  } else if (iconName === 'checksum') {
+    for (let x0 = -18; x0 <= 18; x0 += 12) { ctx.beginPath(); ctx.moveTo(x0, -18); ctx.lineTo(x0, 18); ctx.stroke(); }
+    for (let y0 = -18; y0 <= 18; y0 += 12) { ctx.beginPath(); ctx.moveTo(-18, y0); ctx.lineTo(18, y0); ctx.stroke(); }
+    ctx.beginPath(); ctx.moveTo(-12, 1); ctx.lineTo(-4, 9); ctx.lineTo(13, -10); ctx.stroke();
   } else if (iconName === 'shield') {
     ctx.beginPath();
     ctx.moveTo(0, -28); ctx.lineTo(23, -18); ctx.lineTo(18, 8);
@@ -316,6 +615,11 @@ function drawCanvasIcon(ctx, name, x, y, color, phase = 0, options = {}) {
       ctx.lineTo(0, 8 + k * 12 + lift); ctx.lineTo(-26, -6 + k * 12 + lift);
       ctx.closePath(); ctx.stroke();
     });
+  } else if (iconName === 'context') {
+    roundRect(ctx, -25, -20, 38, 28, 7); ctx.stroke();
+    roundRect(ctx, -13, -7, 38, 28, 7); ctx.stroke();
+    ctx.beginPath(); ctx.arc(6, 7, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(6, -2); ctx.lineTo(6, -11); ctx.stroke();
   } else if (iconName === 'globe') {
     ctx.beginPath(); ctx.arc(0, 0, 25, 0, Math.PI * 2); ctx.stroke();
     ctx.beginPath(); ctx.ellipse(0, 0, 10 + Math.sin(a) * 2, 25, 0, 0, Math.PI * 2); ctx.stroke();
@@ -345,6 +649,14 @@ function drawCanvasIcon(ctx, name, x, y, color, phase = 0, options = {}) {
   } else if (iconName === 'clock') {
     ctx.beginPath(); ctx.arc(0, 0, 25, 0, Math.PI * 2); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(15 * Math.sin(a), -15 * Math.cos(a)); ctx.moveTo(0, 0); ctx.lineTo(10, -8); ctx.stroke();
+  } else if (iconName === 'event') {
+    ctx.beginPath(); ctx.arc(0, 0, 9, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, -23); ctx.lineTo(0, -15); ctx.moveTo(0, 15); ctx.lineTo(0, 23); ctx.moveTo(-23, 0); ctx.lineTo(-15, 0); ctx.moveTo(15, 0); ctx.lineTo(23, 0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-13, -13); ctx.lineTo(-8, -8); ctx.moveTo(13, -13); ctx.lineTo(8, -8); ctx.moveTo(-13, 13); ctx.lineTo(-8, 8); ctx.moveTo(13, 13); ctx.lineTo(8, 8); ctx.stroke();
+  } else if (iconName === 'heartbeat') {
+    ctx.beginPath(); ctx.moveTo(-28, 2); ctx.lineTo(-17, 2); ctx.lineTo(-10, -13); ctx.lineTo(0, 18); ctx.lineTo(10, -7); ctx.lineTo(16, 2); ctx.lineTo(28, 2); ctx.stroke();
+    ctx.globalAlpha = 0.45 + 0.55 * pulse;
+    ctx.beginPath(); ctx.arc(0, 18, 3.5, 0, Math.PI * 2); ctx.fill();
   } else if (iconName === 'database') {
     [-17, 0, 17].forEach((dy, i) => {
       ctx.globalAlpha = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a - i));
@@ -384,6 +696,11 @@ function drawCanvasIcon(ctx, name, x, y, color, phase = 0, options = {}) {
     ctx.beginPath(); ctx.moveTo(0, -28); ctx.lineTo(26, 23); ctx.lineTo(-26, 23); ctx.closePath(); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(0, -10); ctx.lineTo(0, 8); ctx.stroke();
     ctx.beginPath(); ctx.arc(0, 16, 2.5, 0, Math.PI * 2); ctx.fill();
+  } else if (iconName === 'miss') {
+    ctx.beginPath(); ctx.arc(0, 0, 23, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-16, -16); ctx.lineTo(16, 16); ctx.stroke();
+    ctx.globalAlpha = 0.45 + 0.55 * pulse;
+    ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fill();
   } else if (iconName === 'gear') {
     ctx.rotate(a * 0.22);
     ctx.beginPath();
@@ -432,6 +749,14 @@ function drawCanvasIcon(ctx, name, x, y, color, phase = 0, options = {}) {
     pts.forEach(([dx, dy], i) => {
       ctx.globalAlpha = 0.5 + 0.5 * (0.5 + 0.5 * Math.sin(a + i * 0.9));
       ctx.beginPath(); ctx.arc(dx, dy, 3.8, 0, Math.PI * 2); ctx.fill();
+    });
+  } else if (iconName === 'omni') {
+    const pts = [[0, -19], [19, 0], [0, 19], [-19, 0]];
+    ctx.beginPath(); pts.forEach(([dx, dy]) => { ctx.moveTo(0, 0); ctx.lineTo(dx, dy); }); ctx.stroke();
+    roundRect(ctx, -9, -9, 18, 18, 5); ctx.stroke();
+    pts.forEach(([dx, dy], i) => {
+      ctx.globalAlpha = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a + i));
+      ctx.beginPath(); ctx.arc(dx, dy, 5, 0, Math.PI * 2); ctx.fill();
     });
   } else if (iconName === 'cloud') {
     const drift = Math.sin(a) * 2;
@@ -488,6 +813,14 @@ function drawCanvasIcon(ctx, name, x, y, color, phase = 0, options = {}) {
       ctx.globalAlpha = 0.25 + 0.5 * (0.5 + 0.5 * Math.sin(a - i));
       ctx.beginPath(); ctx.arc(0, -3, r, -0.95, -0.22); ctx.stroke();
     });
+  } else if (iconName === 'fleet') {
+    const devices = [[-19, 8], [0, -10], [19, 8]];
+    ctx.beginPath(); ctx.moveTo(-19, 8); ctx.lineTo(0, -10); ctx.lineTo(19, 8); ctx.stroke();
+    devices.forEach(([dx, dy], i) => {
+      roundRect(ctx, dx - 9, dy - 8, 18, 16, 4); ctx.stroke();
+      ctx.globalAlpha = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a + i));
+      ctx.beginPath(); ctx.arc(dx, dy, 2.5, 0, Math.PI * 2); ctx.fill();
+    });
   } else if (iconName === 'router') {
     const glow = 0.5 + 0.5 * Math.sin(a);
     roundRect(ctx, -26, 5, 52, 18, 6); ctx.stroke();
@@ -543,6 +876,67 @@ function drawCanvasIcon(ctx, name, x, y, color, phase = 0, options = {}) {
     pts.forEach(([dx, dy], i) => {
       ctx.globalAlpha = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a + i));
       ctx.beginPath(); ctx.arc(dx, dy, 6, 0, Math.PI * 2); ctx.fill();
+    });
+  } else if (iconName === 'bluetooth') {
+    const sway = Math.sin(a) * 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, -27); ctx.lineTo(0, 27);
+    ctx.moveTo(0, -27); ctx.lineTo(15 + sway, -14); ctx.lineTo(0, 0); ctx.lineTo(15 - sway, 14); ctx.lineTo(0, 27);
+    ctx.moveTo(-16, -14); ctx.lineTo(15 + sway, 14);
+    ctx.moveTo(-16, 14); ctx.lineTo(15 - sway, -14);
+    ctx.stroke();
+  } else if (iconName === 'wifi') {
+    [29, 20, 11].forEach((r, i) => {
+      ctx.globalAlpha = 0.3 + 0.7 * clamp(pulse * 2.4 - i * 0.42, 0, 1);
+      ctx.beginPath(); ctx.arc(0, 18, r, -2.36, -0.78); ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(0, 18, 4, 0, Math.PI * 2); ctx.fill();
+  } else if (iconName === 'cellular') {
+    ctx.beginPath(); ctx.moveTo(0, -25); ctx.lineTo(0, 25); ctx.moveTo(-11, 25); ctx.lineTo(0, 5); ctx.lineTo(11, 25); ctx.stroke();
+    [13, 23].forEach((r, i) => {
+      ctx.globalAlpha = 0.3 + 0.6 * (0.5 + 0.5 * Math.sin(a - i));
+      ctx.beginPath(); ctx.arc(0, -16, r, -0.7, 0.7); ctx.stroke();
+      ctx.beginPath(); ctx.arc(0, -16, r, Math.PI - 0.7, Math.PI + 0.7); ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(0, -16, 4, 0, Math.PI * 2); ctx.fill();
+  } else if (iconName === 'api') {
+    roundRect(ctx, -28, -18, 20, 36, 6); ctx.stroke();
+    roundRect(ctx, 8, -18, 20, 36, 6); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-8, 0); ctx.lineTo(8, 0); ctx.stroke();
+    [-9, 9].forEach((dy, i) => {
+      ctx.globalAlpha = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a + i));
+      ctx.beginPath(); ctx.arc(-18, dy, 3.2, 0, Math.PI * 2); ctx.arc(18, -dy, 3.2, 0, Math.PI * 2); ctx.fill();
+    });
+  } else if (iconName === 'sdk') {
+    roundRect(ctx, -25, -22, 50, 44, 8); ctx.stroke();
+    [[-13, -9], [5, -9], [-13, 9], [5, 9]].forEach(([dx, dy], i) => {
+      ctx.globalAlpha = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a + i * 0.7));
+      roundRect(ctx, dx - 5, dy - 5, 10, 10, 2); ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.moveTo(-31, -9); ctx.lineTo(-25, -9); ctx.moveTo(25, 9); ctx.lineTo(31, 9); ctx.stroke();
+  } else if (iconName === 'wearable') {
+    roundRect(ctx, -11, -29, 22, 58, 8); ctx.stroke();
+    roundRect(ctx, -19, -17, 38, 34, 10); ctx.stroke();
+    ctx.globalAlpha = 0.45 + 0.55 * pulse;
+    ctx.beginPath(); ctx.arc(0, 0, 7, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, 2.8, 0, Math.PI * 2); ctx.fill();
+  } else if (iconName === 'upload') {
+    ctx.beginPath(); ctx.moveTo(-25, 8); ctx.lineTo(-25, 24); ctx.lineTo(25, 24); ctx.lineTo(25, 8); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, 13); ctx.lineTo(0, -24); ctx.moveTo(-11, -13); ctx.lineTo(0, -24); ctx.lineTo(11, -13); ctx.stroke();
+    ctx.globalAlpha = 0.4 + 0.6 * pulse;
+    ctx.beginPath(); ctx.moveTo(-16, 14); ctx.lineTo(16, 14); ctx.stroke();
+  } else if (iconName === 'function-call') {
+    roundRect(ctx, -11, -11, 22, 22, 6); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-28, 0); ctx.lineTo(-11, 0); ctx.moveTo(11, 0); ctx.lineTo(28, 0);
+    ctx.moveTo(20, -8); ctx.lineTo(28, 0); ctx.lineTo(20, 8);
+    ctx.stroke();
+    [-28, 0].forEach((dx, i) => {
+      ctx.globalAlpha = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(a + i));
+      ctx.beginPath(); ctx.arc(dx, 0, i ? 4 : 3.5, 0, Math.PI * 2); ctx.fill();
     });
   } else if (iconName === 'filter') {
     ctx.beginPath();
@@ -650,7 +1044,7 @@ function drawCanvasIcon(ctx, name, x, y, color, phase = 0, options = {}) {
 module.exports = {
   ICON_NAMES,
   FALLBACK_ICON_NAMES,
-  SOFT_ICON_NAMES,
+  CANVAS_ICON_MOTION,
   ICON_ALIASES,
   VISUAL_COLORS,
   fallbackIconFor,

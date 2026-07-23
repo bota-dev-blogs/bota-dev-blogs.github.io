@@ -36,7 +36,7 @@
         {
           "title": "New characters worked",
           "body": "The vocabulary extension and embedding resize path loaded correctly into F5-TTS.",
-          "icon": "database"
+          "icon": "embedding"
         },
         {
           "title": "Pronunciation did not",
@@ -46,7 +46,7 @@
         {
           "title": "Next layer: G2P",
           "body": "A Darija grapheme-to-phoneme layer is likely needed before robust synthesis.",
-          "icon": "filter"
+          "icon": "phoneme"
         }
       ],
       "fileSlug": "darija-lessons"

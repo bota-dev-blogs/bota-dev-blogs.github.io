@@ -20,7 +20,7 @@
           "type": "input",
           "label": "Chinese video",
           "caption": "Original visuals, speech, timing, and speaker identity",
-          "visual": "document",
+          "visual": "video",
           "shape": "illustration",
           "position": {
             "x": 0.12,
@@ -32,7 +32,7 @@
           "type": "process",
           "label": "Timed script",
           "caption": "Transcribe, translate, and review technical terms",
-          "visual": "schema",
+          "visual": "subtitle",
           "shape": "card",
           "position": {
             "x": 0.34,
@@ -44,7 +44,7 @@
           "type": "process",
           "label": "Voice identity",
           "caption": "Diarization produces clean speaker references",
-          "visual": "microphone",
+          "visual": "voiceprint",
           "shape": "card",
           "position": {
             "x": 0.34,
@@ -56,7 +56,7 @@
           "type": "result",
           "label": "English video",
           "caption": "Cloned speech is aligned back to the source timeline",
-          "visual": "merge",
+          "visual": "video",
           "shape": "illustration",
           "position": {
             "x": 0.6,
@@ -68,7 +68,7 @@
           "type": "context",
           "label": "Darija branch",
           "caption": "Fine-tuning revealed data and pronunciation bottlenecks",
-          "visual": "globe",
+          "visual": "branch",
           "shape": "card",
           "position": {
             "x": 0.82,
@@ -164,7 +164,7 @@
           "type": "process",
           "label": "Vocab extension",
           "caption": "Arabic characters were added to the text embedding layer",
-          "visual": "schema",
+          "visual": "embedding",
           "shape": "card",
           "position": {
             "x": 0.14,
@@ -176,7 +176,7 @@
           "type": "constraint",
           "label": "Small dataset",
           "caption": "Hours were limited and spread across speakers",
-          "visual": "database",
+          "visual": "dataset",
           "shape": "card",
           "position": {
             "x": 0.36,
@@ -188,7 +188,7 @@
           "type": "constraint",
           "label": "Unvocalized text",
           "caption": "Missing vowels make pronunciation under-specified",
-          "visual": "document",
+          "visual": "language",
           "shape": "card",
           "position": {
             "x": 0.36,
@@ -212,7 +212,7 @@
           "type": "result",
           "label": "G2P layer",
           "caption": "A pronunciation layer can normalize Arabic script and Arabizi",
-          "visual": "link",
+          "visual": "phoneme",
           "shape": "card",
           "position": {
             "x": 0.82,
@@ -306,7 +306,7 @@
           "type": "process",
           "label": "Transcribe",
           "caption": "Timed source segments and confidence",
-          "visual": "clock",
+          "visual": "asr",
           "shape": "card",
           "position": {
             "x": 0.12,
@@ -318,7 +318,7 @@
           "type": "process",
           "label": "Translate",
           "caption": "Target script that preserves technical meaning",
-          "visual": "document",
+          "visual": "translate",
           "shape": "card",
           "position": {
             "x": 0.31,
@@ -330,7 +330,7 @@
           "type": "process",
           "label": "Clone voice",
           "caption": "Speaker references drive synthetic segments",
-          "visual": "microphone",
+          "visual": "tts",
           "shape": "card",
           "position": {
             "x": 0.5,
@@ -342,7 +342,7 @@
           "type": "process",
           "label": "Align audio",
           "caption": "Time-stretch and loudness normalize",
-          "visual": "merge",
+          "visual": "alignment",
           "shape": "illustration",
           "position": {
             "x": 0.69,
@@ -354,7 +354,7 @@
           "type": "result",
           "label": "Watchable video",
           "caption": "Merged output keeps visuals and speech coherent",
-          "visual": "shield",
+          "visual": "video",
           "shape": "card",
           "position": {
             "x": 0.86,

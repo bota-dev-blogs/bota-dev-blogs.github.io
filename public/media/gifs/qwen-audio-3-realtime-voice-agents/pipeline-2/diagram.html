@@ -20,6 +20,7 @@
     .kind-output .node-box { fill: #e5eafe; stroke: #557bd8; }
     .node-label { font-size: 20px; font-weight: 700; text-anchor: start; fill: var(--ink); }
     .node-description { font-size: 14px; fill: var(--muted); text-anchor: start; }
+    .node-icon { transform-box: fill-box; transform-origin: center; }
     .node-icon-bg { fill: #fff; stroke-width: 2; }
     .node-icon-line { fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
     .edge { fill: none; stroke: var(--edge-color, var(--line)); stroke-width: 2.7; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 8 7; opacity: .98; }
@@ -40,7 +41,7 @@
   <g id="content"></g>
 </svg>
 <script>
-  const diagram = {"title":"Qwen-Audio-3.0-Realtime Voice Agent Loop","subtitle":"A realtime speech system that listens, reasons, speaks, and calls tools within a single interaction loop.","width":1080,"height":888,"duration":6,"fps":15,"theme":"light","nodes":[{"id":"mic_audio","kind":"input","label":"Microphone Audio","description":"Streaming audio chunks captured from the user's microphone.","x":54,"y":146,"width":218,"height":124,"evidence":"Audio capture layer","icon":"microphone","rank":0,"row":0},{"id":"speech_model","kind":"method","label":"Speech Model","description":"Qwen-Audio-3.0-Realtime processes speech input and generates streaming text/audio or function calls.","x":54,"y":334,"width":218,"height":124,"evidence":"The Short Version","icon":"microphone","rank":0,"row":1},{"id":"direct_output","kind":"output","label":"Streaming Output","description":"Incremental text and audio responses sent back to the client in real time.","x":54,"y":522,"width":218,"height":124,"evidence":"Streaming Output","icon":"latency","rank":0,"row":2},{"id":"tool_exec","kind":"method","label":"Tool Execution","description":"Client-side execution of external tools (e.g., APIs, databases) based on the model's function call request.","x":54,"y":710,"width":218,"height":124,"evidence":"Function Calling makes the voice agent useful","icon":"database","rank":0,"row":3}],"edges":[{"id":"e1","from":"mic_audio","to":"speech_model","label":"audio stream","evidence":"The Short Version: client streams microphone audio"},{"id":"e2","from":"speech_model","to":"direct_output","label":"streaming response","evidence":"Streaming Output: text and audio arrive incrementally"},{"id":"e3","from":"speech_model","to":"tool_exec","label":"function_call","evidence":"Function Calling: model requests tool call"},{"id":"e4","from":"tool_exec","to":"speech_model","label":"tool result","evidence":"Function Calling loop: client returns tool result"}],"animation":[{"target":"e1","effect":"flow","at":0,"loop":true,"speed":24,"period":1.8},{"target":"e2","effect":"flow","at":0,"loop":true,"speed":24,"period":1.8},{"target":"e3","effect":"flow","at":0,"loop":true,"speed":24,"period":1.8},{"target":"e4","effect":"flow","at":0,"loop":true,"speed":24,"period":1.8}],"layoutMode":"layered"};
+  const diagram = {"title":"Qwen-Audio-3.0-Realtime Voice Agent Loop","subtitle":"A realtime speech system that listens, reasons, speaks, and calls tools within a single interaction loop.","width":1080,"height":888,"duration":6,"fps":15,"theme":"light","nodes":[{"id":"mic_audio","kind":"input","label":"Microphone Audio","icon":"microphone","description":"Streaming audio chunks captured from the user's microphone.","x":54,"y":146,"width":218,"height":124,"evidence":"Audio capture layer","rank":0,"row":0},{"id":"speech_model","kind":"method","label":"Speech Model","icon":"model","description":"Qwen-Audio-3.0-Realtime processes speech input and generates streaming text/audio or function calls.","x":54,"y":334,"width":218,"height":124,"evidence":"The Short Version","rank":0,"row":1},{"id":"direct_output","kind":"output","label":"Streaming Output","icon":"stream","description":"Incremental text and audio responses sent back to the client in real time.","x":54,"y":522,"width":218,"height":124,"evidence":"Streaming Output","rank":0,"row":2},{"id":"tool_exec","kind":"method","label":"Tool Execution","icon":"function-call","description":"Client-side execution of external tools (e.g., APIs, databases) based on the model's function call request.","x":54,"y":710,"width":218,"height":124,"evidence":"Function Calling makes the voice agent useful","rank":0,"row":3}],"edges":[{"id":"e1","from":"mic_audio","to":"speech_model","label":"audio stream","evidence":"The Short Version: client streams microphone audio"},{"id":"e2","from":"speech_model","to":"direct_output","label":"streaming response","evidence":"Streaming Output: text and audio arrive incrementally"},{"id":"e3","from":"speech_model","to":"tool_exec","label":"function_call","evidence":"Function Calling: model requests tool call"},{"id":"e4","from":"tool_exec","to":"speech_model","label":"tool result","evidence":"Function Calling loop: client returns tool result"}],"animation":[{"target":"e1","effect":"flow","at":0,"loop":true,"speed":24,"period":1.8},{"target":"e2","effect":"flow","at":0,"loop":true,"speed":24,"period":1.8},{"target":"e3","effect":"flow","at":0,"loop":true,"speed":24,"period":1.8},{"target":"e4","effect":"flow","at":0,"loop":true,"speed":24,"period":1.8}],"layoutMode":"layered"};
   const content = document.getElementById('content');
   const svg = document.getElementById('diagram');
   svg.setAttribute('viewBox', `0 0 ${diagram.width} ${diagram.height}`);
@@ -63,15 +64,22 @@
     return node;
   };
   const NODE_ACCENT = { input: '#259d8f', method: '#e99b1c', output: '#557bd8' };
-  const drawKindIcon = (parent, node) => {
+  const ICON_MOTION = Object.freeze({
+    scaleAmplitude: 0.04,
+    driftPx: 1.6,
+    staggerRadians: 0.72,
+    targetPeriodSeconds: 2
+  });
+  const drawKindIcon = (parent, node, index) => {
     const color = NODE_ACCENT[node.kind] || '#557bd8';
     const x = node.x + 16;
     const y = node.y + 18;
     const cx = x + 17;
     const cy = y + 17;
     const iconName = node.icon || (node.kind === 'input' ? 'document' : node.kind === 'output' ? 'check' : 'layers');
-    const group = el('g', { 'aria-hidden': 'true' });
+    const group = el('g', { class: 'node-icon', 'data-icon-index': index, 'aria-hidden': 'true' });
     const path = (d) => group.append(el('path', { class: 'node-icon-line', stroke: color, d }));
+    const glyph = (d, fill = 'none') => group.append(el('path', { class: 'node-icon-line', stroke: color, fill, d, transform: 'translate(' + cx + ' ' + cy + ')' }));
     const line = (x1, y1, x2, y2) => path(`M ${x1} ${y1} L ${x2} ${y2}`);
     const circle = (attrs) => group.append(el('circle', { ...attrs, stroke: color, class: attrs.fill ? '' : 'node-icon-line' }));
     const frame = (attrs) => group.append(el('rect', { class: 'node-icon-line', stroke: color, fill: 'none', ...attrs }));
@@ -107,6 +115,12 @@
       if (iconName === 'agent') group.append(el('rect', { class: 'node-icon-line', stroke: color, fill: '#fff', x: cx - 6, y: cy - 6, width: 12, height: 12, rx: 4 }));
       else circle({ cx, cy, r: 4 });
       [[cx - 10, cy - 7], [cx + 10, cy - 8], [cx - 9, cy + 9], [cx + 10, cy + 8]].forEach(([px, py]) => group.append(el('circle', { cx: px, cy: py, r: 2.1, fill: color })));
+    } else if (iconName === 'omni') {
+      [[cx, cy - 11], [cx + 11, cy], [cx, cy + 11], [cx - 11, cy]].forEach(([px, py]) => {
+        line(cx, cy, px, py);
+        group.append(el('circle', { cx: px, cy: py, r: 2.3, fill: color }));
+      });
+      frame({ x: cx - 4, y: cy - 4, width: 8, height: 8, rx: 2 });
     } else if (iconName === 'schema') {
       [cy - 8, cy, cy + 8].forEach((yy) => group.append(el('rect', { class: 'node-icon-line', stroke: color, fill: 'none', x: cx - 11, y: yy - 2.5, width: 22, height: 5, rx: 2.5 })));
     } else if (iconName === 'graph') {
@@ -126,6 +140,108 @@
       path(`M ${cx - 1} ${cy - 13} Q ${cx + 6} ${cy - 17}, ${cx + 13} ${cy - 11} M ${cx + 1} ${cy + 14} Q ${cx - 6} ${cy + 17}, ${cx - 13} ${cy + 11}`);
     } else if (iconName === 'layers') {
       [-5, 0, 5].forEach((dy) => path(`M ${cx} ${cy - 10 + dy} L ${cx + 12} ${cy - 4 + dy} L ${cx} ${cy + 2 + dy} L ${cx - 12} ${cy - 4 + dy} Z`));
+    } else if (iconName === 'context') {
+      frame({ x: cx - 13, y: cy - 11, width: 19, height: 15, rx: 4 });
+      frame({ x: cx - 6, y: cy - 3, width: 19, height: 15, rx: 4 });
+      group.append(el('circle', { cx: cx + 4, cy: cy + 5, r: 2.2, fill: color }));
+    } else if (iconName === 'bluetooth') {
+      path(`M ${cx} ${cy - 13} V ${cy + 13} M ${cx} ${cy - 13} L ${cx + 8} ${cy - 7} L ${cx} ${cy} L ${cx + 8} ${cy + 7} L ${cx} ${cy + 13} M ${cx - 9} ${cy - 7} L ${cx + 8} ${cy + 7} M ${cx - 9} ${cy + 7} L ${cx + 8} ${cy - 7}`);
+    } else if (iconName === 'wifi') {
+      [13, 9, 5].forEach((r, i) => path(`M ${cx - r} ${cy - 1 + i * 3} Q ${cx} ${cy - 10 + i * 3} ${cx + r} ${cy - 1 + i * 3}`));
+      group.append(el('circle', { cx, cy: cy + 9, r: 2.2, fill: color }));
+    } else if (iconName === 'cellular') {
+      line(cx, cy - 12, cx, cy + 12);
+      line(cx - 7, cy + 12, cx, cy + 2); line(cx, cy + 2, cx + 7, cy + 12);
+      path(`M ${cx - 10} ${cy - 7} Q ${cx} ${cy - 16} ${cx + 10} ${cy - 7} M ${cx - 14} ${cy - 3} Q ${cx} ${cy - 20} ${cx + 14} ${cy - 3}`);
+      group.append(el('circle', { cx, cy: cy - 9, r: 2.2, fill: color }));
+    } else if (iconName === 'api') {
+      frame({ x: cx - 14, y: cy - 10, width: 9, height: 20, rx: 3 });
+      frame({ x: cx + 5, y: cy - 10, width: 9, height: 20, rx: 3 });
+      line(cx - 5, cy, cx + 5, cy);
+      group.append(el('circle', { cx: cx - 9, cy: cy - 4, r: 1.8, fill: color }));
+      group.append(el('circle', { cx: cx + 9, cy: cy + 4, r: 1.8, fill: color }));
+    } else if (iconName === 'sdk') {
+      frame({ x: cx - 13, y: cy - 11, width: 26, height: 22, rx: 4 });
+      [[cx - 7, cy - 5], [cx + 4, cy - 5], [cx - 7, cy + 5], [cx + 4, cy + 5]].forEach(([px, py]) => frame({ x: px - 2.5, y: py - 2.5, width: 5, height: 5, rx: 1 }));
+    } else if (iconName === 'wearable') {
+      frame({ x: cx - 5, y: cy - 13, width: 10, height: 26, rx: 4 });
+      frame({ x: cx - 11, y: cy - 7, width: 22, height: 14, rx: 5 });
+      group.append(el('circle', { class: 'node-icon-line', stroke: color, fill: 'none', cx, cy, r: 3.5 }));
+    } else if (iconName === 'upload') {
+      path(`M ${cx - 12} ${cy + 3} V ${cy + 12} H ${cx + 12} V ${cy + 3} M ${cx} ${cy + 8} V ${cy - 11} M ${cx - 6} ${cy - 5} L ${cx} ${cy - 11} L ${cx + 6} ${cy - 5}`);
+    } else if (iconName === 'function-call') {
+      frame({ x: cx - 5, y: cy - 7, width: 10, height: 14, rx: 3 });
+      line(cx - 13, cy, cx - 5, cy); line(cx + 5, cy, cx + 13, cy);
+      path(`M ${cx + 9} ${cy - 4} L ${cx + 13} ${cy} L ${cx + 9} ${cy + 4}`);
+      group.append(el('circle', { cx: cx - 13, cy, r: 1.8, fill: color }));
+    } else if (iconName === 'noise') {
+      glyph('M -14 0 L -10 -8 L -6 7 L -2 -5 L 3 9 L 8 -6 L 14 0 M -13 13 L 13 -13');
+    } else if (iconName === 'diarization') {
+      glyph('M -10 -7 A 3 3 0 1 0 -4 -7 A 3 3 0 1 0 -10 -7 M -13 10 Q -7 3 -1 10 M 4 -7 A 3 3 0 1 0 10 -7 A 3 3 0 1 0 4 -7 M 1 10 Q 7 3 13 10 M 0 -13 V 13');
+    } else if (iconName === 'codec') {
+      glyph('M -15 0 H -11 L -8 -7 L -4 7 L 0 0 M 3 -10 H 10 V 10 H 3 Z M 13 -5 V 5 M 16 -3 V 3');
+    } else if (iconName === 'audio-token') {
+      glyph('M -14 -8 H -9 V 8 H -14 Z M -6 -8 H -1 V 8 H -6 Z M 2 -8 H 7 V 8 H 2 Z M 10 -8 H 15 V 8 H 10 Z M -15 11 H 15');
+    } else if (iconName === 'stream') {
+      glyph('M -15 0 H 15 M -12 0 A 2 2 0 1 0 -8 0 A 2 2 0 1 0 -12 0 M -4 0 A 2 2 0 1 0 0 0 A 2 2 0 1 0 -4 0 M 4 0 A 2 2 0 1 0 8 0 A 2 2 0 1 0 4 0 M 11 0 A 2 2 0 1 0 15 0 A 2 2 0 1 0 11 0');
+    } else if (iconName === 'prosody') {
+      glyph('M -14 6 Q -5 -13 14 -4 M -14 10 L -9 5 L -5 11 L 0 2 L 5 8 L 14 3');
+    } else if (iconName === 'emotion') {
+      glyph('M 0 12 C -12 4 -15 -5 -9 -10 C -4 -14 0 -8 0 -5 C 0 -8 4 -14 9 -10 C 15 -5 12 4 0 12 M -8 0 L -3 -3 L 2 2 L 8 -4');
+    } else if (iconName === 'voiceprint') {
+      glyph('M 0 -13 A 13 13 0 0 1 0 13 M 0 13 A 13 13 0 0 1 0 -13 M 0 -9 A 9 9 0 0 1 0 9 M 0 9 A 9 9 0 0 1 0 -9 M 0 -5 A 5 5 0 0 1 0 5 M 0 5 A 5 5 0 0 1 0 -5 M 0 -2 V 2');
+    } else if (iconName === 'alignment') {
+      glyph('M -14 -7 H 14 M -14 7 H 14 M -10 -4 V 4 M -2 -4 V 4 M 7 -4 V 4 M 13 -4 V 4');
+    } else if (iconName === 'interruption') {
+      glyph('M -14 -7 H -10 L -7 -12 L -3 -2 L 0 -7 M 0 7 H 4 L 7 2 L 10 11 L 14 7 M 0 -14 V 14');
+    } else if (iconName === 'phoneme') {
+      glyph('M -14 -6 H 14 V 6 H -14 Z M -8 0 H -7 M -1 0 H 0 M 6 0 H 7 M -8 10 Q 0 15 8 10');
+    } else if (iconName === 'language') {
+      glyph('M 0 -11 A 11 11 0 1 0 0 11 A 11 11 0 1 0 0 -11 M -10 0 H 10 M 0 -11 Q 6 0 0 11 Q -6 0 0 -11 M -14 -14 H -6 V -8 H -14 Z M 6 8 H 14 V 14 H 6 Z');
+    } else if (iconName === 'transformer') {
+      glyph('M -9 -11 H 9 V -6 H -9 Z M -9 -2 H 9 V 3 H -9 Z M -9 7 H 9 V 12 H -9 Z M -12 -12 L 12 12 M 12 -12 L -12 12');
+    } else if (iconName === 'attention') {
+      glyph('M 0 0 L -11 -8 M 0 0 L 0 -11 M 0 0 L 11 -5 M 0 0 L -6 9 M 0 0 L 8 10 M -13 -8 A 2 2 0 1 0 -9 -8 A 2 2 0 1 0 -13 -8 M -2 -11 A 2 2 0 1 0 2 -11 A 2 2 0 1 0 -2 -11 M 9 -5 A 2 2 0 1 0 13 -5 A 2 2 0 1 0 9 -5 M -8 9 A 2 2 0 1 0 -4 9 A 2 2 0 1 0 -8 9 M 6 10 A 2 2 0 1 0 10 10 A 2 2 0 1 0 6 10 M -3 0 A 3 3 0 1 0 3 0 A 3 3 0 1 0 -3 0');
+    } else if (iconName === 'memory') {
+      glyph('M -12 -10 H 12 V -5 H -12 Z M -12 -2 H 12 V 3 H -12 Z M -12 6 H 12 V 11 H -12 Z');
+    } else if (iconName === 'retrieval') {
+      glyph('M -12 -7 A 9 3 0 1 0 6 -7 A 9 3 0 1 0 -12 -7 M -12 -7 V 2 M 6 -7 V 2 M 4 7 A 5 5 0 1 0 14 7 A 5 5 0 1 0 4 7 M 12 11 L 16 15');
+    } else if (iconName === 'reasoning') {
+      glyph('M -12 -8 Q -2 -8 0 0 Q 2 8 12 8 M -14 -8 A 2 2 0 1 0 -10 -8 A 2 2 0 1 0 -14 -8 M -2 0 A 2 2 0 1 0 2 0 A 2 2 0 1 0 -2 0 M 10 8 A 2 2 0 1 0 14 8 A 2 2 0 1 0 10 8');
+    } else if (iconName === 'confidence') {
+      glyph('M -12 7 A 12 12 0 0 1 12 7 M 0 7 L 8 -3 M -2 7 A 2 2 0 1 0 2 7 A 2 2 0 1 0 -2 7');
+    } else if (iconName === 'workflow') {
+      glyph('M -15 -11 H -7 V -3 H -15 Z M -4 3 H 4 V 11 H -4 Z M 7 -11 H 15 V -3 H 7 Z M -7 -7 L -4 3 M 4 7 L 7 -7');
+    } else if (iconName === 'guardrail') {
+      glyph('M -11 -13 V 13 M 11 -13 V 13 M -8 8 Q 0 -9 8 8');
+    } else if (iconName === 'battery') {
+      glyph('M -12 -8 H 10 V 8 H -12 Z M 10 -4 H 13 V 4 H 10 M -8 -4 H 4 V 4 H -8 Z');
+    } else if (iconName === 'storage') {
+      glyph('M -13 -9 H 13 V 9 H -13 Z M -8 -2 H 8 M -8 4 H 8 M 7 -6 H 9');
+    } else if (iconName === 'firmware') {
+      glyph('M -9 -9 H 9 V 9 H -9 Z M -14 -5 H -9 M 9 5 H 14 M -5 -14 V -9 M 5 9 V 14 M -4 0 A 4 4 0 1 0 4 0 A 4 4 0 1 0 -4 0');
+    } else if (iconName === 'provisioning') {
+      glyph('M -12 -10 H 3 V 10 H -12 Z M 1 0 A 7 7 0 1 0 15 0 A 7 7 0 1 0 1 0 M 5 1 L 8 4 L 14 -3');
+    } else if (iconName === 'sync') {
+      glyph('M -10 -3 A 10 10 0 0 1 7 -9 M 7 -9 L 12 -8 L 10 -3 M 10 3 A 10 10 0 0 1 -7 9 M -7 9 L -12 8 L -10 3');
+    } else if (iconName === 'webhook') {
+      glyph('M -12 -9 Q -2 -9 -2 0 Q -2 9 8 9 H 13 M 11 7 A 2 2 0 1 0 15 7 A 2 2 0 1 0 11 7 M 4 -8 H 12');
+    } else if (iconName === 'websocket') {
+      glyph('M -14 -7 H -7 L -3 -12 L 2 -2 L 7 -7 H 14 M -14 7 H -7 L -3 2 L 2 12 L 7 7 H 14');
+    } else if (iconName === 'credential') {
+      glyph('M -14 -9 H 14 V 9 H -14 Z M -9 0 A 3 3 0 1 0 -3 0 A 3 3 0 1 0 -9 0 M -3 0 H 8 L 11 3');
+    } else if (iconName === 'telemetry') {
+      glyph('M -14 -10 H 14 V 10 H -14 Z M -10 5 L -5 0 L 0 3 L 5 -6 L 10 -2');
+    } else if (iconName === 'version') {
+      glyph('M -11 -12 H 6 V 8 H -11 Z M -4 -5 H 13 V 15 H -4 Z M 7 9 H 9');
+    } else if (iconName === 'audit') {
+      glyph('M -10 -12 H 4 L 10 -6 V 12 H -10 Z M -6 -2 H 3 M -6 3 H 2 M 2 7 A 4 4 0 1 0 10 7 A 4 4 0 1 0 2 7 M 9 10 L 13 14');
+    } else if (iconName === 'queue') {
+      glyph('M -11 -10 H 11 V -5 H -11 Z M -9 -2 H 9 V 3 H -9 Z M -7 6 H 7 V 11 H -7 Z');
+    } else if (iconName === 'retry') {
+      glyph('M -8 -2 A 9 9 0 1 1 7 -8 L 12 -7 L 10 -2');
+    } else if (iconName === 'checksum') {
+      glyph('M -10 -10 H 10 V 10 H -10 Z M -3 -10 V 10 M 4 -10 V 10 M -10 -3 H 10 M -10 4 H 10 M -7 1 L -2 6 L 7 -5');
     } else if (iconName === 'gate') {
       frame({ x: cx - 13, y: cy - 13, width: 5, height: 26, rx: 2 });
       frame({ x: cx + 8, y: cy - 13, width: 5, height: 26, rx: 2 });
@@ -149,12 +265,18 @@
     } else if (iconName === 'alert') {
       path(`M ${cx} ${cy - 13} L ${cx + 13} ${cy + 11} H ${cx - 13} Z M ${cx} ${cy - 4} V ${cy + 4}`);
       group.append(el('circle', { cx, cy: cy + 8, r: 1.7, fill: color }));
+    } else if (iconName === 'miss') {
+      group.append(el('circle', { class: 'node-icon-line', stroke: color, fill: 'none', cx, cy, r: 11 }));
+      line(cx - 8, cy - 8, cx + 8, cy + 8);
     } else if (iconName === 'check') {
       group.append(el('circle', { class: 'node-icon-line', stroke: color, fill: 'none', cx, cy, r: 12 }));
       path(`M ${cx - 7} ${cy} L ${cx - 2} ${cy + 6} L ${cx + 8} ${cy - 7}`);
     } else if (['phone', 'edge-device'].includes(iconName)) {
       frame({ x: cx - 7, y: cy - 13, width: 14, height: 26, rx: 4 });
       iconName === 'edge-device' ? frame({ x: cx - 3, y: cy - 3, width: 6, height: 6, rx: 1 }) : line(cx - 3, cy + 9, cx + 3, cy + 9);
+    } else if (iconName === 'fleet') {
+      [[cx - 9, cy + 5], [cx, cy - 8], [cx + 9, cy + 5]].forEach(([px, py]) => frame({ x: px - 4, y: py - 4, width: 8, height: 8, rx: 2 }));
+      path(`M ${cx - 9} ${cy + 5} L ${cx} ${cy - 8} L ${cx + 9} ${cy + 5}`);
     } else if (['chip', 'gpu'].includes(iconName)) {
       frame({ x: cx - 8, y: cy - 8, width: 16, height: 16, rx: 3 });
       line(cx - 13, cy - 5, cx - 8, cy - 5); line(cx + 8, cy - 5, cx + 13, cy - 5); line(cx - 13, cy + 5, cx - 8, cy + 5); line(cx + 8, cy + 5, cx + 13, cy + 5);
@@ -177,6 +299,11 @@
       group.append(el('circle', { class: 'node-icon-line', stroke: color, fill: 'none', cx, cy, r: 10 }));
       path(`M ${cx} ${cy} V ${cy - 6} M ${cx} ${cy} L ${cx + 6} ${cy + 3}`);
       if (iconName === 'latency') path(`M ${cx - 10} ${cy + 14} H ${cx - 4} L ${cx} ${cy + 9} L ${cx + 5} ${cy + 14} H ${cx + 12}`);
+    } else if (iconName === 'event') {
+      group.append(el('circle', { class: 'node-icon-line', stroke: color, fill: 'none', cx, cy, r: 4 }));
+      path(`M ${cx} ${cy - 13} V ${cy - 8} M ${cx} ${cy + 8} V ${cy + 13} M ${cx - 13} ${cy} H ${cx - 8} M ${cx + 8} ${cy} H ${cx + 13}`);
+    } else if (iconName === 'heartbeat') {
+      path(`M ${cx - 14} ${cy + 1} H ${cx - 8} L ${cx - 4} ${cy - 7} L ${cx + 1} ${cy + 9} L ${cx + 6} ${cy - 4} L ${cx + 10} ${cy + 1} H ${cx + 14}`);
     } else if (iconName === 'camera') {
       frame({ x: cx - 12, y: cy - 7, width: 24, height: 16, rx: 3 });
       group.append(el('circle', { class: 'node-icon-line', stroke: color, fill: 'none', cx, cy: cy + 1, r: 4 }));
@@ -238,6 +365,7 @@
     } else {
       [-5, 0, 5].forEach((dy) => path(`M ${cx} ${cy - 10 + dy} L ${cx + 12} ${cy - 4 + dy} L ${cx} ${cy + 2 + dy} L ${cx - 12} ${cy - 4 + dy} Z`));
     }
+    return group;
   };
   const wrapText = (parent, className, x, y, text, maxWidth, lineHeight, maxLines) => {
     const textNode = el('text', { class: className, x, y });
@@ -360,11 +488,12 @@
   });
 
   const nodeGroups = {};
-  diagram.nodes.forEach((node) => {
+  const iconGroups = {};
+  diagram.nodes.forEach((node, index) => {
     const group = el('g', { id: node.id, class: `node kind-${node.kind}` });
     content.append(group);
     group.append(el('rect', { class: 'node-box', x: node.x, y: node.y, width: node.width, height: node.height }));
-    drawKindIcon(group, node);
+    iconGroups[node.id] = drawKindIcon(group, node, index);
     const textX = node.x + 64;
     const textWidth = node.width - 78;
     const labelLines = wrapText(group, 'node-label', textX, node.y + 32, node.label, textWidth, 23, 2);
@@ -377,6 +506,14 @@
       node.classList.remove('highlighting');
       node.style.transform = 'scale(1)';
       node.style.filter = 'drop-shadow(0 5px 0 rgba(29,42,45,.08))';
+    });
+    const cycleDuration = Math.max(0.1, Number(diagram.duration) || 6);
+    const cycleCount = Math.max(1, Math.round(cycleDuration / ICON_MOTION.targetPeriodSeconds));
+    Object.values(iconGroups).forEach((iconGroup, index) => {
+      const phase = (time / cycleDuration) * Math.PI * 2 * cycleCount + index * ICON_MOTION.staggerRadians;
+      const scale = 1 + Math.sin(phase) * ICON_MOTION.scaleAmplitude;
+      const drift = Math.cos(phase) * ICON_MOTION.driftPx;
+      iconGroup.style.transform = `translateY(${drift.toFixed(3)}px) scale(${scale.toFixed(4)})`;
     });
     Object.values(edgeNodes).forEach((edge) => {
       edge.classList.remove('flowing');

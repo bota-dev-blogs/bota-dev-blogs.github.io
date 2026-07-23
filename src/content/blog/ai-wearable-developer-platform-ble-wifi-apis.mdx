@@ -1,0 +1,392 @@
+---
+title: "AI Wearable Platforms: BLE, Wi-Fi, SDKs, and APIs"
+slug: "ai-wearable-developer-platform-ble-wifi-apis"
+description: "How AI wearable platforms handle BLE pairing, mobile SDKs, Wi-Fi provisioning, direct uploads, device APIs, webhooks, and offline-first recovery."
+authors: ["Editorial Team"]
+date: "2026-07-09"
+modifiedDate: "2026-07-23"
+readTime: "17 min read"
+contentType: "research-digest"
+tags:
+  - "Developer Platform"
+  - "AI Wearables"
+  - "BLE"
+  - "Device APIs"
+  - "Offline Context"
+keywords:
+  - "AI wearable developer platform"
+  - "BLE React Native SDK"
+  - "Wi-Fi provisioning IoT"
+  - "device-to-cloud API"
+  - "offline context infrastructure"
+  - "wearable audio SDK"
+  - "presigned upload URL"
+  - "AI agent audio context"
+cover:
+  src: "/media/ai-wearable-developer-platform-ble-wifi-apis/featured.png"
+  alt: "Developer architecture map connecting an AI wearable through BLE, Wi-Fi, mobile SDKs, APIs, and agent context"
+  width: 1600
+  height: 900
+  fit: "cover"
+media:
+  - title: "AI wearable developer platform"
+    src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-3/01-article-summary.gif"
+    type: "image"
+    note: "A map of the device, mobile SDK, product backend, context platform, and AI agent workflow."
+  - title: "Multi-link connection policy"
+    src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-3/02-connection-policy.gif"
+    type: "image"
+    note: "A state map for BLE relay, direct Wi-Fi or cellular upload, heartbeat ownership, and recovery."
+  - title: "Secure recording upload lifecycle"
+    src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-3/03-upload-lifecycle.gif"
+    type: "image"
+    note: "A device-to-cloud lifecycle using scoped device credentials, presigned storage uploads, completion events, and webhooks."
+---
+
+## The Developer Platform Begins Where The Microphone Ends
+
+An AI wearable may have only a button, a microphone, a battery, local storage, and a few status indicators. It may not have a screen, keyboard, or reliable network connection.
+
+Yet the software product around it needs a surprisingly rich experience:
+
+- Discover and pair the device.
+- Associate it with the correct user and tenant.
+- Resume after the phone or device disappears.
+- Synchronize completed recordings.
+- Stream audio while recording when the connection permits.
+- Monitor battery, storage, firmware, and signal quality.
+- Configure Wi-Fi without exposing credentials.
+- Upload directly when a phone is unavailable.
+- Turn durable audio into transcripts, summaries, and agent context.
+
+This is why an AI wearable is not only a hardware product. It is the edge endpoint of a **developer platform**.
+
+The wider product case is covered in [why AI agents need offline conversation context](/blogs/offline-context-infrastructure-ai-agents/), while the commercial layer is analyzed in [who buys offline conversation APIs](/blogs/ai-wearables-offline-conversation-apis/). This guide stays at the developer boundary.
+
+![AI wearable developer platform](/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-3/01-article-summary.gif)
+
+The platform's job is to make an unreliable physical environment look like a coherent set of APIs, SDKs, recording states, and events. The product developer should be able to reason about recordings and context without rebuilding Bluetooth synchronization, device credentials, object-storage uploads, and fleet recovery.
+
+## Five Actors Share The System
+
+A clean architecture begins by separating five actors.
+
+### The Wearable
+
+The device owns microphones, local audio, battery, storage, hardware controls, and a persistent device identity. It should continue recording even when the phone or network disappears, within its documented storage and power limits.
+
+### The Mobile App And SDK
+
+The mobile app provides the user's interface and the phone's network connection. A native or [React Native](https://reactnative.dev/docs/native-platform) SDK hides low-level BLE commands, background synchronization, retries, and device status behind a product-oriented interface.
+
+### The Product Backend
+
+The software company's backend owns users, organizations, permissions, business objects, and long-lived platform credentials. It binds a physical device to the correct account and receives recording lifecycle events.
+
+### The Context Platform
+
+The platform registers devices, accepts recording metadata, stores audio, runs speech processing, versions artifacts, and publishes webhooks. It should remain independent from the customer's final CRM, clinical, legal, or productivity workflow.
+
+### The Product And Its AI Agents
+
+The final product presents transcripts, structured context, and proposed actions. Its agents use the context under the product's authorization and review rules.
+
+These boundaries are not cosmetic. They determine where secrets live, who retries failed work, and which system is authoritative for identity and lifecycle.
+
+## BLE Is The Baseline Control Plane
+
+[Bluetooth Low Energy](https://www.bluetooth.com/specifications/specs/core-specification/) is a natural baseline for a wearable because it is widely available on phones and optimized for low-power communication.
+
+BLE should be treated as more than a pipe for audio. It is usually the local control plane for:
+
+- Discovery and pairing.
+- Device identity and ownership binding.
+- Automatic reconnect by stable serial number or device ID.
+- Recording start, stop, and status.
+- Battery, storage, firmware, and signal telemetry.
+- Batch synchronization of completed recordings.
+- Streaming synchronization of in-progress recordings.
+- Wi-Fi scan results and network provisioning.
+- Recovery commands and diagnostic logs.
+
+A good SDK exposes these as domain operations instead of raw characteristic reads and writes. The application should ask to synchronize a recording, not manually assemble hundreds of BLE packets.
+
+## The Mobile SDK Owns A State Machine
+
+Pairing is the easy demo. Reconnection and recovery are the product.
+
+A mobile SDK needs to distinguish states such as:
+
+- Device discovered but not trusted.
+- Paired but not currently connected.
+- Connected and idle.
+- Recording locally.
+- Streaming current audio.
+- Synchronizing backlog.
+- Waiting for the device to confirm a command.
+- Low on storage or battery.
+- Updating firmware.
+- Recovering after interrupted transfer.
+
+The SDK should persist enough state to resume after the app restarts. A serial number or stable device identifier can support automatic reconnect, but it should not by itself prove authorization. The product backend should determine which user and tenant currently own the binding.
+
+For React Native, the JavaScript API may be convenient, but the critical queue and Bluetooth behavior usually belongs in native iOS and Android code. Mobile operating systems impose different background limits, Bluetooth permissions, and lifecycle behavior. The SDK contract should describe those differences rather than pretending the platforms are identical.
+
+## Batch Sync And Streaming Sync Serve Different Goals
+
+An offline-first wearable needs at least two synchronization modes.
+
+### Batch Synchronization
+
+The device records locally and later transfers completed audio to the phone. This mode is power-efficient, tolerant of app absence, and well suited to delayed transcription.
+
+The SDK needs chunk sequence numbers, checksums, resume offsets, and idempotent acknowledgements. Deleting local audio before durable confirmation is a data-loss bug.
+
+### Streaming Synchronization
+
+The device sends audio chunks over BLE while recording. The phone can relay them to the backend before the recording ends.
+
+Streaming reduces time to durability and can enable live transcription or monitoring. It also consumes more phone and device power, depends on background execution, and must tolerate temporary BLE loss.
+
+The two modes should converge on the same recording identity. If streaming stops at minute twelve and batch sync resumes after the meeting, the server should reconcile the missing range rather than create a second recording.
+
+This is a recurring design principle: **transport paths may change, but the recording must remain one logical object**.
+
+## Heartbeats Should Have One Owner
+
+Connected systems need liveness signals, but every radio wake-up consumes power.
+
+An illustrative policy might send a heartbeat every 60 seconds and use a connection preference such as:
+
+    BLE relay through the phone
+        -> direct Wi-Fi
+        -> direct cellular
+
+The interval and priority are product choices, not universal constants. A high-throughput upload may prefer Wi-Fi. An urgent field workflow may use cellular despite its power and cost. A phone in a restricted background state may be less reliable than direct connectivity.
+
+The useful pattern is **single heartbeat ownership**. When the device has an active BLE session, the mobile app can forward device status to the platform. The wearable can pause separate Wi-Fi or cellular heartbeats and avoid waking another radio only to report the same liveness.
+
+When BLE disappears, heartbeat ownership returns to the device and the direct link may become active. The platform should understand this handoff instead of interpreting it as multiple devices or duplicate sessions.
+
+![Multi-link connection policy](/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-3/02-connection-policy.gif)
+
+## Connection Priority Is A Policy Engine
+
+A fixed ordering such as BLE, then Wi-Fi, then cellular is useful as a starting point. A mature platform should evaluate more than availability.
+
+The decision can include:
+
+- Current recording state.
+- Backlog size and upload deadline.
+- Battery level and charging state.
+- Mobile app foreground or background status.
+- Wi-Fi quality and whether the network requires a captive portal.
+- Cellular signal, data plan, and regional availability.
+- User or enterprise policy.
+- Whether streaming or eventual upload is required.
+
+The connection manager should also include hysteresis. Without it, the device can switch repeatedly between two marginal links and make less progress than if it stayed on one.
+
+The developer-facing API should expose the chosen route and reason. "Sync delayed because no authorized route is available" is actionable. "Device offline" hides too much.
+
+## Direct Wi-Fi Or Cellular Upload Removes The Phone From The Data Path
+
+A device with Wi-Fi or cellular connectivity can upload independently after initial provisioning. The mobile app may still handle onboarding and settings, but the recording no longer depends on the phone being nearby.
+
+An illustrative device-to-cloud sequence is:
+
+    POST /v1/recordings
+      Authorization: scoped device credential
+
+    POST /v1/recordings/:recording_id/upload-url
+
+    PUT presigned-object-storage-url
+      Body: encrypted audio object
+
+    POST /v1/recordings/:recording_id/upload-complete
+      Checksum, byte count, part list, and final device timestamp
+
+These paths are an example API shape, not a vendor contract.
+
+The first request creates a logical recording and returns a stable ID. The second returns a short-lived [presigned URL](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html), allowing the device to upload directly to object storage without receiving broad storage credentials. The completion request tells the application layer that the expected object is present and ready for validation.
+
+For long recordings, multipart upload can reduce restart cost. Every part should have an index and checksum. Completion should be idempotent so a device can retry after losing the response.
+
+## Device Credentials Need Narrow Authority
+
+The wearable should never contain the software company's general API secret.
+
+It needs a device credential with narrow scope:
+
+- Identify one registered device.
+- Create recordings for the bound account.
+- Request upload authorization for those recordings.
+- Report health and firmware state.
+- Rotate or revoke credentials.
+- Deny access to unrelated recordings and tenants.
+
+The product backend uses a separate server credential for administrative operations. The mobile app uses a user session. These three identities should not be interchangeable.
+
+Credential rotation matters because devices can be lost, returned, resold, or transferred to another user. A factory identity can establish hardware authenticity, while an operational credential represents the current account binding.
+
+## Wi-Fi Provisioning Is A Security Protocol
+
+A wearable without a keyboard cannot receive an SSID and password directly from the user. The phone becomes the temporary input device.
+
+A secure provisioning flow can look like this:
+
+1. The device and app establish an authenticated BLE session.
+2. The device scans for nearby networks and returns candidate SSIDs.
+3. The user selects a network and enters credentials in the product app.
+4. The product backend authorizes provisioning with a short-lived, one-time grant.
+5. The app sends an encrypted credential envelope and grant to the device over BLE.
+6. The device validates the grant, decrypts the envelope locally, and attempts the connection.
+7. The device returns success or a structured failure without echoing the password.
+
+The exact cryptography and trust model depend on the hardware. The important design goal is that the platform should not need to store the Wi-Fi password in plaintext.
+
+A one-time grant limits replay and lets the backend apply policy: which user may configure which device, for how long, and in which environment. The grant is authorization, not the secret itself.
+
+Provisioning failures should distinguish incorrect credentials, unsupported security mode, weak signal, captive portal, and policy denial. A generic failure sends users and support teams into the wrong troubleshooting path.
+
+## The Recording API Needs A Lifecycle
+
+Audio upload is not a single boolean.
+
+A useful state machine might include:
+
+    created
+      -> receiving
+      -> uploaded
+      -> validated
+      -> processing
+      -> ready
+
+    Any active state
+      -> failed
+      -> retrying
+      -> quarantined
+
+"Uploaded" means bytes arrived. "Validated" means size, checksum, format, and required metadata passed inspection. "Ready" means the published transcript or context artifacts reached a declared version.
+
+The API should expose versions because speech processing can be rerun. A corrected transcript should not silently overwrite the evidence used by an earlier summary. Downstream products need to know which artifact version produced each action.
+
+## Webhooks Complete The Developer Experience
+
+The product backend should not poll every recording forever. It should receive lifecycle events such as:
+
+- Recording created.
+- Upload progressed or stalled.
+- Upload finalized.
+- Audio validation failed.
+- Transcript ready.
+- Summary or structured context ready.
+- Artifact corrected or reprocessed.
+- Recording expired or deleted.
+- Device health changed.
+
+[CloudEvents](https://cloudevents.io/) provides a useful model for consistent event envelopes. Each event needs an ID, type, subject, timestamp, schema version, and tenant context.
+
+Delivery should be at least once, which means duplicates are normal. The consumer must deduplicate by event ID and tolerate out-of-order arrival. A signature and timestamp protect the webhook endpoint from unauthenticated replay.
+
+The provider should offer event logs and replay. Webhooks are part of the product's data plane, not merely notifications.
+
+## The Context Layer Should Stay Separate From Transport
+
+Once audio is durable, the platform can create:
+
+- ASR transcripts and alternatives.
+- Speaker turns and provisional identities.
+- Language and timing metadata.
+- Summaries, topics, decisions, and tasks.
+- Domain-specific structured fields.
+- Embeddings and retrieval indexes.
+- Evidence links from every derived claim to source time ranges.
+
+Transport state and semantic state should remain separate. A recording can be fully uploaded but still processing. A transcript can be ready while speaker attribution remains provisional. A summary can be invalidated after a transcript correction.
+
+AI agents should consume versioned context events, not infer readiness from the existence of an audio file.
+
+## The B2B2C Integration Boundary
+
+In an embedded platform, the end user experiences the software company's product:
+
+    End user
+      -> product mobile app
+      -> mobile device SDK
+      -> product backend
+      -> device and context platform
+      -> product backend receives events
+      -> product presents context and agent actions
+
+The mobile SDK should therefore be brandable and composable. It provides device capabilities while the customer controls onboarding language, account identity, consent workflow, and final interface.
+
+The backend API should make multi-tenancy explicit. A device belongs to a tenant and user under a versioned binding. Reassignment should revoke old credentials and prevent previously cached mobile sessions from continuing to synchronize.
+
+This boundary lets a SaaS company add physical capture without exposing its customers to a separate recording application.
+
+## Offline-First Reliability Requires Adversarial Testing
+
+The happy path proves very little. Test the system by interrupting it.
+
+**BLE:** Walk out of range, kill the app, revoke permission, pair from another phone, and reconnect during an active transfer.
+
+**Recording:** Fill local storage, restart mid-recording, cross a clock change, and press controls repeatedly.
+
+**Wi-Fi:** Use a wrong password, weak signal, captive portal, changed access point, and network loss during multipart upload.
+
+**Cellular:** Remove coverage, exhaust the data plan, change region, and move between towers.
+
+**API:** Retry every POST, deliver responses late, duplicate completion, expire upload URLs, and reorder webhooks.
+
+**Identity:** Transfer the device to another user, revoke it while offline, restore from a mobile backup, and attempt cross-tenant access.
+
+**Processing:** Send unsupported audio, silence, clipped headers, duplicate chunks, and a corrected transcript after an agent already created a draft.
+
+The expected result is not that every operation succeeds immediately. It is that state remains coherent and recovery is explainable.
+
+## What Developers Need From The Platform
+
+A credible developer platform should provide more than endpoint documentation.
+
+- A mobile SDK with explicit lifecycle and background behavior.
+- A device simulator for testing without physical inventory.
+- Sandbox tenants and disposable device credentials.
+- Deterministic webhook fixtures and replay.
+- Recording-state and connectivity diagrams.
+- Error codes that separate user action, device failure, network failure, and server failure.
+- Exportable source audio and versioned artifacts.
+- Fleet observability by firmware, battery, storage, backlog, and connection route.
+- Reference applications that demonstrate recovery, not only onboarding.
+- A security model for provisioning, credential rotation, transfer, and decommissioning.
+
+The quality of the SDK is measured by the number of hardware edge cases the application team does not have to rediscover.
+
+## Why This Is Offline Context Infrastructure
+
+The microphone is visible, but the real product is continuity.
+
+BLE gives the device a low-power relationship with the phone. Wi-Fi and cellular provide independent routes. The mobile SDK translates physical state into application state. Device APIs create durable identities and recordings. Presigned storage uploads move large audio without broad credentials. Webhooks deliver versioned processing results. The context layer makes those results useful to AI agents.
+
+Every component protects the same invariant:
+
+> One real-world conversation should become one durable, traceable, permissioned context object, even when devices, apps, radios, networks, and models fail independently.
+
+That invariant is what turns a recorder into a developer platform.
+
+## Closing View
+
+Building an AI wearable is not finished when the microphone works or the first transcript appears.
+
+The hard engineering lives between those moments: pairing, reconnecting, synchronizing, choosing a route, provisioning a network, securing device identity, completing an upload, publishing an event, versioning derived context, and recovering when any step is interrupted.
+
+A strong developer platform makes those constraints explicit and gives software companies stable abstractions over them. The final product can then focus on what the conversation means and what its AI agents are allowed to do, instead of becoming a Bluetooth, firmware, storage, and fleet-operations company first.
+
+## References
+
+- Bluetooth SIG, [Bluetooth Core Specification](https://www.bluetooth.com/specifications/specs/core-specification/).
+- React Native, [Native Platform documentation](https://reactnative.dev/docs/native-platform).
+- Amazon Web Services, [Uploading objects with presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html).
+- Cloud Native Computing Foundation, [CloudEvents](https://cloudevents.io/).
+- IETF, [HTTP Semantics, RFC 9110](https://www.rfc-editor.org/rfc/rfc9110).
+- NIST, [IoT Device Cybersecurity Capability Core Baseline](https://csrc.nist.gov/pubs/ir/8259/a/final).

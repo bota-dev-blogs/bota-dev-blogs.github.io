@@ -1,0 +1,13 @@
+{
+  "pipeline": "ai-gif-pipeline-2",
+  "source": "diagram.json",
+  "assetSlug": "offline-voice-ai-agent-context",
+  "outputs": {
+    "diagram": "diagram.json",
+    "preview": "diagram.html",
+    "gif": "01-offline-voice-context-stack.gif"
+  },
+  "pages": [
+    "01-offline-voice-context-stack.gif"
+  ]
+}

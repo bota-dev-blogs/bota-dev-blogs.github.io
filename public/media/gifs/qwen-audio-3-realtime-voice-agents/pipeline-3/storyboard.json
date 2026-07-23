@@ -20,7 +20,7 @@
           "type": "input",
           "label": "Voice Agent Runtime",
           "caption": "Combines speech I/O, turn detection, streaming, and function calling via WebSocket.",
-          "visual": "microphone",
+          "visual": "agent",
           "shape": "illustration",
           "position": {
             "x": 0.1,
@@ -32,7 +32,7 @@
           "type": "process",
           "label": "API as State Machine",
           "caption": "Event vocabulary defines conversational state, interruptions, and context management.",
-          "visual": "schema",
+          "visual": "api",
           "shape": "pill",
           "position": {
             "x": 0.28,
@@ -44,7 +44,7 @@
           "type": "process",
           "label": "Smart Turn Detection",
           "caption": "smart_turn uses acoustic and semantic signals for natural turn-taking, ignoring fillers.",
-          "visual": "ear",
+          "visual": "interruption",
           "shape": "pill",
           "position": {
             "x": 0.46,
@@ -56,7 +56,7 @@
           "type": "process",
           "label": "Function Calling",
           "caption": "Model streams tool calls; client executes with validation, confirmation, and audit.",
-          "visual": "gear",
+          "visual": "function-call",
           "shape": "pill",
           "position": {
             "x": 0.46,

@@ -20,7 +20,7 @@
           "type": "context",
           "label": "Classic KWS",
           "caption": "Templates, HMMs, MFCCs, and phrase-specific detection",
-          "visual": "document",
+          "visual": "ear",
           "shape": "card",
           "position": {
             "x": 0.12,
@@ -32,7 +32,7 @@
           "type": "process",
           "label": "Small neural KWS",
           "caption": "Compact DNN and CNN models run before ASR",
-          "visual": "gear",
+          "visual": "chip",
           "shape": "card",
           "position": {
             "x": 0.33,
@@ -44,7 +44,7 @@
           "type": "decision",
           "label": "Intent gate",
           "caption": "Wake evidence combines with speaker and context",
-          "visual": "shield",
+          "visual": "gate",
           "shape": "illustration",
           "position": {
             "x": 0.55,
@@ -151,7 +151,7 @@
           "type": "decision",
           "label": "Threshold",
           "caption": "One score creates two different failure modes",
-          "visual": "graph",
+          "visual": "filter",
           "shape": "illustration",
           "position": {
             "x": 0.18,
@@ -175,7 +175,7 @@
           "type": "result",
           "label": "False rejects",
           "caption": "The user says the phrase and gets ignored",
-          "visual": "mask",
+          "visual": "miss",
           "shape": "card",
           "position": {
             "x": 0.42,
@@ -187,7 +187,7 @@
           "type": "context",
           "label": "Device class",
           "caption": "Speaker, car, phone, watch, earbud, wearable",
-          "visual": "headphones",
+          "visual": "wearable",
           "shape": "card",
           "position": {
             "x": 0.64,
@@ -284,7 +284,7 @@
           "type": "process",
           "label": "Zero-shot KWS",
           "caption": "Match new phrases without phrase-specific retraining",
-          "visual": "search",
+          "visual": "model",
           "shape": "card",
           "position": {
             "x": 0.18,
@@ -296,7 +296,7 @@
           "type": "process",
           "label": "Personalization",
           "caption": "Use phonemes, prosody, and speaker information",
-          "visual": "person",
+          "visual": "voiceprint",
           "shape": "card",
           "position": {
             "x": 0.18,
@@ -320,7 +320,7 @@
           "type": "decision",
           "label": "DDSD",
           "caption": "Decide whether speech is addressed to the device",
-          "visual": "microphone",
+          "visual": "gate",
           "shape": "card",
           "position": {
             "x": 0.7,
@@ -332,7 +332,7 @@
           "type": "decision",
           "label": "Semantic VAD",
           "caption": "Estimate whether it is the assistant's turn",
-          "visual": "clock",
+          "visual": "ear",
           "shape": "card",
           "position": {
             "x": 0.7,
@@ -418,7 +418,7 @@
           "type": "input",
           "label": "Always-on budget",
           "caption": "Define which sensing layer can run continuously",
-          "visual": "gear",
+          "visual": "battery",
           "shape": "card",
           "position": {
             "x": 0.14,
@@ -454,7 +454,7 @@
           "type": "decision",
           "label": "Risk tiers",
           "caption": "Require explicit confirmation for sensitive actions",
-          "visual": "alert",
+          "visual": "guardrail",
           "shape": "card",
           "position": {
             "x": 0.7,
@@ -466,7 +466,7 @@
           "type": "result",
           "label": "Visible privacy",
           "caption": "Show listening, upload, mute, and deletion states",
-          "visual": "shield",
+          "visual": "lock",
           "shape": "illustration",
           "position": {
             "x": 0.84,

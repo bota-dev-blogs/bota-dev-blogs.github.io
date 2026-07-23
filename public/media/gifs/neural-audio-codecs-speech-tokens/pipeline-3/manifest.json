@@ -1,0 +1,18 @@
+{
+  "pipeline": "ai-gif-pipeline-3",
+  "source": "storyboard.json",
+  "assetSlug": "neural-audio-codecs-speech-tokens",
+  "title": "Neural Audio Codecs",
+  "version": 2,
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-article-summary.gif",
+      "02-codec-evaluation.gif"
+    ]
+  },
+  "pages": [
+    "01-article-summary.gif",
+    "02-codec-evaluation.gif"
+  ]
+}

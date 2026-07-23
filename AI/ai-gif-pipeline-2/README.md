@@ -18,10 +18,11 @@ the exact method concept instead.
 
 Node icons are wordless monoline glyphs. Avoid relying on visible acronyms,
 letters, flags, emoji, language characters, or mascots as visual symbols.
-`src/layout-diagram.js` derives `node.icon` through the shared resolver in
-`AI/shared/semantic-icons.cjs`, using `input -> document`, `method -> layers`,
-and `output -> check` as kind-aware fallbacks. The HTML template must keep a
-small SVG drawing case for every shared icon name.
+Published `diagram.json` nodes must define a canonical `node.icon` from
+`AI/shared/semantic-icons.cjs`. `src/layout-diagram.js` preserves valid explicit
+choices and uses semantic matching plus `input -> document`, `method -> layers`,
+and `output -> check` fallbacks only for missing or unknown draft values. The
+HTML template must keep a small SVG drawing case for every shared icon name.
 
 For normal blog work, run it from the repository root:
 

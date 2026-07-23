@@ -54,7 +54,7 @@ const posts = [
   },
   {
     slug: "how-otter.ai-handles-in-person-meetings",
-    file: "src/content/blog/how-otter.ai-handles-in-person-meetings.mdx",
+    file: "src/content/blog/how-otter-ai-handles-in-person-meetings.mdx",
     theme: "meeting",
     alt: "Futuristic meeting room AI capture system with robots and spatial microphones",
     prompt: [

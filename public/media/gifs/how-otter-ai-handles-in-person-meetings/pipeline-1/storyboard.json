@@ -12,7 +12,7 @@
         {
           "title": "Virtual meeting",
           "body": "A bot can join the call because the audio stream already exists online.",
-          "icon": "bot"
+          "icon": "cloud"
         },
         {
           "title": "Physical meeting",

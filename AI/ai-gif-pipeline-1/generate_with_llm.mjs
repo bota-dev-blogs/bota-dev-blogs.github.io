@@ -10,14 +10,8 @@ import { zodTextFormat } from 'openai/helpers/zod';
 const require = createRequire(import.meta.url);
 const sharedIcons = require('../shared/semantic-icons.cjs');
 const Icon = z.enum(sharedIcons.ICON_NAMES);
-const CONCRETE_ICON_HINTS = [
-  'microphone', 'waveform', 'asr', 'tts', 'headphones', 'speaker', 'subtitle',
-  'phone', 'edge-device', 'chip', 'gpu', 'server', 'router', 'sensor',
-  'camera', 'cloud', 'network', 'database', 'dataset', 'embedding', 'model',
-  'shield', 'lock', 'gate', 'filter', 'target', 'sliders', 'latency',
-  'translate', 'globe', 'document', 'search', 'check', 'alert', 'gear',
-  'link', 'layers', 'merge', 'room', 'bot', 'ear', 'video', 'branch'
-].filter((name) => sharedIcons.ICON_NAMES.includes(name)).join(', ');
+const ABSTRACT_ICON_NAMES = new Set(['person', 'bot', 'idea', 'agent', 'schema', 'graph', 'chat-bubbles']);
+const CONCRETE_ICON_HINTS = sharedIcons.ICON_NAMES.filter((name) => !ABSTRACT_ICON_NAMES.has(name)).join(', ');
 const Layout = z.enum(['row', 'timeline', 'spotlight', 'stacked', 'grid', 'mosaic', 'compare', 'lanes', 'checklist']);
 const Composition = z.enum(['flow', 'comparison', 'checklist', 'system-map', 'failure-map', 'evidence-map', 'compact-grid', 'spotlight']);
 const IntroStyle = z.enum(['guide', 'badge', 'ribbon', 'split', 'quiet']);

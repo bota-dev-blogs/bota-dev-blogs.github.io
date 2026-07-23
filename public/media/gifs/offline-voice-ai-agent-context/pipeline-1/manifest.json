@@ -1,0 +1,15 @@
+{
+  "pipeline": "ai-gif-pipeline-1",
+  "source": "storyboard.json",
+  "assetSlug": "offline-voice-ai-agent-context",
+  "title": "Offline Voice AI Reliability",
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-reliability-checklist.gif"
+    ]
+  },
+  "pages": [
+    "01-reliability-checklist.gif"
+  ]
+}

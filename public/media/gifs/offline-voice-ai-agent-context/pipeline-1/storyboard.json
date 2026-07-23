@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "style": "pastel-handdrawn",
+  "title": "Offline Voice AI Reliability",
+  "pages": [
+    {
+      "title": "Four Reliability Gates",
+      "section": "Reliability Checklist",
+      "pageLabel": "1",
+      "kicker": "A recording becomes useful context only when every contract holds",
+      "composition": "checklist",
+      "layout": "checklist",
+      "introStyle": "quiet",
+      "titleTreatment": "none",
+      "surface": "open",
+      "cards": [
+        {
+          "title": "Capture integrity",
+          "body": "Make recording state visible, preserve timestamps, and recover local audio after interruption.",
+          "icon": "microphone"
+        },
+        {
+          "title": "Transfer integrity",
+          "body": "Resume unstable links without missing, reordering, or duplicating audio chunks.",
+          "icon": "sync"
+        },
+        {
+          "title": "Semantic integrity",
+          "body": "Trace every generated note or task back to transcript spans and audio time ranges.",
+          "icon": "link"
+        },
+        {
+          "title": "Policy integrity",
+          "body": "Carry consent, allowed uses, retention, deletion, and audit state through every derivative.",
+          "icon": "shield"
+        }
+      ],
+      "fileSlug": "reliability-checklist"
+    }
+  ]
+}

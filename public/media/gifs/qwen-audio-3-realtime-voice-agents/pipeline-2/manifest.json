@@ -1,6 +1,6 @@
 {
   "pipeline": "ai-gif-pipeline-2",
-  "source": "qwen-audio-3-realtime-voice-agents.md",
+  "source": "diagram.json",
   "assetSlug": "qwen-audio-3-realtime-voice-agents",
   "outputs": {
     "diagram": "diagram.json",

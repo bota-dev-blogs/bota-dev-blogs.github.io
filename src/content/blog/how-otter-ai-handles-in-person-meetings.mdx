@@ -1,0 +1,170 @@
+---
+title: "Otter.ai for In-Person Meetings: Where Hardware Fits"
+slug: "how-otter.ai-handles-in-person-meetings"
+description: "How Otter.ai records in-person meetings, where mobile capture works, and when third-party hardware or embedded meeting infrastructure fits."
+authors: ["Editorial Team"]
+date: "2025-11-02"
+modifiedDate: "2026-07-23"
+readTime: "8 min read"
+contentType: "product-analysis"
+tags:
+  - "Product Analysis"
+  - "Meeting AI"
+  - "In-Person Audio"
+  - "Hardware"
+keywords:
+  - "Otter.ai in-person meetings"
+  - "Otter.ai recording"
+  - "in-person meeting transcription"
+  - "meeting transcription hardware"
+  - "mobile meeting recorder"
+  - "offline meeting capture"
+  - "meeting intelligence API"
+cover:
+  src: "/media/how-otter.ai-handles-in-person-meetings/featured.png"
+  alt: "Illustration of an in-person meeting capture and transcription system"
+  width: 1600
+  height: 900
+  fit: "cover"
+media:
+  - title: "In-person meeting capture map"
+    src: "/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-3/01-article-summary.gif"
+    type: "image"
+    note: "A map of virtual and physical meeting capture paths."
+  - title: "Meeting capture architecture"
+    src: "/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-2/01-in-person-meeting-capture-options.gif"
+    type: "image"
+    note: "Phone, room-audio, and infrastructure paths for in-person transcription."
+  - title: "In-person capture explainer"
+    src: "/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-1/01-what-is-otter-ai.gif"
+    type: "image"
+    note: "The main differences between online and in-person meeting capture."
+  - title: "Build versus integrate trade-off"
+    src: "/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-3/02-build-or-integrate.gif"
+    type: "image"
+    note: "A product decision map for adding physical meeting capture."
+---
+
+## The Short Answer
+
+[Otter.ai](https://otter.ai) supports both online and in-person meeting transcription, but the capture paths are different.
+
+For supported online meetings, Otter Notetaker can join a conferencing session and receive digital meeting audio. For an in-person conversation, Otter's documented workflow uses an app running on a phone, tablet, or computer to record through the device's microphone. Otter then turns that recording into a transcript and related meeting artifacts.
+
+For a vendor-neutral treatment of the deeper capture and synchronization problem, see the [offline voice AI architecture guide](/blogs/offline-voice-ai-agent-context/).
+
+That distinction matters. Online transcription starts with a software session. In-person transcription starts with room acoustics, microphone placement, battery, device permissions, and a person remembering to begin recording.
+
+![In-person meeting capture map](/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-3/01-article-summary.gif)
+
+This review is based on Otter's public product and help-center material available on July 23, 2026. Features and supported devices can change, so teams making a purchase decision should confirm the current documentation.
+
+## Otter's Documented In-Person Workflow
+
+Otter's help center provides a general guide to [recording a conversation](https://help.otter.ai/hc/en-us/articles/360048269733-Record-a-conversation) and a separate set of [best practices for in-person recordings](https://help.otter.ai/hc/en-us/articles/31672594631063-Getting-the-most-out-of-Otter-ai-Best-Practices-for-in-person-recordings). The workflow is software-led:
+
+1. Open Otter on a supported device.
+2. Place the device where the microphone can capture the participants.
+3. Start and stop the recording in the app.
+4. Let Otter process the audio into a transcript and meeting notes.
+5. Review speaker labels, text, and generated outputs before sharing or acting on them.
+
+This is a sensible default for individuals and small teams because it uses hardware they already carry. It also means that capture quality depends on the recording device and the room.
+
+![In-person meeting capture explainer](/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-1/01-what-is-otter-ai.gif)
+
+## Does Otter Sell Dedicated Room Hardware?
+
+Otter's public help-center workflow is centered on its software and on supported or third-party recording hardware. In the material reviewed for this article, Otter did not list a first-party meeting-room appliance comparable to a dedicated conference-room recorder.
+
+That is more precise than saying Otter has "no hardware support." Otter publishes [system requirements and third-party hardware guidance](https://help.otter.ai/hc/en-us/articles/360047247594-System-requirements-third-party-hardware), and a phone or computer is itself part of the audio system. External microphones and room-audio equipment may improve capture when they are compatible and correctly configured.
+
+The relevant product question is therefore not simply whether hardware exists. It is **who owns the capture experience**:
+
+- The user, with a phone or laptop.
+- The organization, with standardized room equipment.
+- An infrastructure provider, with managed devices, synchronization, and APIs.
+
+## Mobile Capture Is Useful, But Context Matters
+
+Phone-based recording is not inherently low quality. In a quiet one-to-one conversation, a modern phone placed close to both speakers may be entirely adequate. The same phone at one end of a large table, inside a noisy restaurant, or beside a loud HVAC vent may produce a very different result.
+
+The main variables are:
+
+- **Distance:** speech level falls as speakers move away from the microphone.
+- **Direction:** device microphones do not capture every seat equally.
+- **Overlap:** simultaneous speakers are difficult for both ASR and speaker diarization.
+- **Room acoustics:** reverberation and background noise reduce intelligibility.
+- **Device state:** calls, low battery, permissions, and operating-system behavior can interrupt capture.
+- **User action:** the workflow still depends on starting, placing, and stopping the recorder correctly.
+
+For occasional meetings, those constraints may be acceptable. For a repeated enterprise workflow, inconsistency can become the larger problem: every room and every user creates a slightly different capture setup.
+
+## Three Ways To Add In-Person Transcription
+
+Teams building meeting intelligence generally have three starting points.
+
+### 1. Use Existing Phones And Computers
+
+This is the fastest route. It has little hardware overhead and works well when users already understand the recording workflow.
+
+It fits interviews, one-to-one meetings, and small groups where the device can be placed near the speakers. It becomes harder to standardize across large rooms, mobile field work, or workflows where missing a recording is costly.
+
+### 2. Standardize Third-Party Room Audio
+
+A team can pair transcription software with conference microphones, USB audio interfaces, or existing room systems. This can improve consistency without requiring the software company to manufacture a device.
+
+The trade-off is integration work. The organization still has to qualify hardware, document setup, handle operating-system routing, troubleshoot rooms, and decide who starts each recording.
+
+### 3. Use A Hardware-Plus-API Platform
+
+Products that need embedded physical-world capture can use a provider that combines recording devices, synchronization, device management, and APIs. The [AI wearable developer-platform guide](/blogs/ai-wearable-developer-platform-ble-wifi-apis/) explains this architecture through BLE, mobile SDKs, direct upload, device identity, transcription, and webhooks.
+
+This is not an Otter integration claim. It is a different architecture for software companies that want in-person audio inside their own product rather than inside a separate transcription app.
+
+![Meeting room capture architecture](/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-2/01-in-person-meeting-capture-options.gif)
+
+![Build versus integrate trade-off](/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-3/02-build-or-integrate.gif)
+
+## How The Options Compare
+
+| Approach | Good starting point for | Main operational responsibility |
+| --- | --- | --- |
+| Phone or laptop app | Individual and occasional recording | The user manages placement, power, and recording state |
+| Third-party room audio | Standardized offices and conference rooms | The organization qualifies and supports the setup |
+| Custom hardware | Products where capture behavior is a core differentiator | The product team owns firmware, supply chain, security, and fleet operations |
+| Hardware-plus-API platform | Software products embedding managed physical capture | The provider operates much of the device and ingestion layer |
+
+No option is universally better. The choice depends on meeting size, acoustic conditions, deployment scale, data residency, user behavior, and how costly a missed or unusable recording would be.
+
+## Consent And Review Still Belong In The Product
+
+Better capture does not remove the need for permission. Recording laws and organizational policies vary by location and use case. A production workflow should make recording state visible, notify participants where required, restrict access, define retention, and provide a deletion path.
+
+Generated notes also need review. ASR can miss names and domain terms; speaker diarization can assign a statement to the wrong person; a summary can overstate an uncertain discussion. The transcript and source audio should remain available to authorized reviewers when the workflow requires traceability.
+
+## What To Measure
+
+Teams evaluating in-person meeting capture should test more than transcript accuracy:
+
+- Recording-start success and unexpected-stop rate.
+- Usable speech coverage by seat and room type.
+- Domain-term recall and speaker-attribution error.
+- Time from meeting end to a reviewable transcript.
+- User correction rate for transcripts, names, and action items.
+- Consent, retention, export, and deletion behavior.
+- Support burden per device, room, and active user.
+
+These metrics reveal whether a workflow is merely available or dependable enough for repeated use.
+
+## The Practical Conclusion
+
+Otter's in-person workflow makes transcription accessible through familiar devices. That is a strength for fast adoption and smaller meetings. It also leaves microphone placement, device state, and recording discipline in the user's hands.
+
+Teams that need more predictable physical capture can standardize third-party room audio, build specialized hardware, or adopt a hardware-plus-API platform. The right choice is not determined by the transcription model alone. It is determined by who should own the microphone, the recording state, the data path, and the operational burden.
+
+## References
+
+- Otter.ai, [Record a conversation](https://help.otter.ai/hc/en-us/articles/360048269733-Record-a-conversation).
+- Otter.ai, [Best practices for in-person recordings](https://help.otter.ai/hc/en-us/articles/31672594631063-Getting-the-most-out-of-Otter-ai-Best-Practices-for-in-person-recordings).
+- Otter.ai, [System requirements and third-party hardware](https://help.otter.ai/hc/en-us/articles/360047247594-System-requirements-third-party-hardware).

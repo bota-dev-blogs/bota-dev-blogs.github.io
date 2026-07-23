@@ -1,0 +1,197 @@
+{
+  "version": 2,
+  "style": "pastel-handdrawn",
+  "title": "Real-Time ASR",
+  "visualDirection": {
+    "character": "systems map for streaming speech teams",
+    "recurringMetaphor": "uncertain audio becoming stable application evidence"
+  },
+  "pages": [
+    {
+      "title": "Streaming Recognition Contract",
+      "section": "article-summary",
+      "pageLabel": "1",
+      "format": "wide",
+      "layout": "semantic-map",
+      "headline": "Real-time ASR must balance fast partials, stable text, and safe endpoints",
+      "nodes": [
+        {
+          "id": "capture",
+          "type": "input",
+          "label": "Audio stream",
+          "caption": "Timed chunks, buffering, microphone state, and reconnects",
+          "visual": "stream",
+          "shape": "illustration",
+          "position": {
+            "x": 0.09,
+            "y": 0.56
+          }
+        },
+        {
+          "id": "decode",
+          "type": "process",
+          "label": "Incremental decode",
+          "caption": "CTC, transducers, or chunked encoders emit partial words",
+          "visual": "asr",
+          "shape": "card",
+          "position": {
+            "x": 0.3,
+            "y": 0.34
+          }
+        },
+        {
+          "id": "context",
+          "type": "context",
+          "label": "Session context",
+          "caption": "Hotwords, language, speakers, and domain vocabulary",
+          "visual": "context",
+          "shape": "card",
+          "position": {
+            "x": 0.3,
+            "y": 0.76
+          }
+        },
+        {
+          "id": "stability",
+          "type": "evidence",
+          "label": "Stability gate",
+          "caption": "Interim, stable, and final text remain separate states",
+          "visual": "gate",
+          "shape": "illustration",
+          "position": {
+            "x": 0.53,
+            "y": 0.55
+          }
+        },
+        {
+          "id": "endpoint",
+          "type": "decision",
+          "label": "Turn endpoint",
+          "caption": "Silence, semantics, latency, and action risk set the boundary",
+          "visual": "latency",
+          "shape": "card",
+          "position": {
+            "x": 0.75,
+            "y": 0.35
+          }
+        },
+        {
+          "id": "application",
+          "type": "result",
+          "label": "Application event",
+          "caption": "Display, persist, summarize, or request confirmation",
+          "visual": "event",
+          "shape": "card",
+          "position": {
+            "x": 0.88,
+            "y": 0.74
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "capture",
+          "to": "decode",
+          "label": "stream",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "audio",
+          "pathStyle": "curve",
+          "bend": -0.15
+        },
+        {
+          "from": "capture",
+          "to": "context",
+          "label": "session",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "audio",
+          "pathStyle": "curve",
+          "bend": 0.15
+        },
+        {
+          "from": "decode",
+          "to": "stability",
+          "label": "partials",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "text",
+          "pathStyle": "curve",
+          "bend": 0.12
+        },
+        {
+          "from": "context",
+          "to": "stability",
+          "label": "bias",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "text",
+          "pathStyle": "curve",
+          "bend": -0.12
+        },
+        {
+          "from": "stability",
+          "to": "endpoint",
+          "label": "stable words",
+          "labelPriority": "essential",
+          "relation": "evidence",
+          "edgeGroup": "decision",
+          "pathStyle": "curve",
+          "bend": -0.1
+        },
+        {
+          "from": "endpoint",
+          "to": "application",
+          "label": "finalize",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "edgeGroup": "decision",
+          "pathStyle": "curve",
+          "bend": 0.12
+        },
+        {
+          "from": "stability",
+          "to": "application",
+          "label": "live display",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "display",
+          "pathStyle": "curve",
+          "bend": 0.34,
+          "via": [
+            {
+              "x": 0.67,
+              "y": 0.84
+            },
+            {
+              "x": 0.8,
+              "y": 0.86
+            }
+          ]
+        }
+      ],
+      "groups": [
+        {
+          "id": "recognition",
+          "label": "Recognition evidence",
+          "nodeIds": [
+            "decode",
+            "context"
+          ],
+          "color": "teal",
+          "labelAlign": "left"
+        },
+        {
+          "id": "control",
+          "label": "Commit boundary",
+          "nodeIds": [
+            "endpoint",
+            "application"
+          ],
+          "color": "orange",
+          "labelAlign": "right"
+        }
+      ]
+    }
+  ]
+}

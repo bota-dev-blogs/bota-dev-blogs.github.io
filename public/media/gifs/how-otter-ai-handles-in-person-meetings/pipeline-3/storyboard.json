@@ -20,7 +20,7 @@
           "type": "context",
           "label": "Virtual meeting",
           "caption": "A bot can join because audio already streams online",
-          "visual": "chat-bubbles",
+          "visual": "cloud",
           "shape": "card",
           "position": {
             "x": 0.14,
@@ -32,7 +32,7 @@
           "type": "input",
           "label": "Meeting room",
           "caption": "Distance, overlap, noise, privacy, and device placement",
-          "visual": "microphone",
+          "visual": "room",
           "shape": "illustration",
           "position": {
             "x": 0.14,
@@ -44,7 +44,7 @@
           "type": "process",
           "label": "Mobile capture",
           "caption": "Fast path, but manual and acoustically inconsistent",
-          "visual": "person",
+          "visual": "phone",
           "shape": "card",
           "position": {
             "x": 0.4,
@@ -56,7 +56,7 @@
           "type": "process",
           "label": "Room hardware",
           "caption": "Managed microphones, sync, security, and APIs",
-          "visual": "gear",
+          "visual": "microphone",
           "shape": "card",
           "position": {
             "x": 0.62,
@@ -68,7 +68,7 @@
           "type": "result",
           "label": "Meeting AI",
           "caption": "Transcripts, summaries, action items, and search",
-          "visual": "agent",
+          "visual": "model",
           "shape": "illustration",
           "position": {
             "x": 0.84,
@@ -152,7 +152,7 @@
           "type": "input",
           "label": "Use phones",
           "caption": "Easy start, weak room coverage, manual workflow",
-          "visual": "person",
+          "visual": "phone",
           "shape": "card",
           "position": {
             "x": 0.14,
@@ -164,7 +164,7 @@
           "type": "process",
           "label": "Build hardware",
           "caption": "Full control over microphones, firmware, and UX",
-          "visual": "gear",
+          "visual": "microphone",
           "shape": "card",
           "position": {
             "x": 0.4,
@@ -176,7 +176,7 @@
           "type": "constraint",
           "label": "Ops burden",
           "caption": "Supply chain, certification, fleet management",
-          "visual": "alert",
+          "visual": "fleet",
           "shape": "card",
           "position": {
             "x": 0.4,
@@ -188,7 +188,7 @@
           "type": "process",
           "label": "Integrate API",
           "caption": "Use managed capture while keeping the software product",
-          "visual": "link",
+          "visual": "api",
           "shape": "illustration",
           "position": {
             "x": 0.64,
@@ -200,7 +200,7 @@
           "type": "result",
           "label": "Offline support",
           "caption": "Room recordings feed transcription automatically",
-          "visual": "shield",
+          "visual": "asr",
           "shape": "card",
           "position": {
             "x": 0.84,

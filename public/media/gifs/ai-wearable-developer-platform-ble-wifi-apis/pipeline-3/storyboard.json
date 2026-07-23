@@ -1,0 +1,507 @@
+{
+  "version": 2,
+  "style": "pastel-handdrawn",
+  "title": "AI Wearable Developer Platform",
+  "visualDirection": {
+    "character": "systems map for mobile, device, and AI platform builders",
+    "recurringMetaphor": "physical audio becoming a versioned developer event"
+  },
+  "pages": [
+    {
+      "title": "One Wearable, Five Software Boundaries",
+      "section": "article-summary",
+      "format": "wide",
+      "layout": "semantic-map",
+      "headline": "The platform hides radio, storage, and speech complexity behind SDKs, APIs, and events",
+      "nodes": [
+        {
+          "id": "device",
+          "type": "input",
+          "label": "AI wearable",
+          "caption": "Microphone, button, local storage, battery, firmware, and device identity",
+          "visual": "wearable",
+          "shape": "illustration",
+          "position": {
+            "x": 0.08,
+            "y": 0.55
+          }
+        },
+        {
+          "id": "sdk",
+          "type": "process",
+          "label": "Mobile SDK",
+          "caption": "BLE pairing, reconnect, batch sync, streaming sync, and device health",
+          "visual": "sdk",
+          "shape": "card",
+          "position": {
+            "x": 0.28,
+            "y": 0.32
+          }
+        },
+        {
+          "id": "backend",
+          "type": "process",
+          "label": "Product backend",
+          "caption": "Users, tenants, permissions, device binding, and workflow objects",
+          "visual": "server",
+          "shape": "card",
+          "position": {
+            "x": 0.28,
+            "y": 0.76
+          }
+        },
+        {
+          "id": "platform",
+          "type": "process",
+          "label": "Developer platform",
+          "caption": "Recording APIs, storage, speech processing, fleet state, and webhooks",
+          "visual": "api",
+          "shape": "illustration",
+          "position": {
+            "x": 0.53,
+            "y": 0.55
+          }
+        },
+        {
+          "id": "context",
+          "type": "evidence",
+          "label": "Versioned context",
+          "caption": "Transcript, speakers, timestamps, summary, provenance, and confidence",
+          "visual": "context",
+          "shape": "card",
+          "position": {
+            "x": 0.75,
+            "y": 0.32
+          }
+        },
+        {
+          "id": "agent",
+          "type": "result",
+          "label": "Product agent",
+          "caption": "Retrieve, draft, confirm, commit, or abstain inside the customer workflow",
+          "visual": "agent",
+          "shape": "card",
+          "position": {
+            "x": 0.9,
+            "y": 0.72
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "device",
+          "to": "sdk",
+          "label": "BLE",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "mobile",
+          "pathStyle": "curve",
+          "bend": -0.15
+        },
+        {
+          "from": "device",
+          "to": "backend",
+          "label": "identity",
+          "labelPriority": "optional",
+          "relation": "constraint",
+          "edgeGroup": "mobile",
+          "pathStyle": "curve",
+          "bend": 0.15
+        },
+        {
+          "from": "sdk",
+          "to": "platform",
+          "label": "relay",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "api",
+          "pathStyle": "curve",
+          "bend": 0.13
+        },
+        {
+          "from": "backend",
+          "to": "platform",
+          "label": "authorize",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "edgeGroup": "api",
+          "pathStyle": "curve",
+          "bend": -0.13
+        },
+        {
+          "from": "platform",
+          "to": "context",
+          "label": "process",
+          "labelPriority": "essential",
+          "relation": "evidence",
+          "edgeGroup": "context",
+          "pathStyle": "curve",
+          "bend": -0.12
+        },
+        {
+          "from": "context",
+          "to": "agent",
+          "label": "webhook",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "context",
+          "pathStyle": "curve",
+          "bend": 0.14
+        }
+      ],
+      "groups": [
+        {
+          "id": "edge-boundary",
+          "label": "Edge boundary",
+          "nodeIds": [
+            "device",
+            "sdk"
+          ],
+          "color": "teal",
+          "labelAlign": "left"
+        },
+        {
+          "id": "developer-boundary",
+          "label": "Developer boundary",
+          "nodeIds": [
+            "platform",
+            "context"
+          ],
+          "color": "purple",
+          "labelAlign": "right"
+        }
+      ]
+    },
+    {
+      "title": "Connectivity Is A Policy, Not A Single Pipe",
+      "section": "connection-policy",
+      "format": "wide",
+      "layout": "semantic-map",
+      "headline": "BLE relay, direct Wi-Fi, and cellular should share one recording identity and one recovery model",
+      "nodes": [
+        {
+          "id": "record",
+          "type": "input",
+          "label": "Local recording",
+          "caption": "Audio continues when the phone or network is unavailable",
+          "visual": "microphone",
+          "shape": "illustration",
+          "position": {
+            "x": 0.08,
+            "y": 0.55
+          }
+        },
+        {
+          "id": "ble",
+          "type": "process",
+          "label": "BLE relay",
+          "caption": "Phone provides control, sync, network, and heartbeat forwarding",
+          "visual": "bluetooth",
+          "shape": "card",
+          "position": {
+            "x": 0.3,
+            "y": 0.29
+          }
+        },
+        {
+          "id": "wifi",
+          "type": "process",
+          "label": "Direct Wi-Fi",
+          "caption": "Device uploads without the phone after secure provisioning",
+          "visual": "wifi",
+          "shape": "card",
+          "position": {
+            "x": 0.3,
+            "y": 0.76
+          }
+        },
+        {
+          "id": "cellular",
+          "type": "process",
+          "label": "Direct cellular",
+          "caption": "Independent route for field coverage, cost, and power trade-offs",
+          "visual": "cellular",
+          "shape": "illustration",
+          "position": {
+            "x": 0.53,
+            "y": 0.55
+          }
+        },
+        {
+          "id": "heartbeat",
+          "type": "decision",
+          "label": "Heartbeat owner",
+          "caption": "One active route reports liveness to avoid duplicate radio wake-ups",
+          "visual": "heartbeat",
+          "shape": "card",
+          "position": {
+            "x": 0.75,
+            "y": 0.32
+          }
+        },
+        {
+          "id": "recovery",
+          "type": "result",
+          "label": "One recording",
+          "caption": "Sequence numbers, retries, checksums, and idempotent reconciliation",
+          "visual": "merge",
+          "shape": "card",
+          "position": {
+            "x": 0.9,
+            "y": 0.72
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "record",
+          "to": "ble",
+          "label": "nearby",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "routes",
+          "pathStyle": "curve",
+          "bend": -0.16
+        },
+        {
+          "from": "record",
+          "to": "wifi",
+          "label": "available",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "routes",
+          "pathStyle": "curve",
+          "bend": 0.16
+        },
+        {
+          "from": "wifi",
+          "to": "cellular",
+          "label": "fallback",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "routes",
+          "pathStyle": "curve",
+          "bend": 0.13
+        },
+        {
+          "from": "ble",
+          "to": "heartbeat",
+          "label": "forward",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "liveness",
+          "pathStyle": "curve",
+          "bend": 0.13
+        },
+        {
+          "from": "cellular",
+          "to": "heartbeat",
+          "label": "own",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "edgeGroup": "liveness",
+          "pathStyle": "curve",
+          "bend": -0.13
+        },
+        {
+          "from": "heartbeat",
+          "to": "recovery",
+          "label": "reconcile",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "edgeGroup": "recovery",
+          "pathStyle": "curve",
+          "bend": 0.14
+        }
+      ],
+      "groups": [
+        {
+          "id": "connection-routes",
+          "label": "Connection routes",
+          "nodeIds": [
+            "ble",
+            "wifi",
+            "cellular"
+          ],
+          "color": "blue",
+          "labelAlign": "left"
+        },
+        {
+          "id": "continuity",
+          "label": "Continuity contract",
+          "nodeIds": [
+            "heartbeat",
+            "recovery"
+          ],
+          "color": "orange",
+          "labelAlign": "right"
+        }
+      ]
+    },
+    {
+      "title": "Upload Audio With Scoped Trust",
+      "section": "upload-lifecycle",
+      "format": "wide",
+      "layout": "semantic-map",
+      "headline": "A recording API should separate device identity, storage upload, completion, and context events",
+      "nodes": [
+        {
+          "id": "audio",
+          "type": "input",
+          "label": "Audio chunks",
+          "caption": "Sequenced bytes with recording ID, timestamps, and checksums",
+          "visual": "waveform",
+          "shape": "illustration",
+          "position": {
+            "x": 0.08,
+            "y": 0.55
+          }
+        },
+        {
+          "id": "create",
+          "type": "process",
+          "label": "Recording API",
+          "caption": "Create one logical object with a scoped device credential",
+          "visual": "api",
+          "shape": "card",
+          "position": {
+            "x": 0.29,
+            "y": 0.32
+          }
+        },
+        {
+          "id": "storage",
+          "type": "process",
+          "label": "Presigned storage",
+          "caption": "Upload large audio without exposing broad storage credentials",
+          "visual": "storage",
+          "shape": "card",
+          "position": {
+            "x": 0.29,
+            "y": 0.76
+          }
+        },
+        {
+          "id": "complete",
+          "type": "evidence",
+          "label": "Validate and complete",
+          "caption": "Check bytes, parts, format, checksum, and final device timestamp",
+          "visual": "check",
+          "shape": "illustration",
+          "position": {
+            "x": 0.53,
+            "y": 0.55
+          }
+        },
+        {
+          "id": "events",
+          "type": "process",
+          "label": "Webhook events",
+          "caption": "Publish signed, versioned, retryable lifecycle changes",
+          "visual": "webhook",
+          "shape": "card",
+          "position": {
+            "x": 0.75,
+            "y": 0.32
+          }
+        },
+        {
+          "id": "context",
+          "type": "result",
+          "label": "Agent context",
+          "caption": "Transcript, speakers, summary, provenance, and correction state",
+          "visual": "context",
+          "shape": "card",
+          "position": {
+            "x": 0.9,
+            "y": 0.72
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "audio",
+          "to": "create",
+          "label": "identify",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "upload",
+          "pathStyle": "curve",
+          "bend": -0.16
+        },
+        {
+          "from": "audio",
+          "to": "storage",
+          "label": "put",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "upload",
+          "pathStyle": "curve",
+          "bend": 0.16
+        },
+        {
+          "from": "create",
+          "to": "complete",
+          "label": "authorize",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "edgeGroup": "trust",
+          "pathStyle": "curve",
+          "bend": 0.13
+        },
+        {
+          "from": "storage",
+          "to": "complete",
+          "label": "checksum",
+          "labelPriority": "essential",
+          "relation": "evidence",
+          "edgeGroup": "trust",
+          "pathStyle": "curve",
+          "bend": -0.13
+        },
+        {
+          "from": "complete",
+          "to": "events",
+          "label": "publish",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "processing",
+          "pathStyle": "curve",
+          "bend": -0.12
+        },
+        {
+          "from": "events",
+          "to": "context",
+          "label": "process",
+          "labelPriority": "essential",
+          "relation": "evidence",
+          "edgeGroup": "processing",
+          "pathStyle": "curve",
+          "bend": 0.14
+        }
+      ],
+      "groups": [
+        {
+          "id": "upload-trust",
+          "label": "Upload trust boundary",
+          "nodeIds": [
+            "create",
+            "storage"
+          ],
+          "color": "teal",
+          "labelAlign": "left"
+        },
+        {
+          "id": "developer-events",
+          "label": "Developer event layer",
+          "nodeIds": [
+            "events",
+            "context"
+          ],
+          "color": "purple",
+          "labelAlign": "right"
+        }
+      ]
+    }
+  ]
+}

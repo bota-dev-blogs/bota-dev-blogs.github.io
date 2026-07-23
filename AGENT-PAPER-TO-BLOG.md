@@ -347,6 +347,7 @@ GIF rules:
 - Use pipeline 3 for a single graphical abstract, a research landscape, a comparison map, or a practical checklist. Dense survey posts often benefit from 2-5 pipeline-3 visuals distributed through the article.
 - Do not let generated GIF artwork display internal editorial labels such as "takeaway". Use reader-facing labels such as "key idea", "design rule", "checklist", or the actual concept being explained.
 - Use the shared icon vocabulary in `AI/shared/semantic-icons.cjs`. Prefer concrete AI/audio/mobile/edge/computing icons such as ASR, TTS, microphone, waveform, phone, edge device, chip, GPU, server, router, dataset, embedding, model, gate, filter, and latency before generic idea/agent/schema icons. Keep fallback icons concrete and narrow; fallback should not select person, bot, idea, agent, schema, graph, or chat bubbles.
+- Give every published Pipeline 1 card, Pipeline 2 node, and Pipeline 3 node an explicit canonical `icon` or `visual`. The renderer preserves valid explicit choices and infers only missing or unknown values; `npm run gif:check` rejects published intermediates without explicit icons.
 - For manual pipeline-3 storyboards, treat `semantic-map` coordinates as relative anchors. Do not add fake margin in coordinates; the renderer fits the map into the post-header content frame.
 - Reference GIFs from MDX with public paths only.
 

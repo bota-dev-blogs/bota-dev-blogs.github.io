@@ -17,7 +17,7 @@
         {
           "title": "Context evidence",
           "body": "Speaker identity, session state, device posture, and privacy controls shape confidence.",
-          "icon": "lock"
+          "icon": "context"
         },
         {
           "title": "Escalate carefully",

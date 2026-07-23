@@ -1,0 +1,340 @@
+{
+  "version": 2,
+  "style": "pastel-handdrawn",
+  "title": "AI Wearables As Infrastructure",
+  "visualDirection": {
+    "character": "market map for B2B product and platform teams",
+    "recurringMetaphor": "one capture layer feeding many domain workflows"
+  },
+  "pages": [
+    {
+      "title": "The B2B Buyer Is A Workflow Owner",
+      "section": "article-summary",
+      "format": "wide",
+      "layout": "semantic-map",
+      "headline": "Software companies buy offline capture when a physical conversation changes what their product should do next",
+      "nodes": [
+        {
+          "id": "conversation",
+          "type": "input",
+          "label": "Offline conversation",
+          "caption": "Site visit, patient discussion, expert call, interview, or field observation",
+          "visual": "microphone",
+          "shape": "illustration",
+          "position": {
+            "x": 0.08,
+            "y": 0.55
+          }
+        },
+        {
+          "id": "device",
+          "type": "process",
+          "label": "Managed device",
+          "caption": "Capture state, local storage, battery, identity, and synchronization",
+          "visual": "wearable",
+          "shape": "card",
+          "position": {
+            "x": 0.29,
+            "y": 0.55
+          }
+        },
+        {
+          "id": "platform",
+          "type": "process",
+          "label": "Capture API platform",
+          "caption": "Recordings, webhooks, speech processing, fleet control, and policy",
+          "visual": "api",
+          "shape": "illustration",
+          "position": {
+            "x": 0.51,
+            "y": 0.55
+          }
+        },
+        {
+          "id": "verticals",
+          "type": "context",
+          "label": "B2B software products",
+          "caption": "CRM, productivity, healthcare, legal, knowledge, finance, and field tools",
+          "visual": "layers",
+          "shape": "card",
+          "position": {
+            "x": 0.73,
+            "y": 0.32
+          }
+        },
+        {
+          "id": "objects",
+          "type": "evidence",
+          "label": "Domain objects",
+          "caption": "Opportunity, note, matter, work order, research record, or task",
+          "visual": "schema",
+          "shape": "card",
+          "position": {
+            "x": 0.73,
+            "y": 0.77
+          }
+        },
+        {
+          "id": "outcome",
+          "type": "result",
+          "label": "Workflow value",
+          "caption": "Less manual entry, better evidence, faster follow-up, and safer action",
+          "visual": "workflow",
+          "shape": "illustration",
+          "position": {
+            "x": 0.91,
+            "y": 0.55
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "conversation",
+          "to": "device",
+          "label": "capture",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "physical",
+          "pathStyle": "straight"
+        },
+        {
+          "from": "device",
+          "to": "platform",
+          "label": "sync",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "physical",
+          "pathStyle": "straight"
+        },
+        {
+          "from": "platform",
+          "to": "verticals",
+          "label": "embed",
+          "labelPriority": "essential",
+          "relation": "evidence",
+          "edgeGroup": "product",
+          "pathStyle": "curve",
+          "bend": -0.15
+        },
+        {
+          "from": "platform",
+          "to": "objects",
+          "label": "structure",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "product",
+          "pathStyle": "curve",
+          "bend": 0.15
+        },
+        {
+          "from": "verticals",
+          "to": "outcome",
+          "label": "workflow",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "value",
+          "pathStyle": "curve",
+          "bend": 0.14
+        },
+        {
+          "from": "objects",
+          "to": "outcome",
+          "label": "improve",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "edgeGroup": "value",
+          "pathStyle": "curve",
+          "bend": -0.14
+        }
+      ],
+      "groups": [
+        {
+          "id": "platform-layer",
+          "label": "Infrastructure layer",
+          "nodeIds": [
+            "device",
+            "platform"
+          ],
+          "color": "teal",
+          "labelAlign": "left"
+        },
+        {
+          "id": "customer-layer",
+          "label": "Customer workflow",
+          "nodeIds": [
+            "verticals",
+            "objects"
+          ],
+          "color": "orange",
+          "labelAlign": "right"
+        }
+      ]
+    },
+    {
+      "title": "The Revenue Stack Has Five Layers",
+      "section": "business-model",
+      "format": "wide",
+      "layout": "semantic-map",
+      "headline": "Device access opens the account, but recurring value comes from software, usage, operations, and control",
+      "nodes": [
+        {
+          "id": "hardware",
+          "type": "input",
+          "label": "Device access",
+          "caption": "Purchase, lease, bundle, or subsidized endpoint",
+          "visual": "edge-device",
+          "shape": "illustration",
+          "position": {
+            "x": 0.08,
+            "y": 0.55
+          }
+        },
+        {
+          "id": "platform",
+          "type": "process",
+          "label": "Platform access",
+          "caption": "SDKs, APIs, tenants, credentials, events, and support",
+          "visual": "sdk",
+          "shape": "card",
+          "position": {
+            "x": 0.29,
+            "y": 0.32
+          }
+        },
+        {
+          "id": "usage",
+          "type": "process",
+          "label": "Processing usage",
+          "caption": "Audio minutes, ASR, diarization, summaries, storage, and transfer",
+          "visual": "layers",
+          "shape": "card",
+          "position": {
+            "x": 0.29,
+            "y": 0.76
+          }
+        },
+        {
+          "id": "operations",
+          "type": "evidence",
+          "label": "Fleet operations",
+          "caption": "Inventory, provisioning, shipping, replacement, returns, and firmware",
+          "visual": "fleet",
+          "shape": "illustration",
+          "position": {
+            "x": 0.53,
+            "y": 0.55
+          }
+        },
+        {
+          "id": "enterprise",
+          "type": "constraint",
+          "label": "Enterprise controls",
+          "caption": "Retention, regional deployment, SSO, audit, private infrastructure, and branding",
+          "visual": "shield",
+          "shape": "card",
+          "position": {
+            "x": 0.75,
+            "y": 0.32
+          }
+        },
+        {
+          "id": "contract",
+          "type": "result",
+          "label": "Predictable account value",
+          "caption": "A managed path from active device to successful workflow outcome",
+          "visual": "workflow",
+          "shape": "card",
+          "position": {
+            "x": 0.9,
+            "y": 0.72
+          }
+        }
+      ],
+      "edges": [
+        {
+          "from": "hardware",
+          "to": "platform",
+          "label": "activate",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "revenue",
+          "pathStyle": "curve",
+          "bend": -0.16
+        },
+        {
+          "from": "hardware",
+          "to": "usage",
+          "label": "record",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "revenue",
+          "pathStyle": "curve",
+          "bend": 0.16
+        },
+        {
+          "from": "platform",
+          "to": "operations",
+          "label": "operate",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "service",
+          "pathStyle": "curve",
+          "bend": 0.13
+        },
+        {
+          "from": "usage",
+          "to": "operations",
+          "label": "scale",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "service",
+          "pathStyle": "curve",
+          "bend": -0.13
+        },
+        {
+          "from": "operations",
+          "to": "enterprise",
+          "label": "govern",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "edgeGroup": "account",
+          "pathStyle": "curve",
+          "bend": -0.12
+        },
+        {
+          "from": "enterprise",
+          "to": "contract",
+          "label": "retain",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "edgeGroup": "account",
+          "pathStyle": "curve",
+          "bend": 0.14
+        }
+      ],
+      "groups": [
+        {
+          "id": "recurring-stack",
+          "label": "Recurring platform layers",
+          "nodeIds": [
+            "platform",
+            "usage",
+            "operations"
+          ],
+          "color": "purple",
+          "labelAlign": "left"
+        },
+        {
+          "id": "enterprise-boundary",
+          "label": "Enterprise contract",
+          "nodeIds": [
+            "enterprise",
+            "contract"
+          ],
+          "color": "green",
+          "labelAlign": "right"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "pipeline": "ai-gif-pipeline-3",
+  "source": "storyboard.json",
+  "assetSlug": "offline-context-infrastructure-ai-agents",
+  "title": "Offline Context For AI Agents",
+  "version": 2,
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-article-summary.gif",
+      "02-context-contract.gif"
+    ]
+  },
+  "pages": [
+    "01-article-summary.gif",
+    "02-context-contract.gif"
+  ]
+}
