@@ -1,13 +1,18 @@
 {
   "pipeline": "ai-gif-pipeline-2",
-  "source": "diagram.json",
+  "source": "storyboard.json",
   "assetSlug": "realtime-speech-ai-control-stack",
+  "title": "Realtime Speech AI",
+  "version": 2,
   "outputs": {
-    "diagram": "diagram.json",
-    "preview": "diagram.html",
-    "gif": "01-realtime-speech-control-plane.gif"
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-article-summary.gif",
+      "02-model-family-map.gif"
+    ]
   },
   "pages": [
-    "01-realtime-speech-control-plane.gif"
+    "01-article-summary.gif",
+    "02-model-family-map.gif"
   ]
 }

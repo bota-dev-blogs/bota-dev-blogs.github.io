@@ -83,9 +83,6 @@ function loadEnvFile(filePath) {
 
 const env = {
   ...loadEnvFile(path.join(rootDir, ".env")),
-  ...loadEnvFile(path.join(rootDir, "AI", "ai-gif-pipeline-1", ".env")),
-  ...loadEnvFile(path.join(rootDir, "AI", "ai-gif-pipeline-2", ".env")),
-  ...loadEnvFile(path.join(rootDir, "AI", "ai-gif-pipeline-3", ".env")),
   ...loadEnvFile(path.join(rootDir, "scripts", ".env")),
   ...process.env
 };
@@ -449,7 +446,7 @@ async function main() {
     const finalPath = path.join(outDir, "featured.png");
 
     if (!env.OPENAI_API_KEY) {
-      if (!allowLocalFallback) throw new Error("Missing OPENAI_API_KEY in shell, scripts/.env, root .env, or pipeline .env files.");
+      if (!allowLocalFallback) throw new Error("Missing OPENAI_API_KEY in shell, scripts/.env, or root .env.");
       writeLocalFallback(post, outDir);
       continue;
     }

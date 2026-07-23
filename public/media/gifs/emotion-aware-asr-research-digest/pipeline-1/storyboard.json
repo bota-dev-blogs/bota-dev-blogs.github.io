@@ -25,7 +25,9 @@
           "icon": "shield"
         }
       ],
-      "fileSlug": "design-questions"
+      "fileSlug": "design-questions",
+      "layout": "staircase",
+      "composition": "checklist"
     }
   ]
 }

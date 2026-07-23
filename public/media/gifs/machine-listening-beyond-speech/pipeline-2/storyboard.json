@@ -1,0 +1,248 @@
+{
+  "version": 2,
+  "style": "pastel-handdrawn",
+  "title": "Machine Listening",
+  "visualDirection": {
+    "character": "frontier map for audio sensing and field AI",
+    "recurringMetaphor": "continuous sound becoming time-grounded evidence"
+  },
+  "pages": [
+    {
+      "title": "Listen Beyond Words",
+      "section": "article-summary",
+      "format": "wide",
+      "layout": "diverging",
+      "headline": "The useful signal may be a species call, bearing fault, alarm, or acoustic scene",
+      "nodes": [
+        {
+          "id": "sensor",
+          "type": "input",
+          "label": "Continuous sound",
+          "caption": "Field microphones, machines, rooms, weather, and overlap",
+          "visual": "sensor",
+          "shape": "illustration"
+        },
+        {
+          "id": "encoder",
+          "type": "process",
+          "label": "Audio representation",
+          "caption": "General encoders turn waveform context into reusable features",
+          "visual": "embedding",
+          "shape": "card"
+        },
+        {
+          "id": "ecology",
+          "type": "evidence",
+          "label": "Bioacoustics",
+          "caption": "Species calls, habitat activity, migration, and human noise",
+          "visual": "ear",
+          "shape": "card"
+        },
+        {
+          "id": "machines",
+          "type": "evidence",
+          "label": "Machine health",
+          "caption": "Normal operating sound, faults, load, and maintenance context",
+          "visual": "gear",
+          "shape": "card"
+        },
+        {
+          "id": "events",
+          "type": "process",
+          "label": "Open-world events",
+          "caption": "Known labels, novel sounds, anomalies, and time boundaries",
+          "visual": "search",
+          "shape": "illustration"
+        },
+        {
+          "id": "evidence",
+          "type": "result",
+          "label": "Reviewable alert",
+          "caption": "Timestamp, source, confidence, model version, and human status",
+          "visual": "alert",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "sensor",
+          "to": "encoder",
+          "label": "sample",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "capture",
+          "pathStyle": "straight"
+        },
+        {
+          "from": "encoder",
+          "to": "ecology",
+          "label": "transfer",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "domains",
+          "pathStyle": "curve",
+          "bend": -0.16
+        },
+        {
+          "from": "encoder",
+          "to": "machines",
+          "label": "adapt",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "domains",
+          "pathStyle": "curve",
+          "bend": 0.16
+        },
+        {
+          "from": "ecology",
+          "to": "events",
+          "label": "detect",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "reason",
+          "pathStyle": "curve",
+          "bend": 0.12
+        },
+        {
+          "from": "machines",
+          "to": "events",
+          "label": "compare",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "edgeGroup": "reason",
+          "pathStyle": "curve",
+          "bend": -0.13
+        },
+        {
+          "from": "events",
+          "to": "evidence",
+          "label": "ground",
+          "labelPriority": "essential",
+          "relation": "evidence",
+          "edgeGroup": "trust",
+          "pathStyle": "curve",
+          "bend": 0.13
+        }
+      ]
+    },
+    {
+      "title": "Unknown Sounds Need A Route",
+      "section": "open-world-evaluation",
+      "format": "wide",
+      "layout": "decision-tree",
+      "headline": "A detector should separate known events, new sounds, drift, and operator overload",
+      "nodes": [
+        {
+          "id": "clip",
+          "type": "input",
+          "label": "Local audio window",
+          "caption": "A short source interval retained for authorized inspection",
+          "visual": "waveform",
+          "shape": "illustration"
+        },
+        {
+          "id": "known",
+          "type": "evidence",
+          "label": "Known event",
+          "caption": "Class precision, recall, onset, offset, and repetition",
+          "visual": "target",
+          "shape": "card"
+        },
+        {
+          "id": "unknown",
+          "type": "decision",
+          "label": "Unknown or novel",
+          "caption": "Abstain when the sound is outside the trusted label set",
+          "visual": "alert",
+          "shape": "card"
+        },
+        {
+          "id": "shift",
+          "type": "constraint",
+          "label": "Domain shift",
+          "caption": "Device, site, season, weather, load, and room change scores",
+          "visual": "globe",
+          "shape": "card"
+        },
+        {
+          "id": "timeline",
+          "type": "evidence",
+          "label": "Evidence timeline",
+          "caption": "Link every claim to time, sensor, score, and model version",
+          "visual": "clock",
+          "shape": "illustration"
+        },
+        {
+          "id": "review",
+          "type": "result",
+          "label": "Human review queue",
+          "caption": "Prioritize useful alerts while measuring false alerts per hour",
+          "visual": "queue",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "clip",
+          "to": "known",
+          "label": "classify",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "decision",
+          "pathStyle": "curve",
+          "bend": -0.16
+        },
+        {
+          "from": "clip",
+          "to": "unknown",
+          "label": "abstain",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "edgeGroup": "decision",
+          "pathStyle": "curve",
+          "bend": 0.16
+        },
+        {
+          "from": "known",
+          "to": "shift",
+          "label": "stress",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "robustness",
+          "pathStyle": "curve",
+          "bend": 0.13
+        },
+        {
+          "from": "unknown",
+          "to": "shift",
+          "label": "investigate",
+          "labelPriority": "essential",
+          "relation": "evidence",
+          "edgeGroup": "robustness",
+          "pathStyle": "curve",
+          "bend": -0.13
+        },
+        {
+          "from": "shift",
+          "to": "timeline",
+          "label": "ground",
+          "labelPriority": "essential",
+          "relation": "evidence",
+          "edgeGroup": "evidence",
+          "pathStyle": "curve",
+          "bend": -0.11
+        },
+        {
+          "from": "timeline",
+          "to": "review",
+          "label": "prioritize",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "edgeGroup": "evidence",
+          "pathStyle": "curve",
+          "bend": 0.13
+        }
+      ]
+    }
+  ]
+}

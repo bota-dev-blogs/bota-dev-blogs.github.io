@@ -1,13 +1,20 @@
 {
   "pipeline": "ai-gif-pipeline-2",
-  "source": "diagram.json",
+  "source": "storyboard.json",
   "assetSlug": "from-chinese-to-english-and-a-detour-into-moroccan-arabic",
+  "title": "AI Video Localization Pipeline",
+  "version": 2,
   "outputs": {
-    "diagram": "diagram.json",
-    "preview": "diagram.html",
-    "gif": "01-ai-video-localization-pipeline.gif"
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-article-summary.gif",
+      "02-darija-bottlenecks.gif",
+      "03-quality-gates.gif"
+    ]
   },
   "pages": [
-    "01-ai-video-localization-pipeline.gif"
+    "01-article-summary.gif",
+    "02-darija-bottlenecks.gif",
+    "03-quality-gates.gif"
   ]
 }

@@ -30,11 +30,11 @@ cover:
   fit: "cover"
 media:
   - title: "Neural audio codec and speech-token map"
-    src: "/media/gifs/neural-audio-codecs-speech-tokens/pipeline-3/01-article-summary.gif"
+    src: "/media/gifs/neural-audio-codecs-speech-tokens/pipeline-2/01-article-summary.gif"
     type: "image"
     note: "A graphical abstract of waveform encoding, semantic and acoustic codebooks, token modeling, and speech reconstruction."
   - title: "Speech codec release gate"
-    src: "/media/gifs/neural-audio-codecs-speech-tokens/pipeline-3/02-codec-evaluation.gif"
+    src: "/media/gifs/neural-audio-codecs-speech-tokens/pipeline-2/02-codec-evaluation.gif"
     type: "image"
     note: "A practical evaluation map connecting reconstruction quality, intelligibility, identity, prosody, and streaming behavior."
 ---
@@ -47,7 +47,7 @@ Raw waveforms are expressive but computationally expensive. Text is compact but 
 
 Those symbols are usually called **audio tokens**, **speech tokens**, or **codec tokens**. They are one of the main reasons recent speech-to-speech systems can generate playable audio without first reducing every utterance to text.
 
-![Neural audio codec and speech-token map](/media/gifs/neural-audio-codecs-speech-tokens/pipeline-3/01-article-summary.gif)
+![Neural audio codec and speech-token map](/media/gifs/neural-audio-codecs-speech-tokens/pipeline-2/01-article-summary.gif)
 
 The central design question is not simply whether a codec reconstructs pleasant audio. It is whether its tokens preserve the right information, at the right rate, for the model and product built on top of them.
 
@@ -155,7 +155,7 @@ These failures can survive a conventional codec score. A reconstruction may soun
 
 Codec research commonly reports perceptual audio quality, bitrate, and reconstruction metrics. A speech-model team needs a wider release gate.
 
-![Speech codec release gate](/media/gifs/neural-audio-codecs-speech-tokens/pipeline-3/02-codec-evaluation.gif)
+![Speech codec release gate](/media/gifs/neural-audio-codecs-speech-tokens/pipeline-2/02-codec-evaluation.gif)
 
 Useful tests include:
 

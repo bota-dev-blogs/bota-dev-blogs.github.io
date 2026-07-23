@@ -31,13 +31,9 @@ cover:
   fit: "cover"
 media:
   - title: "Offline voice AI field map"
-    src: "/media/gifs/offline-voice-ai-agent-context/pipeline-3/01-article-summary.gif"
+    src: "/media/gifs/offline-voice-ai-agent-context/pipeline-2/01-article-summary.gif"
     type: "image"
     note: "Animated map of capture, transport, speech intelligence, context packaging, and action control."
-  - title: "Offline voice context architecture"
-    src: "/media/gifs/offline-voice-ai-agent-context/pipeline-2/01-offline-voice-context-stack.gif"
-    type: "image"
-    note: "A reference architecture for moving a physical conversation into an AI product."
   - title: "Reliability checklist"
     src: "/media/gifs/offline-voice-ai-agent-context/pipeline-1/01-reliability-checklist.gif"
     type: "image"
@@ -52,7 +48,7 @@ This is the problem behind **offline voice AI**: turning conversations that happ
 
 The phrase sounds like a transcription problem. It is actually a distributed-systems problem with a speech layer in the middle. A microphone can capture sound, but an agent needs much more than sound. It needs a trustworthy record of what was captured, who may use it, when it became complete, how it was transformed, and which actions are allowed to follow.
 
-![Offline voice AI field map](/media/gifs/offline-voice-ai-agent-context/pipeline-3/01-article-summary.gif)
+![Offline voice AI field map](/media/gifs/offline-voice-ai-agent-context/pipeline-2/01-article-summary.gif)
 
 The central argument of this field guide is simple:
 
@@ -117,8 +113,6 @@ created -> receiving -> uploaded -> finalized -> processing -> ready
 ```
 
 The distinction between `uploaded` and `finalized` matters. A client may successfully transfer every chunk it knows about while the device still has unsent audio. Finalization is the claim that the recording boundary is complete and downstream processing may begin.
-
-![Offline voice context architecture](/media/gifs/offline-voice-ai-agent-context/pipeline-2/01-offline-voice-context-stack.gif)
 
 Webhooks or an event bus can notify downstream services as the state changes. Those events should carry stable IDs and versions, follow a documented retry policy, and tolerate out-of-order delivery. The [CloudEvents specification](https://cloudevents.io/) is one useful reference for consistent event envelopes.
 

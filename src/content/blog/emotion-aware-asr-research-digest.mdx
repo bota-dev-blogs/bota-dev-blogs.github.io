@@ -31,27 +31,23 @@ cover:
   fit: "cover"
 media:
   - title: "Emotion-aware ASR research map"
-    src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-3/01-article-summary.gif"
+    src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-2/01-article-summary.gif"
     type: "image"
     note: "Animated survey map of acoustic, lexical, and policy layers."
-  - title: "Affect-aware ASR stack"
-    src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-2/01-affect-aware-asr-stack.gif"
-    type: "image"
-    note: "Animated architecture diagram for separating ASR text from affect signals."
   - title: "Research design questions"
     src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-1/01-design-questions.gif"
     type: "image"
     note: "Three practical questions for product and research teams."
   - title: "Model families for ASR emotion"
-    src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-3/02-model-families.gif"
+    src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-2/02-model-families.gif"
     type: "image"
     note: "How classical acoustic features, ASR transfer, SSL encoders, and multimodal systems relate."
   - title: "Data and evaluation cautions"
-    src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-3/03-data-and-evaluation.gif"
+    src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-2/03-data-and-evaluation.gif"
     type: "image"
     note: "Dataset, annotation, and evaluation issues for speech emotion recognition."
   - title: "Deployment checklist"
-    src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-3/04-deployment-checklist.gif"
+    src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-2/04-deployment-checklist.gif"
     type: "image"
     note: "How to expose affect signals without collapsing them into psychological claims."
 ---
@@ -62,7 +58,7 @@ The question behind "ASR emotion" is not whether an [automatic speech recognitio
 
 That distinction matters because [speech emotion recognition](https://en.wikipedia.org/wiki/Emotion_recognition) sits between two different worlds. ASR turns speech into words. [Affective computing](https://en.wikipedia.org/wiki/Affective_computing) studies computational models of affective phenomena, including vocal delivery, arousal, sentiment, stress, and conversational stance. A production voice system may need both, but treating emotion as a simple transcript field is usually the wrong abstraction.
 
-![Emotion-aware ASR research map](/media/gifs/emotion-aware-asr-research-digest/pipeline-3/01-article-summary.gif)
+![Emotion-aware ASR research map](/media/gifs/emotion-aware-asr-research-digest/pipeline-2/01-article-summary.gif)
 
 This digest takes a research-survey view. It uses [emotion2vec](https://arxiv.org/abs/2312.15185) as one important recent model, but the main topic is broader: how ASR, speech emotion recognition, self-supervised speech encoders, transcript fusion, datasets, and safety constraints fit together.
 
@@ -135,13 +131,11 @@ A second line uses large self-supervised speech encoders. [wav2vec 2.0](https://
 
 A third line specializes the representation for emotion. [emotion2vec](https://arxiv.org/abs/2312.15185) is a good representative: it uses self-supervised online distillation with both utterance-level and frame-level losses, then evaluates across speech emotion recognition, song emotion recognition, emotion prediction in conversation, sentiment analysis, and multilingual SER settings.
 
-![Model families for ASR emotion](/media/gifs/emotion-aware-asr-research-digest/pipeline-3/02-model-families.gif)
+![Model families for ASR emotion](/media/gifs/emotion-aware-asr-research-digest/pipeline-2/02-model-families.gif)
 
 ## The Affect-Aware ASR Stack
 
 An emotion-aware ASR stack should not collapse everything into a single label. The more robust pattern is a layered speech understanding stack.
-
-![Affect-aware ASR stack](/media/gifs/emotion-aware-asr-research-digest/pipeline-2/01-affect-aware-asr-stack.gif)
 
 At the bottom, a front end performs [voice activity detection](https://en.wikipedia.org/wiki/Voice_activity_detection), denoising, segmentation, and sometimes [speaker diarization](https://en.wikipedia.org/wiki/Speaker_diarisation). Those steps matter because affect labels are turn-sensitive. A 12-second emotional burst, a short backchannel, and an overlapped meeting segment should not be treated as identical evidence.
 
@@ -171,7 +165,7 @@ The dataset problem has three parts:
 2. Recording conditions matter. Clean acted speech, meeting audio, phone calls, cars, earbuds, and podcasts produce different acoustic distributions.
 3. Evaluation is easy to overfit. A model that performs well on IEMOCAP may still fail on noisy, cross-cultural, or long-tail production speech.
 
-![Data and evaluation cautions](/media/gifs/emotion-aware-asr-research-digest/pipeline-3/03-data-and-evaluation.gif)
+![Data and evaluation cautions](/media/gifs/emotion-aware-asr-research-digest/pipeline-2/03-data-and-evaluation.gif)
 
 ## Where The Frontier Is Moving
 
@@ -199,7 +193,7 @@ Third, what action will the system take? A model used only for aggregate analyti
 
 For most ASR emotion systems, a conservative architecture looks like this:
 
-![Deployment checklist for emotion-aware ASR](/media/gifs/emotion-aware-asr-research-digest/pipeline-3/04-deployment-checklist.gif)
+![Deployment checklist for emotion-aware ASR](/media/gifs/emotion-aware-asr-research-digest/pipeline-2/04-deployment-checklist.gif)
 
 | Layer | Output | Design rule |
 | --- | --- | --- |

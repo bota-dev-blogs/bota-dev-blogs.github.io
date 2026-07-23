@@ -30,19 +30,15 @@ cover:
   fit: "cover"
 media:
   - title: "Project research map"
-    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-3/01-article-summary.gif"
+    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/01-article-summary.gif"
     type: "image"
-    note: "Pipeline 3 summary map for the video localization project."
-  - title: "Pipeline architecture diagram"
-    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/01-ai-video-localization-pipeline.gif"
-    type: "image"
-    note: "Pipeline 2 technical diagram for the video language transformation workflow."
+    note: "Pipeline 2 summary map for the video localization project."
   - title: "Project explainer"
     src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-1/01-project-overview.gif"
     type: "image"
     note: "Pipeline 1 explainer GIF for the main Chinese-to-English workflow."
   - title: "Darija bottleneck map"
-    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-3/02-darija-bottlenecks.gif"
+    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/02-darija-bottlenecks.gif"
     type: "image"
     note: "Why the Moroccan Arabic fine-tuning experiment did not converge."
   - title: "Lessons from the negative result"
@@ -50,7 +46,7 @@ media:
     type: "image"
     note: "Pipeline 1 explainer GIF for data and writing-system lessons."
   - title: "Localization quality gates"
-    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-3/03-quality-gates.gif"
+    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/03-quality-gates.gif"
     type: "image"
     note: "Checks that keep a translated and voice-cloned video usable."
 ---
@@ -61,7 +57,7 @@ This project started with a practical goal: take Chinese-language GitHub tutoria
 
 That requirement turns localization into a systems problem. Translation quality matters, but it is only one part of the stack. The pipeline also has to preserve segment timing, speaker boundaries, voice references, audio loudness, and final video synchronization.
 
-![Project research map](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-3/01-article-summary.gif)
+![Project research map](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/01-article-summary.gif)
 
 After the Chinese-to-English path became usable, the project took a harder detour: could the same voice-cloning stack be adapted to Darija, Moroccan Arabic? The reported experiment did not produce intelligible Darija speech, but it clarified where a low-resource TTS attempt can fall short: in the interaction between data, orthography, speaker variation, and pronunciation ambiguity.
 
@@ -79,8 +75,6 @@ The working pipeline combines several components:
 6. **Video merge** - [FFmpeg](https://ffmpeg.org/) replaces the original audio track with the translated, aligned, voice-cloned output.
 
 The project also includes Voxtral-related audio and transcription experiments. Voxtral's public model line is an audio-understanding and speech-to-text tool, not a conventional text-to-speech engine, so it should be treated as a separate utility rather than as the source of the cloned English voice.
-
-![AI video language transformation pipeline diagram](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/01-ai-video-localization-pipeline.gif)
 
 A [Streamlit](https://streamlit.io/) interface ties the workflow together. It lets the operator monitor each stage, inspect segment-level output, edit translations, and rerun weak parts of the pipeline.
 
@@ -112,7 +106,7 @@ Moroccan Arabic is the language of everyday life in Morocco: family conversation
 
 It does not have one standardized everyday orthography. Darija can be written in Arabic script, Latin script, or Arabizi, a Latin-numeric writing style where **3afak** can represent **عفاك** because "3" stands for the Arabic letter ع. Arabic-script Darija is often unvocalized: short vowels are omitted, as in standard Arabic writing. That is normal for fluent readers, but it creates ambiguity for a TTS model trying to infer pronunciation.
 
-![Darija bottleneck map](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-3/02-darija-bottlenecks.gif)
+![Darija bottleneck map](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/02-darija-bottlenecks.gif)
 
 ## What We Tried
 
@@ -152,7 +146,7 @@ Two bottlenecks stood out.
 
 The main pipeline points toward a useful architecture pattern for video localization: every stage should produce an inspectable artifact and a quality signal.
 
-![Localization quality gates](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-3/03-quality-gates.gif)
+![Localization quality gates](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/03-quality-gates.gif)
 
 | Stage | Artifact | Quality question |
 | --- | --- | --- |

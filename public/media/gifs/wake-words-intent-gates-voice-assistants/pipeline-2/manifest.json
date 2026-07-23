@@ -1,13 +1,22 @@
 {
   "pipeline": "ai-gif-pipeline-2",
-  "source": "diagram.json",
+  "source": "storyboard.json",
   "assetSlug": "wake-words-intent-gates-voice-assistants",
+  "title": "Wake Word Detection Is Becoming Intent Gating",
+  "version": 2,
   "outputs": {
-    "diagram": "diagram.json",
-    "preview": "diagram.html",
-    "gif": "01-wake-word-to-intent-gate.gif"
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-article-summary.gif",
+      "02-operating-point.gif",
+      "03-research-frontier.gif",
+      "04-design-checklist.gif"
+    ]
   },
   "pages": [
-    "01-wake-word-to-intent-gate.gif"
+    "01-article-summary.gif",
+    "02-operating-point.gif",
+    "03-research-frontier.gif",
+    "04-design-checklist.gif"
   ]
 }

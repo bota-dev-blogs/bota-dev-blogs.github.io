@@ -6,66 +6,30 @@ const pipelineDir = process.cwd();
 
 function usage() {
   console.log(`Usage:
-  npm run generate -- --input article.md
-  npm run generate -- --input article.md --out output/my-article
-  npm run local -- --input article.md
-  npm run plan -- --input article.md
-  npm run storyboard -- --input article.md
+  npm run render -- --input path/to/storyboard.json
+  npm run render -- --input path/to/storyboard.json --out output/my-article
+  npm run render -- --input path/to/storyboard.json --page 2
 
-Options:
-  --input <path>   Required. Markdown, MDX-normalized Markdown, TXT, or storyboard JSON for --local.
-  --out <dir>      Optional. Defaults to output/<input-name>.
-  --local          Skip LLM and render a heuristic storyboard.
-  --page <n>       Local/storyboard renders only. Render one storyboard page.
-  --plan-only      Save plan.json only.
-  --no-render      Save plan.json and storyboard.json without GIF rendering.`);
+The coding agent authors storyboard.json by following SKILL.md. This command only
+validates and renders the storyboard locally; it never calls an LLM API.`);
 }
 
 function parseArgs(argv) {
-  const args = { local: false, planOnly: false, noRender: false };
-  const positional = [];
+  const args = {};
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     if (arg === "--help" || arg === "-h") args.help = true;
-    else if (arg === "--local") args.local = true;
-    else if (arg === "--plan-only") args.planOnly = true;
-    else if (arg === "--no-render") args.noRender = true;
-    else if (arg === "--page") args.page = argv[++index];
-    else if (arg.startsWith("--")) {
-      const key = arg.slice(2).replace(/-([a-z])/g, (_, char) => char.toUpperCase());
-      args[key] = argv[index + 1];
-      index += 1;
-    } else {
-      positional.push(arg);
-    }
+    else if (arg === "--input" || arg === "--out" || arg === "--page") args[arg.slice(2)] = argv[++index];
+    else if (!arg.startsWith("--") && !args.input) args.input = arg;
+    else throw new Error(`Unknown option: ${arg}`);
   }
-  if (!args.input && positional[0]) args.input = positional[0];
   return args;
-}
-
-function readEnvFile(filePath) {
-  if (!fs.existsSync(filePath)) return {};
-  const values = {};
-  for (const line of fs.readFileSync(filePath, "utf8").split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) continue;
-    const equals = trimmed.indexOf("=");
-    if (equals < 0) continue;
-    const key = trimmed.slice(0, equals).trim();
-    const value = trimmed.slice(equals + 1).trim().replace(/^['"]|['"]$/g, "");
-    if (process.env[key] === undefined) values[key] = value;
-  }
-  return values;
 }
 
 function run(command, args, options) {
   const result = spawnSync(command, args, { stdio: "inherit", shell: false, ...options });
   if (result.error) throw result.error;
   if (result.status !== 0) throw new Error(`${command} ${args.join(" ")} exited with code ${result.status}`);
-}
-
-function defaultOut(inputPath) {
-  return path.resolve(pipelineDir, "output", path.basename(inputPath, path.extname(inputPath)));
 }
 
 function main() {
@@ -75,21 +39,14 @@ function main() {
     process.exitCode = args.help ? 0 : 1;
     return;
   }
-
   const inputPath = path.resolve(pipelineDir, args.input);
   if (!fs.existsSync(inputPath)) throw new Error(`Input not found: ${args.input}`);
-  const outDir = path.resolve(pipelineDir, args.out || defaultOut(inputPath));
+  if (path.extname(inputPath).toLowerCase() !== ".json") throw new Error("Pipeline 1 requires an agent-authored storyboard.json input.");
+  const outDir = path.resolve(pipelineDir, args.out || path.dirname(inputPath));
   fs.mkdirSync(outDir, { recursive: true });
-
-  const env = { ...readEnvFile(path.join(pipelineDir, ".env")), ...process.env };
-  const commandArgs = args.local
-    ? ["comic_pipeline.js", inputPath, outDir]
-    : ["generate_with_llm.mjs", inputPath, outDir];
-  if (args.local && args.page) commandArgs.push("--page", args.page);
-  if (!args.local && args.planOnly) commandArgs.push("--plan-only");
-  if (!args.local && args.noRender) commandArgs.push("--no-render");
-
-  run(process.execPath, commandArgs, { cwd: pipelineDir, env });
+  const commandArgs = ["comic_pipeline.js", inputPath, outDir];
+  if (args.page) commandArgs.push("--page", args.page);
+  run(process.execPath, commandArgs, { cwd: pipelineDir });
   console.log(`\nOutput written to: ${outDir}`);
 }
 

@@ -1,0 +1,141 @@
+{
+  "version": 2,
+  "style": "pastel-handdrawn",
+  "title": "Live Speech Translation",
+  "visualDirection": {
+    "character": "systems map for multilingual voice products",
+    "recurringMetaphor": "meaning crossing languages through controlled streaming units"
+  },
+  "pages": [
+    {
+      "title": "Translate While The Speaker Talks",
+      "section": "article-summary",
+      "pageLabel": "1",
+      "format": "wide",
+      "layout": "funnel",
+      "headline": "Live translation balances waiting, stable meaning, terminology, and voice",
+      "nodes": [
+        {
+          "id": "source",
+          "type": "input",
+          "label": "Source speech",
+          "caption": "Partial words, speaker turns, code-switching, and visual context",
+          "visual": "microphone",
+          "shape": "illustration"
+        },
+        {
+          "id": "units",
+          "type": "process",
+          "label": "Semantic units",
+          "caption": "Wait for enough meaning without delaying the conversation",
+          "visual": "embedding",
+          "shape": "card"
+        },
+        {
+          "id": "terms",
+          "type": "context",
+          "label": "Terminology",
+          "caption": "Names, glossaries, pronunciation, and session scope",
+          "visual": "document",
+          "shape": "card"
+        },
+        {
+          "id": "translate",
+          "type": "process",
+          "label": "Translate stream",
+          "caption": "Preserve meaning while target-language word order unfolds",
+          "visual": "translate",
+          "shape": "illustration"
+        },
+        {
+          "id": "commit",
+          "type": "decision",
+          "label": "Commit policy",
+          "caption": "Speak now, wait, revise text, or repair explicitly",
+          "visual": "sliders",
+          "shape": "card"
+        },
+        {
+          "id": "voice",
+          "type": "result",
+          "label": "Target voice",
+          "caption": "Intelligible speech, speaker assignment, consent, and logs",
+          "visual": "tts",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "source",
+          "to": "units",
+          "label": "listen",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "input",
+          "pathStyle": "curve",
+          "bend": -0.15
+        },
+        {
+          "from": "source",
+          "to": "terms",
+          "label": "session",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "input",
+          "pathStyle": "curve",
+          "bend": 0.15
+        },
+        {
+          "from": "units",
+          "to": "translate",
+          "label": "stable meaning",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "translation",
+          "pathStyle": "curve",
+          "bend": 0.12
+        },
+        {
+          "from": "terms",
+          "to": "translate",
+          "label": "constrain",
+          "labelPriority": "optional",
+          "relation": "constraint",
+          "edgeGroup": "translation",
+          "pathStyle": "curve",
+          "bend": -0.12
+        },
+        {
+          "from": "translate",
+          "to": "commit",
+          "label": "candidate",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "output",
+          "pathStyle": "curve",
+          "bend": -0.1
+        },
+        {
+          "from": "commit",
+          "to": "voice",
+          "label": "authorize",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "edgeGroup": "output",
+          "pathStyle": "curve",
+          "bend": 0.12
+        },
+        {
+          "from": "translate",
+          "to": "voice",
+          "label": "voice plan",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "speech",
+          "pathStyle": "curve",
+          "bend": 0.34
+        }
+      ]
+    }
+  ]
+}

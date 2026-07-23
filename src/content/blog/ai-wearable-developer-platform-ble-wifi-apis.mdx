@@ -30,15 +30,15 @@ cover:
   fit: "cover"
 media:
   - title: "AI wearable developer platform"
-    src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-3/01-article-summary.gif"
+    src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-2/01-article-summary.gif"
     type: "image"
     note: "A map of the device, mobile SDK, product backend, context platform, and AI agent workflow."
   - title: "Multi-link connection policy"
-    src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-3/02-connection-policy.gif"
+    src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-2/02-connection-policy.gif"
     type: "image"
     note: "A state map for BLE relay, direct Wi-Fi or cellular upload, heartbeat ownership, and recovery."
   - title: "Secure recording upload lifecycle"
-    src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-3/03-upload-lifecycle.gif"
+    src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-2/03-upload-lifecycle.gif"
     type: "image"
     note: "A device-to-cloud lifecycle using scoped device credentials, presigned storage uploads, completion events, and webhooks."
 ---
@@ -63,7 +63,7 @@ This is why an AI wearable is not only a hardware product. It is the edge endpoi
 
 The wider product case is covered in [why AI agents need offline conversation context](/blogs/offline-context-infrastructure-ai-agents/), while the commercial layer is analyzed in [who buys offline conversation APIs](/blogs/ai-wearables-offline-conversation-apis/). This guide stays at the developer boundary.
 
-![AI wearable developer platform](/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-3/01-article-summary.gif)
+![AI wearable developer platform](/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-2/01-article-summary.gif)
 
 The platform's job is to make an unreliable physical environment look like a coherent set of APIs, SDKs, recording states, and events. The product developer should be able to reason about recordings and context without rebuilding Bluetooth synchronization, device credentials, object-storage uploads, and fleet recovery.
 
@@ -168,7 +168,7 @@ The useful pattern is **single heartbeat ownership**. When the device has an act
 
 When BLE disappears, heartbeat ownership returns to the device and the direct link may become active. The platform should understand this handoff instead of interpreting it as multiple devices or duplicate sessions.
 
-![Multi-link connection policy](/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-3/02-connection-policy.gif)
+![Multi-link connection policy](/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-2/02-connection-policy.gif)
 
 ## Connection Priority Is A Policy Engine
 

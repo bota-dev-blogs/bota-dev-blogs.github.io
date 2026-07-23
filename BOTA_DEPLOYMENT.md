@@ -34,16 +34,16 @@ Do not use root-level `blogs/`, `media/`, or `assets/` folders. They are ignored
 
 ## Generate Assets
 
-For an audio AI paper diagram:
+For an article-wide research map or graphical abstract:
 
 ```bash
-npm run gif -- 2 --input .tmp/papers/paper.pdf --slug post-slug
+npm run gif -- 2 --input public/media/gifs/post-slug/pipeline-2/storyboard.json
 ```
 
 For an article/comic explainer sequence:
 
 ```bash
-npm run gif -- 1 --input src/content/blog/post-slug.mdx
+npm run gif -- 1 --input public/media/gifs/post-slug/pipeline-1/storyboard.json
 ```
 
 Generated blog-ready files land under:
@@ -167,14 +167,14 @@ For paper posts, also check:
 - The article makes clear that it is editorial explanation of third-party work, not a claim of authorship.
 - The article body uses neutral editorial language and avoids explicit site-brand mentions unless the post is about the brand itself.
 
-For generated diagram GIF covers, use:
+For generated research-map GIF covers, use:
 
 ```yaml
 cover:
-  src: "/media/gifs/<asset-slug>/pipeline-2/01-<diagram-title>.gif"
-  alt: "Animated method diagram"
-  width: 1396
-  height: 620
+  src: "/media/gifs/<asset-slug>/pipeline-2/01-article-summary.gif"
+  alt: "Animated research map"
+  width: 1600
+  height: 900
   fit: "contain"
 ```
 
@@ -187,7 +187,7 @@ src: "/media/post-slug/demo.mp3"
 ```
 
 ```mdx
-![Method diagram](/media/gifs/<asset-slug>/pipeline-2/01-<diagram-title>.gif)
+![Research map](/media/gifs/<asset-slug>/pipeline-2/01-article-summary.gif)
 ```
 
 For audio/video captions, prefer WebVTT:

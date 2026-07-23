@@ -30,25 +30,21 @@ cover:
   fit: "cover"
 media:
   - title: "Wake word research map"
-    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-3/01-article-summary.gif"
+    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/01-article-summary.gif"
     type: "image"
-    note: "Pipeline 3 research-map GIF for the article."
+    note: "Pipeline 2 research-map GIF for the article."
   - title: "Operating point trade-off"
-    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-3/02-operating-point.gif"
+    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/02-operating-point.gif"
     type: "image"
-    note: "Pipeline 3 visual of FAR, FRR, and deployment thresholds."
+    note: "Pipeline 2 visual of FAR, FRR, and deployment thresholds."
   - title: "Research frontier map"
-    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-3/03-research-frontier.gif"
+    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/03-research-frontier.gif"
     type: "image"
-    note: "Pipeline 3 visual of zero-shot KWS, personalization, distillation, and semantic turn-taking."
+    note: "Pipeline 2 visual of zero-shot KWS, personalization, distillation, and semantic turn-taking."
   - title: "Wake strategy checklist"
-    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-3/04-design-checklist.gif"
+    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/04-design-checklist.gif"
     type: "image"
-    note: "Pipeline 3 visual checklist for designing a voice-entry system."
-  - title: "Wake word gate diagram"
-    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/01-wake-word-to-intent-gate.gif"
-    type: "image"
-    note: "Pipeline 2 method diagram from the research digest."
+    note: "Pipeline 2 visual checklist for designing a voice-entry system."
   - title: "Layered gate explainer"
     src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-1/01-layered-gate.gif"
     type: "image"
@@ -70,7 +66,7 @@ The short answer: wake words are not disappearing. They are becoming one input t
 
 Once that gate opens, the [real-time ASR systems guide](/blogs/real-time-asr-2026-streaming-recognition/) explains how partial text, endpointing, hotwords, and finalization should behave.
 
-![Wake word research map](/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-3/01-article-summary.gif)
+![Wake word research map](/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/01-article-summary.gif)
 
 ## Key Concepts
 
@@ -104,15 +100,13 @@ A production wake word system is usually a cascade, not a single classifier atta
 
 The design pattern is simple: spend tiny compute all the time, then spend larger compute only when the evidence is strong.
 
-![Wake word gate diagram](/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/01-wake-word-to-intent-gate.gif)
-
 ## The Operating Point Is The Real Product
 
 Benchmarks often report accuracy, but deployed wake word systems live or die by their operating point.
 
 [False accepts](https://www.sciencedirect.com/topics/computer-science/false-acceptance-rate) are cases where background speech, television, music, or another person triggers the assistant. False rejects are cases where the intended wake phrase is missed. For a detector whose score increases with confidence, lowering the threshold usually reduces false rejects but increases false accepts; raising it can reduce interruptions and privacy exposure at the cost of more missed activations.
 
-![Operating point trade-off](/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-3/02-operating-point.gif)
+![Operating point trade-off](/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/02-operating-point.gif)
 
 Different devices want different operating points:
 
@@ -174,7 +168,7 @@ A capable teacher model for intent gating may be too large for always-on inferen
 
 Classical VAD asks whether speech exists. A voice agent needs a harder question: should the assistant respond now? This overlaps with [turn-taking](https://en.wikipedia.org/wiki/Turn-taking), interruption handling, hesitation, backchannels, and semantic completion. Modern real-time voice APIs expose this problem directly through turn-detection settings; OpenAI's [Realtime API reference](https://developers.openai.com/api/reference/resources/realtime) is one visible example.
 
-![Research frontier map](/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-3/03-research-frontier.gif)
+![Research frontier map](/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/03-research-frontier.gif)
 
 ## Wearables Make The Research Problem Sharper
 
@@ -194,7 +188,7 @@ This layered design is a way to balance natural interaction with battery, heat, 
 
 For a voice-first product, the research lesson is not "choose a better wake phrase." The lesson is to specify the entry policy as carefully as the ASR, LLM, and tool-use stack.
 
-![Wake strategy checklist](/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-3/04-design-checklist.gif)
+![Wake strategy checklist](/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/04-design-checklist.gif)
 
 A good wake strategy should define:
 

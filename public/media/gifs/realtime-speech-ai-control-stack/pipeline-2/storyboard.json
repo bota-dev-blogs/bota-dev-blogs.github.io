@@ -1,0 +1,242 @@
+{
+  "version": 2,
+  "style": "pastel-handdrawn",
+  "title": "Realtime Speech AI",
+  "visualDirection": {
+    "character": "research map for speech-product teams",
+    "recurringMetaphor": "speech AI as a layered control stack"
+  },
+  "pages": [
+    {
+      "title": "Realtime Speech Control Stack",
+      "section": "article-summary",
+      "pageLabel": "1",
+      "format": "wide",
+      "layout": "parallel-lanes",
+      "headline": "Speech products need recognition, audio reasoning, timing, and authority",
+      "nodes": [
+        {
+          "id": "stream",
+          "type": "input",
+          "label": "Audio stream",
+          "caption": "Speech, timing, prosody, noise, and speaker cues",
+          "visual": "stream",
+          "shape": "illustration"
+        },
+        {
+          "id": "asr",
+          "type": "process",
+          "label": "ASR trace",
+          "caption": "Words, timestamps, confidence, and search logs",
+          "visual": "asr",
+          "shape": "card"
+        },
+        {
+          "id": "lalm",
+          "type": "process",
+          "label": "Audio reasoning",
+          "caption": "Sound events, intent, context, and uncertainty",
+          "visual": "reasoning",
+          "shape": "card"
+        },
+        {
+          "id": "realtime",
+          "type": "process",
+          "label": "Realtime loop",
+          "caption": "Turn timing, interruption, response, and speech output",
+          "visual": "latency",
+          "shape": "illustration"
+        },
+        {
+          "id": "policy",
+          "type": "decision",
+          "label": "Control plane",
+          "caption": "Permissions, confirmations, schemas, and audit",
+          "visual": "guardrail",
+          "shape": "card"
+        },
+        {
+          "id": "action",
+          "type": "result",
+          "label": "Safe output",
+          "caption": "Speech reply, translated media, or verified tool action",
+          "visual": "shield",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "stream",
+          "to": "asr",
+          "label": "recognize",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "evidence",
+          "pathStyle": "curve",
+          "bend": -0.18
+        },
+        {
+          "from": "stream",
+          "to": "lalm",
+          "label": "listen",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "evidence",
+          "pathStyle": "curve",
+          "bend": 0.18
+        },
+        {
+          "from": "asr",
+          "to": "realtime",
+          "label": "words",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "loop",
+          "pathStyle": "curve",
+          "bend": 0.12
+        },
+        {
+          "from": "lalm",
+          "to": "realtime",
+          "label": "context",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "loop",
+          "pathStyle": "curve",
+          "bend": -0.12
+        },
+        {
+          "from": "realtime",
+          "to": "policy",
+          "label": "intent",
+          "labelPriority": "optional",
+          "relation": "constraint",
+          "edgeGroup": "control",
+          "pathStyle": "curve",
+          "bend": -0.16
+        },
+        {
+          "from": "policy",
+          "to": "action",
+          "label": "authorize",
+          "labelPriority": "optional",
+          "relation": "constraint",
+          "edgeGroup": "control",
+          "pathStyle": "straight"
+        },
+        {
+          "from": "realtime",
+          "to": "action",
+          "label": "speak",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "speech",
+          "pathStyle": "curve",
+          "bend": 0.2
+        }
+      ]
+    },
+    {
+      "title": "Model Family Map",
+      "section": "model-family-map",
+      "pageLabel": "2",
+      "format": "wide",
+      "layout": "timeline",
+      "headline": "The same audio input can support very different product contracts",
+      "nodes": [
+        {
+          "id": "asr",
+          "type": "context",
+          "label": "ASR models",
+          "caption": "Best for transcripts, timestamps, vocabulary, and audit",
+          "visual": "asr",
+          "shape": "card"
+        },
+        {
+          "id": "audio-text",
+          "type": "process",
+          "label": "Audio-text LALMs",
+          "caption": "Reason over speech, music, environment, and long audio",
+          "visual": "model",
+          "shape": "illustration"
+        },
+        {
+          "id": "translate",
+          "type": "process",
+          "label": "Live translation",
+          "caption": "Balance latency, readable units, speakers, and terms",
+          "visual": "translate",
+          "shape": "card"
+        },
+        {
+          "id": "omni",
+          "type": "process",
+          "label": "Omni speech",
+          "caption": "Connect listening, reasoning, talking, and interruption",
+          "visual": "omni",
+          "shape": "illustration"
+        },
+        {
+          "id": "control",
+          "type": "result",
+          "label": "Voice agents",
+          "caption": "Need tool gates, confirmations, logging, and rollback",
+          "visual": "agent",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "asr",
+          "to": "audio-text",
+          "label": "beyond text",
+          "labelPriority": "optional",
+          "relation": "contrast",
+          "edgeGroup": "map",
+          "pathStyle": "curve",
+          "bend": 0.18
+        },
+        {
+          "from": "audio-text",
+          "to": "translate",
+          "label": "ground meaning",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "map",
+          "pathStyle": "curve",
+          "bend": -0.18
+        },
+        {
+          "from": "translate",
+          "to": "omni",
+          "label": "stream output",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "speech",
+          "pathStyle": "curve",
+          "bend": 0.18
+        },
+        {
+          "from": "omni",
+          "to": "control",
+          "label": "act safely",
+          "labelPriority": "optional",
+          "relation": "constraint",
+          "edgeGroup": "control",
+          "pathStyle": "curve",
+          "bend": -0.12
+        },
+        {
+          "from": "asr",
+          "to": "control",
+          "label": "audit trail",
+          "labelPriority": "essential",
+          "relation": "evidence",
+          "edgeGroup": "audit",
+          "pathStyle": "curve",
+          "bend": -0.32
+        }
+      ]
+    }
+  ]
+}

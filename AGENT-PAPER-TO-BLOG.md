@@ -74,7 +74,6 @@ Put generated GIF assets here:
 ```text
 public/media/gifs/<asset-slug>/pipeline-1/
 public/media/gifs/<asset-slug>/pipeline-2/
-public/media/gifs/<asset-slug>/pipeline-3/
 ```
 
 The asset slug is a filesystem-safe version of the post slug. Use it in media paths and generated GIF folders.
@@ -138,14 +137,14 @@ paper:
   project: "https://..."
   dataset: "https://..."
 cover:
-  src: "/media/gifs/<asset-slug>/pipeline-2/01-<diagram-title>.gif"
+  src: "/media/gifs/<asset-slug>/pipeline-2/01-article-summary.gif"
   alt: "Animated visual explanation of the original paper's method"
   width: 1396
   height: 620
   fit: "contain"
 media:
   - title: "Visual method explanation"
-    src: "/media/gifs/<asset-slug>/pipeline-2/01-<diagram-title>.gif"
+    src: "/media/gifs/<asset-slug>/pipeline-2/01-article-summary.gif"
     type: "image"
     note: "Original visualization generated from the public paper."
 ---
@@ -269,60 +268,45 @@ How does it compare with related methods?
 
 ## GIF Workflow
 
-For a paper-method overview, use pipeline 2:
+The GIF renderers do not call an LLM. The active coding agent must first read
+the selected pipeline's `SKILL.md`, study the paper and article, and author the
+intermediate storyboard.
 
-```bash
-npm run gif -- 2 --input .tmp/papers/<paper>.pdf --slug <slug>
-```
-
-This writes:
-
-```text
-public/media/gifs/<asset-slug>/pipeline-2/diagram.json
-public/media/gifs/<asset-slug>/pipeline-2/diagram.html
-public/media/gifs/<asset-slug>/pipeline-2/01-<diagram-title>.gif
-public/media/gifs/<asset-slug>/pipeline-2/manifest.json
-```
-
-For optional explainer cards after the MDX draft exists, use pipeline 1:
-
-```bash
-npm run gif -- 1 --input src/content/blog/<slug>.mdx
-```
-
-To rerender one selected page from an existing storyboard, use:
-
-```bash
-npm run gif -- 1 --input public/media/gifs/<asset-slug>/pipeline-1/storyboard.json --slug <slug> --local --page 1
-```
-
-This writes:
+For compact section explainers, read `AI/ai-gif-pipeline-1/SKILL.md` and write:
 
 ```text
 public/media/gifs/<asset-slug>/pipeline-1/storyboard.json
-public/media/gifs/<asset-slug>/pipeline-1/*.gif
-public/media/gifs/<asset-slug>/pipeline-1/manifest.json
 ```
 
-Pipeline 1 cleans stale `.gif` files after a successful render. Keep `storyboard.json`, `manifest.json`, and optional `plan.json`; do not keep unreferenced old GIFs.
-
-For one concise article-wide graphical abstract after the MDX draft exists, use pipeline 3:
+Then render it:
 
 ```bash
-npm run gif -- 3 --input src/content/blog/<slug>.mdx
+npm run gif -- 1 --input public/media/gifs/<asset-slug>/pipeline-1/storyboard.json
 ```
 
-This writes:
+For an article-wide graphical abstract, research landscape, architecture,
+comparison, or checklist, read `AI/ai-gif-pipeline-2/SKILL.md` and write:
 
 ```text
-public/media/gifs/<asset-slug>/pipeline-3/storyboard.json
-public/media/gifs/<asset-slug>/pipeline-3/01-article-summary.gif
-public/media/gifs/<asset-slug>/pipeline-3/manifest.json
+public/media/gifs/<asset-slug>/pipeline-2/storyboard.json
 ```
 
-Pipeline 3 may also write `plan.json` when the LLM planner is used. Local storyboard renders do not require it.
+Then render it:
 
-For research digests or survey posts, pipeline 3 can also be used for multiple section-level research maps, such as:
+```bash
+npm run gif -- 2 --input public/media/gifs/<asset-slug>/pipeline-2/storyboard.json
+```
+
+Both pipelines write:
+
+```text
+public/media/gifs/<asset-slug>/pipeline-<n>/storyboard.json
+public/media/gifs/<asset-slug>/pipeline-<n>/*.gif
+public/media/gifs/<asset-slug>/pipeline-<n>/manifest.json
+```
+
+For research digests or survey posts, pipeline 2 can contain multiple
+storyboard pages and publish several research maps, such as:
 
 ```text
 01-article-summary.gif
@@ -331,30 +315,23 @@ For research digests or survey posts, pipeline 3 can also be used for multiple s
 04-design-checklist.gif
 ```
 
-Use `--series` when the article needs a multi-page visual summary:
-
-```bash
-npm run gif -- 3 --input src/content/blog/<slug>.mdx --series
-```
-
 GIF rules:
 
 - Generate original visual explanations.
 - Do not convert paper figures into GIFs.
 - Do not trace paper figures too closely.
-- Use pipeline 2 to teach a method, architecture, or data flow.
-- Use pipeline 1 for section-level explainer cards.
-- Use pipeline 3 for a single graphical abstract, a research landscape, a comparison map, or a practical checklist. Dense survey posts often benefit from 2-5 pipeline-3 visuals distributed through the article.
+- Use pipeline 1 for compact section explainers without arrows.
+- Use pipeline 2 for a method, architecture, data flow, graphical abstract, research landscape, comparison map, or practical checklist. Dense survey posts often benefit from 2-5 pipeline-2 visuals distributed through the article.
 - Do not let generated GIF artwork display internal editorial labels such as "takeaway". Use reader-facing labels such as "key idea", "design rule", "checklist", or the actual concept being explained.
 - Use the shared icon vocabulary in `AI/shared/semantic-icons.cjs`. Prefer concrete AI/audio/mobile/edge/computing icons such as ASR, TTS, microphone, waveform, phone, edge device, chip, GPU, server, router, dataset, embedding, model, gate, filter, and latency before generic idea/agent/schema icons. Keep fallback icons concrete and narrow; fallback should not select person, bot, idea, agent, schema, graph, or chat bubbles.
-- Give every published Pipeline 1 card, Pipeline 2 node, and Pipeline 3 node an explicit canonical `icon` or `visual`. The renderer preserves valid explicit choices and infers only missing or unknown values; `npm run gif:check` rejects published intermediates without explicit icons.
-- For manual pipeline-3 storyboards, treat `semantic-map` coordinates as relative anchors. Do not add fake margin in coordinates; the renderer fits the map into the post-header content frame.
+- Give every published Pipeline 1 card and Pipeline 2 node an explicit canonical `icon` or `visual`; `npm run gif:check` rejects missing or unknown icons.
+- For pipeline-2 semantic maps, treat coordinates as relative anchors. Do not add fake margin in coordinates; the renderer fits the map into the content frame.
 - Reference GIFs from MDX with public paths only.
 
 Example:
 
 ```mdx
-![Method diagram](/media/gifs/<asset-slug>/pipeline-2/01-<diagram-title>.gif)
+![Research map](/media/gifs/<asset-slug>/pipeline-2/01-article-summary.gif)
 ```
 
 ## References Section

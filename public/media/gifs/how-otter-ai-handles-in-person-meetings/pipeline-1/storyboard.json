@@ -25,7 +25,9 @@
           "icon": "alert"
         }
       ],
-      "fileSlug": "what-is-otter-ai"
+      "fileSlug": "what-is-otter-ai",
+      "layout": "split-focus",
+      "composition": "comparison"
     }
   ]
 }

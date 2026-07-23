@@ -9,7 +9,11 @@ const BG = '#fffdf8', INK = '#292b42', MUTED = '#667085';
 const FONT_STACK = '"Avenir Next","Inter","Segoe UI","Helvetica Neue",Arial,"Microsoft YaHei",sans-serif';
 const PALETTE = ['#eefaf6', '#eef3ff', '#fbf0f7', '#fff6df', '#f0f8ea', '#f7f5ff'];
 const ACCENTS = ['#259d8f', '#557bd8', '#ad67a7', '#e99b1c', '#69a34f', '#d85f91'];
-const LAYOUTS = ['row', 'timeline', 'spotlight', 'stacked', 'grid', 'mosaic', 'compare', 'lanes', 'checklist'];
+const LAYOUTS = [
+  'row', 'timeline', 'spotlight', 'stacked', 'grid', 'mosaic', 'compare', 'lanes', 'checklist',
+  'flow-board', 'bento', 'split-focus', 'staircase', 'bands', 'triptych', 'dashboard', 'orbit',
+  'matrix', 'system-board', 'failure-focus'
+];
 const COMPOSITIONS = ['flow', 'comparison', 'checklist', 'system-map', 'failure-map', 'evidence-map', 'compact-grid', 'spotlight'];
 const INTRO_STYLES = ['guide', 'badge', 'ribbon', 'split', 'quiet'];
 const TITLE_TREATMENTS = ['underline', 'corner-tag', 'side-note', 'none'];
@@ -48,10 +52,6 @@ function assetSlugFromOutputDir(outputDir) {
   return assetSlug(candidate);
 }
 
-function sentences(text) {
-  return text.replace(/\s+/g, ' ').trim().split(/(?<=[。！？.!?])\s*/).filter(Boolean);
-}
-
 function hashText(text) {
   let hash = 0;
   for (const char of String(text || '')) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
@@ -65,11 +65,6 @@ function pickFrom(list, seed) {
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
-
-function semanticIconFor(text, fallbackIndex = 0) {
-  return sharedIcons.semanticIconFor(text, fallbackIndex);
-}
-
 
 function resolveIconName(name, text, index = 0) {
   return sharedIcons.resolveIconName(name, text, index);
@@ -97,19 +92,12 @@ function inferComposition(page) {
   return 'compact-grid';
 }
 
-function shortTitle(text, index) {
-  const clean = text.replace(/^[\d.)、\s-]+/, '').trim();
-  const first = sentences(clean)[0] || clean;
-  return first.length > 34 ? first.slice(0, 32) + '…' : first || `Point ${index + 1}`;
-}
-
 function matchCase(replacement, sample) {
   if (sample === sample.toUpperCase()) return replacement.toUpperCase();
   if (sample[0] === sample[0].toUpperCase()) return replacement.replace(/\b[a-z]/g, (char) => char.toUpperCase());
   return replacement;
 }
 
-const NON_VISUAL_SECTION_RE = /^(?:references?|bibliography|sources?|further reading|footnotes?|appendix|acknowledg(?:e)?ments?|table of contents|contents|external links|citation notes|source notes?|notes?|related links|metadata|front\s*matter|seo|changelog|revision history|about the author|author note|disclaimer|read more|see also|share|subscribe|newsletter|comments?)$/i;
 const EXACT_VISIBLE_LABELS = [
   [/^practical design takeaways?$/i, 'Design Rules'],
   [/^key takeaways?$/i, 'Key Ideas'],
@@ -137,11 +125,6 @@ const EXACT_VISIBLE_LABELS = [
   [/^section\s*\d*$/i, 'Part'],
   [/^chapter\s*\d*$/i, 'Part']
 ];
-
-function isNonVisualSectionHeading(heading) {
-  const clean = String(heading || '').replace(/[:：]+$/g, '').trim();
-  return NON_VISUAL_SECTION_RE.test(clean);
-}
 
 function sanitizeVisibleText(value) {
   if (typeof value !== 'string') return value;
@@ -211,78 +194,6 @@ function compositionLabelFor(composition) {
   })[composition] || 'Visual Map';
 }
 
-function parseMarkdown(raw) {
-  const lines = raw.replace(/\r/g, '').split('\n');
-  let title = 'Untitled Article';
-  const sections = [];
-  let current = { heading: 'Overview', paragraphs: [] };
-  let paragraph = [];
-
-  function flushParagraph() {
-    const value = paragraph.join(' ').trim();
-    if (value) current.paragraphs.push(value);
-    paragraph = [];
-  }
-  function flushSection() {
-    flushParagraph();
-    if (current.paragraphs.length && !isNonVisualSectionHeading(current.heading)) sections.push(current);
-  }
-
-  for (const line of lines) {
-    const h = line.match(/^(#{1,3})\s+(.+)$/);
-    if (h) {
-      if (h[1].length === 1 && title === 'Untitled Article') { title = h[2].trim(); continue; }
-      flushSection();
-      current = { heading: h[2].trim(), paragraphs: [] };
-    } else if (!line.trim()) flushParagraph();
-    else paragraph.push(line.replace(/^[-*]\s+/, '').trim());
-  }
-  flushSection();
-  if (!sections.length) sections.push({ heading: 'Overview', paragraphs: [raw.trim()] });
-  return { title, sections };
-}
-
-// Long articles are paginated by semantic section first, then by card capacity.
-// An LLM may replace this heuristic by writing the same storyboard JSON contract.
-function articleToStoryboard(article) {
-  const pages = [];
-  for (const section of article.sections) {
-    const units = [];
-    for (const paragraph of section.paragraphs) {
-      const ss = sentences(paragraph);
-      if (paragraph.length <= 210 || ss.length <= 1) units.push(paragraph);
-      else {
-        let buf = '';
-        for (const s of ss) {
-          if ((buf + s).length > 190 && buf) { units.push(buf); buf = ''; }
-          buf += s;
-        }
-        if (buf) units.push(buf);
-      }
-    }
-    for (let i = 0; i < units.length; i += 4) {
-      const group = units.slice(i, i + 4);
-      const seed = hashText(`${article.title}|${section.heading}|${i}`);
-      const cards = group.map((body, j) => ({
-          title: shortTitle(body, j),
-          body,
-          icon: semanticIconFor(`${section.heading} ${body}`, i + j)
-        }));
-      pages.push({
-        title: article.title,
-        section: section.heading,
-        pageLabel: `${Math.floor(i / 4) + 1}`,
-        layout: pickFrom(LAYOUTS, seed),
-        composition: inferComposition({ title: article.title, section: section.heading, cards }),
-        introStyle: pickFrom(INTRO_STYLES, seed >> 3),
-        titleTreatment: pickFrom(TITLE_TREATMENTS, seed >> 6),
-        cards
-      });
-    }
-  }
-  return { version: 1, style: 'pastel-handdrawn', title: article.title, pages };
-}
-
 function validateStoryboard(sb) {
   if (!sb || !Array.isArray(sb.pages) || !sb.pages.length) throw new Error('storyboard.pages must be a non-empty array');
   sb.pages.forEach((p, i) => {
@@ -331,21 +242,21 @@ function pageDesign(page, pageIndex) {
   let composition = page.composition || inferComposition(page);
   const count = page.cards.length;
   const layoutFamilies = {
-    flow: count === 3 ? ['timeline', 'mosaic', 'lanes'] : ['timeline', 'grid', 'mosaic'],
-    comparison: ['compare', 'lanes', 'spotlight'],
-    checklist: ['checklist', 'stacked', 'mosaic'],
-    'system-map': ['lanes', 'mosaic', 'grid'],
-    'failure-map': ['spotlight', 'checklist', 'mosaic'],
-    'evidence-map': ['grid', 'lanes', 'mosaic'],
-    'compact-grid': count === 3 ? ['mosaic', 'grid', 'lanes'] : ['grid', 'mosaic', 'row'],
+    flow: ['flow-board', 'timeline', 'staircase', 'bands'],
+    comparison: ['compare', 'split-focus', 'lanes', 'matrix'],
+    checklist: ['checklist', 'stacked', 'bands', 'staircase'],
+    'system-map': ['system-board', 'orbit', 'dashboard', 'bento'],
+    'failure-map': ['failure-focus', 'spotlight', 'split-focus'],
+    'evidence-map': ['matrix', 'dashboard', 'mosaic', 'triptych'],
+    'compact-grid': ['bento', 'mosaic', 'grid', 'triptych', 'dashboard'],
     spotlight: ['spotlight']
   };
   let layout = page.layout || pickFrom(layoutFamilies[composition] || LAYOUTS, seed + pageIndex * 17);
   let introStyle = page.introStyle || pickFrom(INTRO_STYLES, (seed >> 3) + pageIndex * 11);
   let titleTreatment = page.titleTreatment || pickFrom(TITLE_TREATMENTS, (seed >> 6) + pageIndex * 7);
   if (count === 1) { layout = 'spotlight'; composition = 'spotlight'; }
-  if (count === 2 && layout === 'grid') layout = 'compare';
-  if (count === 4 && layout === 'row') layout = 'grid';
+  if (count === 2 && ['grid', 'matrix', 'triptych'].includes(layout)) layout = 'compare';
+  if (count === 4 && layout === 'row') layout = 'dashboard';
   if (composition === 'comparison' && count < 2) composition = 'spotlight';
   if (composition === 'flow' && count < 2) composition = 'spotlight';
   if (composition === 'flow' && introStyle === 'quiet') introStyle = 'ribbon';
@@ -1110,19 +1021,226 @@ function drawSpotlightLayout(ctx, cards, top, t) {
   });
 }
 
+function drawMosaicLayout(ctx, cards, top, t) {
+  if (cards.length < 3) return drawSpotlightLayout(ctx, cards, top, t);
+  drawBoardSurface(ctx, top, 79);
+  const y = top + 18;
+  const gap = 16;
+  const height = Math.min(548, BOARD_BOTTOM - y);
+  const primaryW = cards.length === 3 ? 510 : 430;
+  drawCard(ctx, cards[0], BOARD_LEFT, y, primaryW, height, 0, t, { pulse: 0.016 });
+  const supportX = BOARD_LEFT + primaryW + gap;
+  const supportW = BOARD_RIGHT - supportX;
+  const supportCount = cards.length - 1;
+  const supportH = (height - gap * (supportCount - 1)) / supportCount;
+  cards.slice(1).forEach((card, i) => {
+    drawMiniCard(ctx, card, supportX, y + i * (supportH + gap), supportW, supportH, i + 1, t, {
+      sideIcon: true,
+      small: supportH < 180,
+      pulse: 0.012
+    });
+  });
+}
+
+function drawLanesLayout(ctx, cards, top, t) {
+  drawBoardSurface(ctx, top, 83, { fill: 'rgba(255,255,255,.25)' });
+  const y = top + 18;
+  const gap = 16;
+  const cols = cards.length === 1 ? 1 : 2;
+  const rows = Math.ceil(cards.length / cols);
+  const cardW = cols === 1 ? 760 : 420;
+  const cardH = Math.min(244, (BOARD_BOTTOM - y - gap * (rows - 1)) / rows);
+  const laneX = cols === 1 ? [120] : [74, 506];
+  laneX.forEach((x, i) => {
+    ctx.save();
+    ctx.fillStyle = PALETTE[(i + 1) % PALETTE.length];
+    roundRect(ctx, x - 10, y - 8, cardW + 20, rows * cardH + (rows - 1) * gap + 16, 26);
+    ctx.globalAlpha = .55;
+    ctx.fill();
+    ctx.restore();
+  });
+  cards.forEach((card, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    drawMiniCard(ctx, card, laneX[col], y + row * (cardH + gap), cardW, cardH, i, t, {
+      sideIcon: true,
+      small: true,
+      pulse: 0.012
+    });
+  });
+}
+
+function drawBentoLayout(ctx, cards, top, t) {
+  if (cards.length < 3) return drawGridLayout(ctx, cards, top, t);
+  drawBoardSurface(ctx, top, 89);
+  const y = top + 18;
+  const gap = 16;
+  const height = Math.min(548, BOARD_BOTTOM - y);
+  if (cards.length === 3) {
+    const topH = height * .52;
+    drawCard(ctx, cards[0], 104, y, 792, topH, 0, t, { sideIcon: true, pulse: 0.016 });
+    drawMiniCard(ctx, cards[1], 104, y + topH + gap, 388, height - topH - gap, 1, t, { small: true });
+    drawMiniCard(ctx, cards[2], 508, y + topH + gap, 388, height - topH - gap, 2, t, { small: true });
+    return;
+  }
+  const leftW = 506;
+  const rightW = 350;
+  drawCard(ctx, cards[0], BOARD_LEFT, y, leftW, height, 0, t, { pulse: 0.016 });
+  const rightX = BOARD_LEFT + leftW + gap;
+  const smallH = (height - gap * 2) / 3;
+  cards.slice(1).forEach((card, i) => drawMiniCard(ctx, card, rightX, y + i * (smallH + gap), rightW, smallH, i + 1, t, {
+    sideIcon: true,
+    small: true,
+    pulse: 0.011
+  }));
+}
+
+function drawSplitFocusLayout(ctx, cards, top, t) {
+  if (cards.length === 1) return drawSpotlightLayout(ctx, cards, top, t);
+  drawBoardSurface(ctx, top, 97, { fill: 'rgba(255,255,255,.28)' });
+  const y = top + 18;
+  const gap = 18;
+  const height = Math.min(548, BOARD_BOTTOM - y);
+  const leftW = 548;
+  drawCard(ctx, cards[0], BOARD_LEFT, y, leftW, height, 0, t, { pulse: 0.018 });
+  const supportX = BOARD_LEFT + leftW + gap;
+  const supportW = BOARD_RIGHT - supportX;
+  const supportH = (height - gap * (cards.length - 2)) / (cards.length - 1);
+  cards.slice(1).forEach((card, i) => drawMiniCard(ctx, card, supportX, y + i * (supportH + gap), supportW, supportH, i + 1, t, {
+    sideIcon: supportH < 190,
+    small: true,
+    pulse: 0.012
+  }));
+}
+
+function drawStaircaseLayout(ctx, cards, top, t) {
+  drawBoardSurface(ctx, top, 101, { fill: 'rgba(255,255,255,.22)' });
+  const y = top + 18;
+  const gap = 14;
+  const cardH = Math.min(132, (BOARD_BOTTOM - y - gap * (cards.length - 1)) / cards.length);
+  cards.forEach((card, i) => {
+    const x = 76 + i * 42;
+    const w = 840 - i * 70;
+    drawMiniCard(ctx, card, x, y + i * (cardH + gap), w, cardH, i, t, {
+      sideIcon: true,
+      small: true,
+      pulse: 0.014
+    });
+  });
+}
+
+function drawBandsLayout(ctx, cards, top, t) {
+  const y = top + 18;
+  const gap = 10;
+  const bandH = Math.min(132, (BOARD_BOTTOM - y - gap * (cards.length - 1)) / cards.length);
+  cards.forEach((card, i) => {
+    const inset = i % 2 ? 104 : 66;
+    drawMiniCard(ctx, card, inset, y + i * (bandH + gap), 1000 - inset * 2, bandH, i, t, {
+      sideIcon: true,
+      small: true,
+      fill: PALETTE[i % PALETTE.length],
+      pulse: 0.012
+    });
+  });
+}
+
+function drawTriptychLayout(ctx, cards, top, t) {
+  if (cards.length < 3) return drawComparisonComposition(ctx, cards, top, t, { seed: 107 });
+  drawBoardSurface(ctx, top, 107);
+  const y = top + 18;
+  const gap = 14;
+  const bottomH = cards.length === 4 ? 132 : 0;
+  const mainH = Math.min(430, BOARD_BOTTOM - y - (bottomH ? bottomH + gap : 0));
+  const cardW = (872 - gap * 2) / 3;
+  cards.slice(0, 3).forEach((card, i) => drawCard(ctx, card, BOARD_LEFT + i * (cardW + gap), y, cardW, mainH, i, t, {
+    pulse: 0.014
+  }));
+  if (cards[3]) drawMiniCard(ctx, cards[3], 154, y + mainH + gap, 692, bottomH, 3, t, {
+    sideIcon: true,
+    small: true,
+    pulse: 0.012
+  });
+}
+
+function drawDashboardLayout(ctx, cards, top, t) {
+  if (cards.length < 3) return drawGridLayout(ctx, cards, top, t);
+  drawBoardSurface(ctx, top, 113);
+  const y = top + 18;
+  const gap = 14;
+  const heroH = 246;
+  drawCard(ctx, cards[0], 96, y, 808, heroH, 0, t, { sideIcon: true, pulse: 0.017 });
+  const count = cards.length - 1;
+  const w = (872 - gap * (count - 1)) / count;
+  const h = Math.min(254, BOARD_BOTTOM - y - heroH - gap);
+  cards.slice(1).forEach((card, i) => drawMiniCard(ctx, card, BOARD_LEFT + i * (w + gap), y + heroH + gap, w, h, i + 1, t, {
+    small: true,
+    pulse: 0.012
+  }));
+}
+
+function drawOrbitLayout(ctx, cards, top, t) {
+  if (cards.length < 3) return drawSpotlightLayout(ctx, cards, top, t);
+  drawBoardSurface(ctx, top, 127, { fill: 'rgba(255,255,255,.18)' });
+  const y = top + 18;
+  const height = Math.min(548, BOARD_BOTTOM - y);
+  const centerY = y + height / 2;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(85,123,216,.16)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5, 10]);
+  ctx.beginPath();
+  ctx.ellipse(500, centerY, 350, 208, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+  const positions = cards.length === 3
+    ? [[360, y], [110, y + height - 214], [610, y + height - 214]]
+    : [[88, y], [562, y], [88, y + height - 214], [562, y + height - 214]];
+  cards.forEach((card, i) => drawMiniCard(ctx, card, positions[i][0], positions[i][1], cards.length === 3 ? 280 : 350, 214, i, t, {
+    small: true,
+    pulse: 0.017
+  }));
+}
+
+function drawMatrixLayout(ctx, cards, top, t) {
+  drawBoardSurface(ctx, top, 131, { fill: 'rgba(255,255,255,.24)' });
+  const y = top + 18;
+  const gap = 14;
+  const cols = 2;
+  const rows = Math.ceil(cards.length / cols);
+  const w = (872 - gap) / 2;
+  const h = Math.min(258, (BOARD_BOTTOM - y - gap * (rows - 1)) / rows);
+  cards.forEach((card, i) => drawMiniCard(ctx, card, BOARD_LEFT + (i % cols) * (w + gap), y + Math.floor(i / cols) * (h + gap), w, h, i, t, {
+    sideIcon: true,
+    pulse: 0.013
+  }));
+}
+
 function drawCards(ctx, page, design, top, t) {
-  if (design.composition === 'flow') return drawFlowComposition(ctx, page.cards, top, t, design);
-  if (design.composition === 'comparison') return drawComparisonComposition(ctx, page.cards, top, t, design);
-  if (design.composition === 'checklist') return drawChecklistComposition(ctx, page.cards, top, t, design);
-  if (design.composition === 'system-map') return drawSystemMapComposition(ctx, page.cards, top, t, design);
-  if (design.composition === 'failure-map') return drawFailureMapComposition(ctx, page.cards, top, t, design);
-  if (design.composition === 'evidence-map' || design.composition === 'compact-grid') return drawCompactGridComposition(ctx, page.cards, top, t, design);
   const layout = design.layout;
-  if (layout === 'timeline') drawTimelineLayout(ctx, page.cards, top, t);
-  else if (layout === 'spotlight') drawSpotlightLayout(ctx, page.cards, top, t);
-  else if (layout === 'stacked') drawStackedLayout(ctx, page.cards, top, t);
-  else if (layout === 'grid') drawGridLayout(ctx, page.cards, top, t);
-  else drawRowLayout(ctx, page.cards, top, t);
+  const renderers = {
+    row: drawRowLayout,
+    timeline: drawTimelineLayout,
+    spotlight: drawSpotlightLayout,
+    stacked: drawStackedLayout,
+    grid: drawGridLayout,
+    mosaic: drawMosaicLayout,
+    lanes: drawLanesLayout,
+    bento: drawBentoLayout,
+    'split-focus': drawSplitFocusLayout,
+    staircase: drawStaircaseLayout,
+    bands: drawBandsLayout,
+    triptych: drawTriptychLayout,
+    dashboard: drawDashboardLayout,
+    orbit: drawOrbitLayout,
+    matrix: drawMatrixLayout
+  };
+  if (layout === 'compare') return drawComparisonComposition(ctx, page.cards, top, t, design);
+  if (layout === 'checklist') return drawChecklistComposition(ctx, page.cards, top, t, design);
+  if (layout === 'flow-board') return drawFlowComposition(ctx, page.cards, top, t, design);
+  if (layout === 'system-board') return drawSystemMapComposition(ctx, page.cards, top, t, design);
+  if (layout === 'failure-focus') return drawFailureMapComposition(ctx, page.cards, top, t, design);
+  return (renderers[layout] || drawCompactGridComposition)(ctx, page.cards, top, t, design);
 }
 
 function minimumCardsTop(introStyle) {
@@ -1158,7 +1276,8 @@ function cleanStaleGifs(outDir, outputs) {
 function main() {
   const args=parseArgs(process.argv.slice(2));if(args.help||!args.input){usage();process.exit(args.help?0:1);}
   const input=args.input, outDir=path.resolve(args.outDir);const abs=path.resolve(input);const raw=fs.readFileSync(abs,'utf8');
-  const storyboard=sanitizeStoryboardText(path.extname(abs).toLowerCase()==='.json'?JSON.parse(raw):articleToStoryboard(parseMarkdown(raw)));validateStoryboard(storyboard);
+  if(path.extname(abs).toLowerCase()!=='.json')throw new Error('Pipeline 1 requires an agent-authored storyboard.json input.');
+  const storyboard=sanitizeStoryboardText(JSON.parse(raw));validateStoryboard(storyboard);
   if (args.page !== undefined) {
     if (!Number.isInteger(args.page) || args.page < 1 || args.page > storyboard.pages.length) throw new Error(`--page must be between 1 and ${storyboard.pages.length}`);
     storyboard.pages = [storyboard.pages[args.page - 1]];

@@ -1,0 +1,18 @@
+{
+  "pipeline": "ai-gif-pipeline-2",
+  "source": "storyboard.json",
+  "assetSlug": "ai-wearables-offline-conversation-apis",
+  "title": "AI Wearables As Infrastructure",
+  "version": 2,
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-article-summary.gif",
+      "02-business-model.gif"
+    ]
+  },
+  "pages": [
+    "01-article-summary.gif",
+    "02-business-model.gif"
+  ]
+}

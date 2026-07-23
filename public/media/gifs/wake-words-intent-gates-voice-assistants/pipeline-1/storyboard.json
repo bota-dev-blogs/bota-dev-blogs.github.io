@@ -25,7 +25,9 @@
           "icon": "gate"
         }
       ],
-      "fileSlug": "layered-gate"
+      "fileSlug": "layered-gate",
+      "layout": "system-board",
+      "composition": "system-map"
     }
   ]
 }

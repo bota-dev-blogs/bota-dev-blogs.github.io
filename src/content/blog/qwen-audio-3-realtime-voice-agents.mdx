@@ -31,13 +31,9 @@ cover:
   fit: "cover"
 media:
   - title: "Qwen-Audio Realtime field map"
-    src: "/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-3/01-article-summary.gif"
+    src: "/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-2/01-article-summary.gif"
     type: "image"
     note: "Animated map of real-time speech input, turn detection, streaming output, and tool use."
-  - title: "Real-time voice-agent event loop"
-    src: "/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-2/01-qwen-audio-3-0-realtime-voice-agent-loop.gif"
-    type: "image"
-    note: "Architecture diagram for the WebSocket session, model events, and Function Calling loop."
   - title: "Builder checklist"
     src: "/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-1/01-demo-evaluation-checklist.gif"
     type: "image"
@@ -52,7 +48,7 @@ As of July 23, 2026, the official Alibaba Cloud Model Studio documentation lists
 
 That makes the model family more than a speech recognizer. It is a building block for real-time voice products such as assistants, customer-service agents, language practice tools, support systems, and hands-free enterprise workflows. Product latency still depends on the client, network, audio pipeline, tool execution, and deployment region, not only on the model endpoint.
 
-![Qwen-Audio Realtime field map](/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-3/01-article-summary.gif)
+![Qwen-Audio Realtime field map](/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-2/01-article-summary.gif)
 
 This article is not a benchmark review. It is a field guide for reading the docs, papers, technical blogs, and demos around a frontier real-time audio model. The useful question is not "is this model good?" The useful question is: **what kind of product architecture does this model make possible, and where are its boundaries?**
 
@@ -106,8 +102,6 @@ That event vocabulary tells you how the product works:
 - Conversation items can be created, retrieved, or deleted.
 
 That is closer to a state machine than a normal request-response API.
-
-![Real-time voice-agent event loop](/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-2/01-qwen-audio-3-0-realtime-voice-agent-loop.gif)
 
 This matters because many real-time voice-agent failures are state-management failures, not only text-quality failures. Playback may continue after an interruption, the assistant may talk over the user, a filler sound may trigger the wrong turn boundary, stale context may remain in memory, or a tool call may execute without enough confirmation.
 

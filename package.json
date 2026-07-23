@@ -14,10 +14,9 @@
     "export:bota": "node scripts/export-bota-post.mjs",
     "export:bota:all": "node scripts/export-bota-post.mjs --all",
     "export:bota:site": "node scripts/export-bota-site.mjs",
-    "gif:setup": "npm install --prefix AI/ai-gif-pipeline-1 && npm install --prefix AI/ai-gif-pipeline-2 && npm --prefix AI/ai-gif-pipeline-2 exec playwright install chromium && npm install --prefix AI/ai-gif-pipeline-3",
+    "gif:setup": "npm install --prefix AI/ai-gif-pipeline-1 && npm install --prefix AI/ai-gif-pipeline-2",
     "gif:setup:1": "npm install --prefix AI/ai-gif-pipeline-1",
-    "gif:setup:2": "npm install --prefix AI/ai-gif-pipeline-2 && npm --prefix AI/ai-gif-pipeline-2 exec playwright install chromium",
-    "gif:setup:3": "npm install --prefix AI/ai-gif-pipeline-3",
+    "gif:setup:2": "npm install --prefix AI/ai-gif-pipeline-2",
     "featured:images": "node scripts/generate-featured-images.mjs"
   },
   "dependencies": {

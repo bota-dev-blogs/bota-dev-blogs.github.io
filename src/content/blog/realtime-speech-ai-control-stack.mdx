@@ -36,17 +36,13 @@ cover:
   fit: "cover"
 media:
   - title: "Real-time speech AI stack"
-    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-3/01-article-summary.gif"
+    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-2/01-article-summary.gif"
     type: "image"
     note: "Animated map of recognition, audio reasoning, real-time response, and policy control."
   - title: "Model family map"
-    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-3/02-model-family-map.gif"
+    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-2/02-model-family-map.gif"
     type: "image"
     note: "How ASR, audio-text LALMs, live translation, and speech-to-speech systems differ."
-  - title: "Real-time speech control plane"
-    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-2/01-realtime-speech-control-plane.gif"
-    type: "image"
-    note: "A practical architecture for combining ASR, LALM reasoning, voice generation, and tool safety."
   - title: "Design questions for voice agents"
     src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-1/01-design-questions.gif"
     type: "image"
@@ -61,7 +57,7 @@ The most useful way to think about modern speech AI is not "ASR versus audio LLM
 
 ASR is not disappearing. It is becoming one evidence layer inside a larger voice-agent stack.
 
-![Real-time speech AI stack](/media/gifs/realtime-speech-ai-control-stack/pipeline-3/01-article-summary.gif)
+![Real-time speech AI stack](/media/gifs/realtime-speech-ai-control-stack/pipeline-2/01-article-summary.gif)
 
 This article maps that stack through several public reference points: Alibaba Cloud Model Studio's [speech-to-text model documentation](https://www.alibabacloud.com/help/en/model-studio/asr-model/), the [Qwen-Audio realtime voice model](https://www.alibabacloud.com/help/en/model-studio/qwen-audio-realtime-user-guides), NVIDIA's [Audio Flamingo Next](https://huggingface.co/nvidia/audio-flamingo-next-hf), OpenMOSS [MOSS-Audio-8B-Instruct](https://ai.gitcode.com/OpenMOSS/MOSS-Audio-8B-Instruct), Qwen's [Qwen3.5-LiveTranslate](https://qwen.ai/blog?id=qwen3.5-livetranslate), and the [Qwen3.5-Omni technical report](https://arxiv.org/abs/2604.15804).
 
@@ -157,7 +153,7 @@ A transcript alone is too narrow for those questions.
 
 MOSS-Audio-8B-Instruct sits in a similar category from an open audio-model direction. Its public page, reviewed on the same date, describes speech recognition, environmental sound analysis, music understanding, audio captioning, and time-aware question answering. Whether a builder chooses that exact model is less important than the pattern: audio models are becoming general-purpose listening engines.
 
-![Model family map](/media/gifs/realtime-speech-ai-control-stack/pipeline-3/02-model-family-map.gif)
+![Model family map](/media/gifs/realtime-speech-ai-control-stack/pipeline-2/02-model-family-map.gif)
 
 The boundary is output and timing. If a model takes audio and returns text, it may be excellent for analysis, but it is not automatically a real-time voice agent. Something else still has to decide how to speak, when to stop, whether to revise, and what to do when the user interrupts.
 
@@ -194,8 +190,6 @@ A real-time voice agent is not only a listener and a speaker. It can act.
 It may schedule a meeting, send a message, update a CRM, change a device setting, summarize a call, buy a ticket, modify a workflow, or route a support case. At that point, the model's interpretation is no longer just language. It becomes authority.
 
 This is where many demos are misleading. A demo can let a model speak fluently. A product needs to decide whether the model is allowed to do anything.
-
-![Real-time speech control plane](/media/gifs/realtime-speech-ai-control-stack/pipeline-2/01-realtime-speech-control-plane.gif)
 
 A practical control plane should keep three channels separate:
 

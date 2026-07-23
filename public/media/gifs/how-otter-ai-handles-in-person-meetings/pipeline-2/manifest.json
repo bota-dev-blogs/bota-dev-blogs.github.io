@@ -1,13 +1,18 @@
 {
   "pipeline": "ai-gif-pipeline-2",
-  "source": "diagram.json",
+  "source": "storyboard.json",
   "assetSlug": "how-otter-ai-handles-in-person-meetings",
+  "title": "In-Person Meeting Capture",
+  "version": 2,
   "outputs": {
-    "diagram": "diagram.json",
-    "preview": "diagram.html",
-    "gif": "01-in-person-meeting-capture-options.gif"
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-article-summary.gif",
+      "02-build-or-integrate.gif"
+    ]
   },
   "pages": [
-    "01-in-person-meeting-capture-options.gif"
+    "01-article-summary.gif",
+    "02-build-or-integrate.gif"
   ]
 }

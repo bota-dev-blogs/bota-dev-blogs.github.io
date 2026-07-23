@@ -2,12 +2,13 @@
   "name": "ai-gif-pipeline-2",
   "version": "0.1.0",
   "private": true,
-  "description": "Render a structured SVG diagram as a short animated GIF.",
+  "description": "Deterministic renderer for agent-authored research-map GIF storyboards.",
   "scripts": {
+    "render": "node standalone.mjs",
     "generate": "node standalone.mjs"
   },
   "dependencies": {
-    "pdf-parse": "^1.1.1",
-    "playwright": "^1.52.0"
+    "@napi-rs/canvas": "^0.1.80",
+    "gif-encoder-2": "^1.0.5"
   }
 }

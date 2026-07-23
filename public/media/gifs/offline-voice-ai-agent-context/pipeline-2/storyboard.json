@@ -1,0 +1,141 @@
+{
+  "version": 2,
+  "style": "pastel-handdrawn",
+  "title": "Offline Voice AI",
+  "visualDirection": {
+    "character": "systems map for voice product teams",
+    "recurringMetaphor": "a physical conversation becoming governed digital memory"
+  },
+  "pages": [
+    {
+      "title": "From Audio to Agent Context",
+      "section": "article-summary",
+      "pageLabel": "1",
+      "format": "wide",
+      "layout": "parallel-lanes",
+      "headline": "A recording needs durable transport, evidence, provenance, and policy before an agent can trust it",
+      "nodes": [
+        {
+          "id": "capture",
+          "type": "input",
+          "label": "Physical capture",
+          "caption": "Visible recording state, local audio, time, and device identity",
+          "visual": "microphone",
+          "shape": "illustration"
+        },
+        {
+          "id": "sync",
+          "type": "process",
+          "label": "Resilient sync",
+          "caption": "Sequenced chunks, checksums, retries, and available networks",
+          "visual": "sync",
+          "shape": "card"
+        },
+        {
+          "id": "ingest",
+          "type": "process",
+          "label": "Recording state",
+          "caption": "Create, receive, finalize, version, and publish events",
+          "visual": "version",
+          "shape": "card"
+        },
+        {
+          "id": "speech",
+          "type": "evidence",
+          "label": "Speech evidence",
+          "caption": "ASR, speakers, timings, confidence, and domain terms",
+          "visual": "asr",
+          "shape": "illustration"
+        },
+        {
+          "id": "context",
+          "type": "process",
+          "label": "Context object",
+          "caption": "Typed artifacts, provenance, consent, and retention state",
+          "visual": "context",
+          "shape": "card"
+        },
+        {
+          "id": "action",
+          "type": "result",
+          "label": "Governed action",
+          "caption": "Draft, confirm, commit, audit, correct, and roll back",
+          "visual": "shield",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "capture",
+          "to": "sync",
+          "label": "buffer",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "transport",
+          "pathStyle": "curve",
+          "bend": -0.16
+        },
+        {
+          "from": "capture",
+          "to": "ingest",
+          "label": "reconcile",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "transport",
+          "pathStyle": "curve",
+          "bend": 0.16
+        },
+        {
+          "from": "sync",
+          "to": "speech",
+          "label": "durable audio",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "evidence",
+          "pathStyle": "curve",
+          "bend": 0.12
+        },
+        {
+          "from": "ingest",
+          "to": "speech",
+          "label": "finality",
+          "labelPriority": "optional",
+          "relation": "constraint",
+          "edgeGroup": "evidence",
+          "pathStyle": "curve",
+          "bend": -0.12
+        },
+        {
+          "from": "speech",
+          "to": "context",
+          "label": "provenance",
+          "labelPriority": "essential",
+          "relation": "evidence",
+          "edgeGroup": "context",
+          "pathStyle": "curve",
+          "bend": -0.12
+        },
+        {
+          "from": "context",
+          "to": "action",
+          "label": "authorize",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "edgeGroup": "control",
+          "pathStyle": "curve",
+          "bend": 0.12
+        },
+        {
+          "from": "speech",
+          "to": "action",
+          "label": "evidence trail",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "audit",
+          "pathStyle": "curve",
+          "bend": 0.34
+        }
+      ]
+    }
+  ]
+}

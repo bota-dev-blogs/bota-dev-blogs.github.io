@@ -8,8 +8,8 @@
       "section": "Demo Evaluation Checklist",
       "pageLabel": "9",
       "kicker": "Rate these dimensions to gauge real-world readiness.",
-      "composition": "checklist",
-      "layout": "checklist",
+      "composition": "evidence-map",
+      "layout": "matrix",
       "introStyle": "badge",
       "titleTreatment": "corner-tag",
       "cards": [

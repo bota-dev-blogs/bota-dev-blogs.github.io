@@ -1,0 +1,201 @@
+{
+  "version": 2,
+  "style": "pastel-handdrawn",
+  "title": "In-Person Meeting Capture",
+  "visualDirection": {
+    "character": "product infrastructure decision map",
+    "recurringMetaphor": "meeting audio leaving the room through reliable capture paths"
+  },
+  "pages": [
+    {
+      "title": "In-Person Meeting Capture Map",
+      "section": "article-summary",
+      "pageLabel": "1",
+      "format": "wide",
+      "layout": "parallel-lanes",
+      "headline": "Virtual meetings have audio streams; physical rooms need capture infrastructure",
+      "nodes": [
+        {
+          "id": "virtual",
+          "type": "context",
+          "label": "Virtual meeting",
+          "caption": "A bot can join because audio already streams online",
+          "visual": "cloud",
+          "shape": "card"
+        },
+        {
+          "id": "room",
+          "type": "input",
+          "label": "Meeting room",
+          "caption": "Distance, overlap, noise, privacy, and device placement",
+          "visual": "room",
+          "shape": "illustration"
+        },
+        {
+          "id": "mobile",
+          "type": "process",
+          "label": "Mobile capture",
+          "caption": "Fast path, but manual and acoustically inconsistent",
+          "visual": "phone",
+          "shape": "card"
+        },
+        {
+          "id": "hardware",
+          "type": "process",
+          "label": "Room hardware",
+          "caption": "Managed microphones, sync, security, and APIs",
+          "visual": "microphone",
+          "shape": "card"
+        },
+        {
+          "id": "product",
+          "type": "result",
+          "label": "Meeting AI",
+          "caption": "Transcripts, summaries, action items, and search",
+          "visual": "model",
+          "shape": "illustration"
+        }
+      ],
+      "edges": [
+        {
+          "from": "virtual",
+          "to": "product",
+          "label": "online audio",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "virtual",
+          "pathStyle": "curve",
+          "bend": -0.22
+        },
+        {
+          "from": "room",
+          "to": "mobile",
+          "label": "phone path",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "physical",
+          "pathStyle": "curve",
+          "bend": -0.12
+        },
+        {
+          "from": "mobile",
+          "to": "hardware",
+          "label": "scale gap",
+          "labelPriority": "optional",
+          "relation": "contrast",
+          "edgeGroup": "physical",
+          "pathStyle": "straight"
+        },
+        {
+          "from": "hardware",
+          "to": "product",
+          "label": "API audio",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "physical",
+          "pathStyle": "straight"
+        }
+      ]
+    },
+    {
+      "title": "Build Or Integrate",
+      "section": "build-or-integrate",
+      "pageLabel": "2",
+      "format": "wide",
+      "layout": "decision-tree",
+      "headline": "The in-room decision is a trade-off between speed, control, and operations",
+      "nodes": [
+        {
+          "id": "phone",
+          "type": "input",
+          "label": "Use phones",
+          "caption": "Easy start, weak room coverage, manual workflow",
+          "visual": "phone",
+          "shape": "card"
+        },
+        {
+          "id": "build",
+          "type": "process",
+          "label": "Build hardware",
+          "caption": "Full control over microphones, firmware, and UX",
+          "visual": "microphone",
+          "shape": "card"
+        },
+        {
+          "id": "ops",
+          "type": "constraint",
+          "label": "Ops burden",
+          "caption": "Supply chain, certification, fleet management",
+          "visual": "fleet",
+          "shape": "card"
+        },
+        {
+          "id": "integrate",
+          "type": "process",
+          "label": "Integrate API",
+          "caption": "Use managed capture while keeping the software product",
+          "visual": "api",
+          "shape": "illustration"
+        },
+        {
+          "id": "ship",
+          "type": "result",
+          "label": "Offline support",
+          "caption": "Room recordings feed transcription automatically",
+          "visual": "asr",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "phone",
+          "to": "build",
+          "label": "control",
+          "labelPriority": "optional",
+          "relation": "contrast",
+          "edgeGroup": "tradeoff",
+          "pathStyle": "curve",
+          "bend": -0.16
+        },
+        {
+          "from": "build",
+          "to": "ops",
+          "label": "cost",
+          "labelPriority": "optional",
+          "relation": "constraint",
+          "edgeGroup": "tradeoff",
+          "pathStyle": "curve",
+          "bend": 0.18
+        },
+        {
+          "from": "ops",
+          "to": "integrate",
+          "label": "avoid",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "tradeoff",
+          "pathStyle": "curve",
+          "bend": -0.12
+        },
+        {
+          "from": "phone",
+          "to": "integrate",
+          "label": "scale",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "api",
+          "pathStyle": "straight"
+        },
+        {
+          "from": "integrate",
+          "to": "ship",
+          "label": "capture",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "api",
+          "pathStyle": "straight"
+        }
+      ]
+    }
+  ]
+}

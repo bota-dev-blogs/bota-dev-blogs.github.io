@@ -9,7 +9,7 @@
       "pageLabel": "1",
       "kicker": "Choose the control boundary before choosing the model",
       "composition": "checklist",
-      "layout": "checklist",
+      "layout": "bands",
       "introStyle": "ribbon",
       "titleTreatment": "none",
       "cards": [

@@ -1,13 +1,16 @@
 {
   "pipeline": "ai-gif-pipeline-2",
-  "source": "diagram.json",
+  "source": "storyboard.json",
   "assetSlug": "qwen-audio-3-realtime-voice-agents",
+  "title": "Qwen-Audio-3.0-Realtime Field Guide",
+  "version": 2,
   "outputs": {
-    "diagram": "diagram.json",
-    "preview": "diagram.html",
-    "gif": "01-qwen-audio-3-0-realtime-voice-agent-loop.gif"
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-article-summary.gif"
+    ]
   },
   "pages": [
-    "01-qwen-audio-3-0-realtime-voice-agent-loop.gif"
+    "01-article-summary.gif"
   ]
 }

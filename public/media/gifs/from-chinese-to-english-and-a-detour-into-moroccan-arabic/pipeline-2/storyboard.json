@@ -1,0 +1,301 @@
+{
+  "version": 2,
+  "style": "pastel-handdrawn",
+  "title": "AI Video Localization Pipeline",
+  "visualDirection": {
+    "character": "project map for video localization engineers",
+    "recurringMetaphor": "timed speech segments moving through quality gates"
+  },
+  "pages": [
+    {
+      "title": "Video Localization Map",
+      "section": "article-summary",
+      "pageLabel": "1",
+      "format": "wide",
+      "layout": "parallel-lanes",
+      "headline": "The working path localizes video; the Darija branch exposes speech data limits",
+      "nodes": [
+        {
+          "id": "source",
+          "type": "input",
+          "label": "Chinese video",
+          "caption": "Original visuals, speech, timing, and speaker identity",
+          "visual": "video",
+          "shape": "illustration"
+        },
+        {
+          "id": "text",
+          "type": "process",
+          "label": "Timed script",
+          "caption": "Transcribe, translate, and review technical terms",
+          "visual": "subtitle",
+          "shape": "card"
+        },
+        {
+          "id": "voice",
+          "type": "process",
+          "label": "Voice identity",
+          "caption": "Diarization produces clean speaker references",
+          "visual": "voiceprint",
+          "shape": "card"
+        },
+        {
+          "id": "english",
+          "type": "result",
+          "label": "English video",
+          "caption": "Cloned speech is aligned back to the source timeline",
+          "visual": "video",
+          "shape": "illustration"
+        },
+        {
+          "id": "darija",
+          "type": "context",
+          "label": "Darija branch",
+          "caption": "Fine-tuning revealed data and pronunciation bottlenecks",
+          "visual": "branch",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "source",
+          "to": "text",
+          "label": "words",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "main",
+          "pathStyle": "curve",
+          "bend": -0.16
+        },
+        {
+          "from": "source",
+          "to": "voice",
+          "label": "speakers",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "main",
+          "pathStyle": "curve",
+          "bend": 0.16
+        },
+        {
+          "from": "text",
+          "to": "english",
+          "label": "script",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "main",
+          "pathStyle": "curve",
+          "bend": 0.12
+        },
+        {
+          "from": "voice",
+          "to": "english",
+          "label": "Evidence",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "main",
+          "pathStyle": "curve",
+          "bend": -0.12
+        },
+        {
+          "from": "english",
+          "to": "darija",
+          "label": "harder test",
+          "labelPriority": "optional",
+          "relation": "contrast",
+          "edgeGroup": "branch",
+          "pathStyle": "straight"
+        }
+      ]
+    },
+    {
+      "title": "Darija Bottlenecks",
+      "section": "darija-bottlenecks",
+      "pageLabel": "2",
+      "format": "wide",
+      "layout": "converging",
+      "headline": "The failure came from data, writing, speakers, and pronunciation ambiguity",
+      "nodes": [
+        {
+          "id": "vocab",
+          "type": "process",
+          "label": "Vocab extension",
+          "caption": "Arabic characters were added to the text embedding layer",
+          "visual": "embedding",
+          "shape": "card"
+        },
+        {
+          "id": "data",
+          "type": "constraint",
+          "label": "Small dataset",
+          "caption": "Hours were limited and spread across speakers",
+          "visual": "dataset",
+          "shape": "card"
+        },
+        {
+          "id": "script",
+          "type": "constraint",
+          "label": "Unvocalized text",
+          "caption": "Missing vowels make pronunciation under-specified",
+          "visual": "language",
+          "shape": "card"
+        },
+        {
+          "id": "output",
+          "type": "result",
+          "label": "Speech-like output",
+          "caption": "Rhythm appeared, but recognizable phonemes did not",
+          "visual": "waveform",
+          "shape": "illustration"
+        },
+        {
+          "id": "g2p",
+          "type": "result",
+          "label": "G2P layer",
+          "caption": "A pronunciation layer can normalize Arabic script and Arabizi",
+          "visual": "phoneme",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "vocab",
+          "to": "data",
+          "label": "not enough",
+          "labelPriority": "optional",
+          "relation": "constraint",
+          "edgeGroup": "failure",
+          "pathStyle": "curve",
+          "bend": -0.16
+        },
+        {
+          "from": "vocab",
+          "to": "script",
+          "label": "ambiguous",
+          "labelPriority": "optional",
+          "relation": "constraint",
+          "edgeGroup": "failure",
+          "pathStyle": "curve",
+          "bend": 0.16
+        },
+        {
+          "from": "data",
+          "to": "output",
+          "label": "weak map",
+          "labelPriority": "optional",
+          "relation": "contrast",
+          "edgeGroup": "failure",
+          "pathStyle": "curve",
+          "bend": 0.12
+        },
+        {
+          "from": "script",
+          "to": "output",
+          "label": "missing vowels",
+          "labelPriority": "optional",
+          "relation": "contrast",
+          "edgeGroup": "failure",
+          "pathStyle": "curve",
+          "bend": -0.12
+        },
+        {
+          "from": "output",
+          "to": "g2p",
+          "label": "next step",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "next",
+          "pathStyle": "straight"
+        }
+      ]
+    },
+    {
+      "title": "Quality Gates",
+      "section": "quality-gates",
+      "pageLabel": "3",
+      "format": "wide",
+      "layout": "staged-flow",
+      "headline": "Each model output needs an artifact, a check, and a rerun path",
+      "nodes": [
+        {
+          "id": "transcribe",
+          "type": "process",
+          "label": "Transcribe",
+          "caption": "Timed source segments and confidence",
+          "visual": "asr",
+          "shape": "card"
+        },
+        {
+          "id": "translate",
+          "type": "process",
+          "label": "Translate",
+          "caption": "Target script that preserves technical meaning",
+          "visual": "translate",
+          "shape": "card"
+        },
+        {
+          "id": "clone",
+          "type": "process",
+          "label": "Clone voice",
+          "caption": "Speaker references drive synthetic segments",
+          "visual": "tts",
+          "shape": "card"
+        },
+        {
+          "id": "align",
+          "type": "process",
+          "label": "Align audio",
+          "caption": "Time-stretch and loudness normalize",
+          "visual": "alignment",
+          "shape": "illustration"
+        },
+        {
+          "id": "ship",
+          "type": "result",
+          "label": "Watchable video",
+          "caption": "Merged output keeps visuals and speech coherent",
+          "visual": "video",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "transcribe",
+          "to": "translate",
+          "label": "segments",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "gates",
+          "pathStyle": "straight"
+        },
+        {
+          "from": "translate",
+          "to": "clone",
+          "label": "script",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "gates",
+          "pathStyle": "straight"
+        },
+        {
+          "from": "clone",
+          "to": "align",
+          "label": "speech",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "gates",
+          "pathStyle": "straight"
+        },
+        {
+          "from": "align",
+          "to": "ship",
+          "label": "merge",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "gates",
+          "pathStyle": "straight"
+        }
+      ]
+    }
+  ]
+}

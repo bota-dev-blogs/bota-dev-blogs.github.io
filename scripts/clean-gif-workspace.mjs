@@ -33,7 +33,7 @@ function existing(paths) {
 }
 
 function scratchPaths(args) {
-  const paths = [".tmp/gif-frames"];
+  const paths = [];
   if (!args.all) return existing(paths);
 
   const tmpDir = path.join(rootDir, ".tmp");
@@ -42,19 +42,13 @@ function scratchPaths(args) {
     "AI/ai-gif-pipeline-1/.DS_Store",
     "AI/ai-gif-pipeline-1/linkedin_reference.gif",
     "AI/ai-gif-pipeline-2/.DS_Store",
-    "AI/ai-gif-pipeline-2/diagram.complex.json",
     "AI/ai-gif-pipeline-2/output",
-    "AI/ai-gif-pipeline-2/public",
-    "AI/ai-gif-pipeline-2/research",
-    "AI/ai-gif-pipeline-2/test-papers",
-    "AI/ai-gif-pipeline-2/test-results",
-    "AI/ai-gif-pipeline-3/output"
+    "AI/ai-gif-pipeline-1/output"
   ];
   if (!fs.existsSync(tmpDir)) return existing([...paths, ...aiArtifacts]);
   const allPaths = [
     ...paths,
     ".tmp/gif-drafts",
-    ".tmp/gif-inputs",
     ".tmp/gif-test-inputs",
     ".tmp/final-visual-check",
     ".tmp/pipeline1-final-check",

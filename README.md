@@ -109,31 +109,31 @@ npm run gif:setup
 npm run gif:doctor
 ```
 
-Create local `.env` files from the templates in each pipeline folder, then fill in your provider keys:
-
-```bash
-cp AI/ai-gif-pipeline-1/.env.example AI/ai-gif-pipeline-1/.env
-cp AI/ai-gif-pipeline-2/.env.example AI/ai-gif-pipeline-2/.env
-cp AI/ai-gif-pipeline-3/.env.example AI/ai-gif-pipeline-3/.env
-```
-
 Use the root wrapper for blog work:
 
 ```bash
-npm run gif -- 1 --input src/content/blog/my-post.mdx
-npm run gif -- 1 --input public/media/gifs/my-post/pipeline-1/storyboard.json --slug my-post --local --page 1
-npm run gif -- 2 --input .tmp/papers/paper.pdf --slug my-post
-npm run gif -- 3 --input src/content/blog/my-post.mdx
-npm run gif -- 3 --input public/media/gifs/my-post/pipeline-3/storyboard.json --slug my-post --local --page 1
+npm run gif -- 1 --input public/media/gifs/my-post/pipeline-1/storyboard.json
+npm run gif -- 2 --input public/media/gifs/my-post/pipeline-2/storyboard.json
 npm run gif:check
 npm run gif:clean -- --dry-run
 ```
 
 Generated assets go to `public/media/gifs/<asset-slug>/` and can be referenced from MDX with `/media/gifs/...`. The asset slug is a filesystem-safe version of the post slug, so punctuation becomes hyphens.
 
-Pipeline 1 creates compact, arrow-free tile-board section explainer GIFs from a blog draft, pipeline 2 creates a method or architecture diagram from a paper/PDF/Markdown source, and pipeline 3 creates one article-wide animated graphical abstract by default. Use pipeline 1 or pipeline 3 `--page <n>` when rerendering a selected local storyboard page; stale GIFs not in the latest manifest are cleaned automatically. Pipeline 2 names final GIFs from the diagram title, such as `01-affect-aware-asr-stack.gif`, and temporary PNG frames are cleaned after successful root renders unless you pass `--keep-frames`. Intermediate-only root runs with `--plan-only` or `--no-render` now default to `.tmp/gif-drafts/` instead of publishing half-finished folders. For dense research digests, use pipeline 3 for multiple publishable visuals such as a research map, trade-off diagram, frontier map, or practical checklist.
+Before rendering, ask the active coding agent to read
+`AI/ai-gif-pipeline-1/SKILL.md` or `AI/ai-gif-pipeline-2/SKILL.md` and author the
+intermediate `storyboard.json`. The renderers are deterministic and do not call
+an LLM API or read pipeline `.env` files. Pipeline 1 creates compact, arrow-free
+tile-board explainers; pipeline 2 creates article-wide research maps,
+architectures, comparisons, and graphical abstracts. Use `--page <n>` when
+rerendering a selected storyboard page. Stale GIFs not listed by the latest
+manifest are removed automatically.
 
-All three pipelines use the shared semantic icon vocabulary in `AI/shared/semantic-icons.cjs`, with concrete AI/audio/mobile/edge/computing icons preferred over generic idea or agent symbols. Published storyboard cards and diagram nodes must carry an explicit canonical `icon` or `visual`; valid explicit choices are preserved, while semantic inference handles only missing or unknown draft values. The curated fallback list is narrower than the full icon list so weak text does not randomly become a person, bot, idea, schema, graph, or chat bubble. `npm run gif:check` validates the explicit-icon contract.
+Both pipelines use the shared semantic icon vocabulary in
+`AI/shared/semantic-icons.cjs`, with concrete AI/audio/mobile/edge/computing
+icons preferred over generic idea or agent symbols. Published cards and nodes
+must carry an explicit canonical `icon` or `visual`; `npm run gif:check`
+validates the contract.
 
 Generated GIF artwork should use reader-facing labels, not internal editorial labels. In particular, never render the word "takeaway" in a GIF; use "key idea", "design rule", "checklist", "summary", or the actual concept name.
 

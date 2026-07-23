@@ -1,0 +1,141 @@
+{
+  "version": 2,
+  "style": "pastel-handdrawn",
+  "title": "Long-Audio Understanding",
+  "visualDirection": {
+    "character": "research map for audio-language model builders",
+    "recurringMetaphor": "a long recording becoming grounded, searchable evidence"
+  },
+  "pages": [
+    {
+      "title": "Long Audio Needs Evidence",
+      "section": "article-summary",
+      "pageLabel": "1",
+      "format": "wide",
+      "layout": "funnel",
+      "headline": "Audio-language models need retrieval, time grounding, and uncertainty",
+      "nodes": [
+        {
+          "id": "recording",
+          "type": "input",
+          "label": "Long recording",
+          "caption": "Speech, music, events, overlap, silence, and room context",
+          "visual": "waveform",
+          "shape": "illustration"
+        },
+        {
+          "id": "index",
+          "type": "process",
+          "label": "Window and index",
+          "caption": "Audio chunks, transcript spans, speakers, and embeddings",
+          "visual": "database",
+          "shape": "card"
+        },
+        {
+          "id": "retrieve",
+          "type": "process",
+          "label": "Retrieve evidence",
+          "caption": "Find relevant waveform windows instead of prompting everything",
+          "visual": "retrieval",
+          "shape": "card"
+        },
+        {
+          "id": "reason",
+          "type": "process",
+          "label": "Audio reasoning",
+          "caption": "Combine words, sound events, timing, and local context",
+          "visual": "reasoning",
+          "shape": "illustration"
+        },
+        {
+          "id": "ground",
+          "type": "evidence",
+          "label": "Timestamp ground",
+          "caption": "Link every answer to time ranges and source artifacts",
+          "visual": "alignment",
+          "shape": "card"
+        },
+        {
+          "id": "answer",
+          "type": "result",
+          "label": "Reviewable answer",
+          "caption": "Answer, evidence, confidence, caveat, and abstention",
+          "visual": "check",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "recording",
+          "to": "index",
+          "label": "segment",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "edgeGroup": "prepare",
+          "pathStyle": "curve",
+          "bend": -0.15
+        },
+        {
+          "from": "recording",
+          "to": "retrieve",
+          "label": "preserve audio",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "prepare",
+          "pathStyle": "curve",
+          "bend": 0.15
+        },
+        {
+          "from": "index",
+          "to": "reason",
+          "label": "global map",
+          "labelPriority": "optional",
+          "relation": "evidence",
+          "edgeGroup": "analysis",
+          "pathStyle": "curve",
+          "bend": 0.12
+        },
+        {
+          "from": "retrieve",
+          "to": "reason",
+          "label": "local windows",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "edgeGroup": "analysis",
+          "pathStyle": "curve",
+          "bend": -0.12
+        },
+        {
+          "from": "reason",
+          "to": "ground",
+          "label": "claims",
+          "labelPriority": "essential",
+          "relation": "evidence",
+          "edgeGroup": "grounding",
+          "pathStyle": "curve",
+          "bend": -0.1
+        },
+        {
+          "from": "ground",
+          "to": "answer",
+          "label": "verify",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "edgeGroup": "grounding",
+          "pathStyle": "curve",
+          "bend": 0.12
+        },
+        {
+          "from": "reason",
+          "to": "answer",
+          "label": "uncertainty",
+          "labelPriority": "optional",
+          "relation": "constraint",
+          "edgeGroup": "policy",
+          "pathStyle": "curve",
+          "bend": 0.34
+        }
+      ]
+    }
+  ]
+}

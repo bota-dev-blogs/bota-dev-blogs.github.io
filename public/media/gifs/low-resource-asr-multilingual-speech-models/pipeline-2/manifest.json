@@ -1,0 +1,18 @@
+{
+  "pipeline": "ai-gif-pipeline-2",
+  "source": "storyboard.json",
+  "assetSlug": "low-resource-asr-multilingual-speech-models",
+  "title": "Low-Resource Multilingual ASR",
+  "version": 2,
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-article-summary.gif",
+      "02-local-release-gate.gif"
+    ]
+  },
+  "pages": [
+    "01-article-summary.gif",
+    "02-local-release-gate.gif"
+  ]
+}

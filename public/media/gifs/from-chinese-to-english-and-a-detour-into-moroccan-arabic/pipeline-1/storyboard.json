@@ -25,7 +25,9 @@
           "icon": "video"
         }
       ],
-      "fileSlug": "project-overview"
+      "fileSlug": "project-overview",
+      "layout": "flow-board",
+      "composition": "flow"
     },
     {
       "title": "AI Video Localization Pipeline",
@@ -49,7 +51,9 @@
           "icon": "phoneme"
         }
       ],
-      "fileSlug": "darija-lessons"
+      "fileSlug": "darija-lessons",
+      "layout": "failure-focus",
+      "composition": "failure-map"
     }
   ]
 }
