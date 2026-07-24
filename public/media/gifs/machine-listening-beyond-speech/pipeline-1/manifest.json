@@ -1,0 +1,15 @@
+{
+  "pipeline": "ai-gif-pipeline-1",
+  "source": "storyboard.json",
+  "assetSlug": "machine-listening-beyond-speech",
+  "title": "Machine Listening for Wildlife and Machine Faults",
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "02-acoustic-evidence-contract.gif"
+    ]
+  },
+  "pages": [
+    "02-acoustic-evidence-contract.gif"
+  ]
+}

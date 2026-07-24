@@ -13,6 +13,7 @@
     {
       "title": "Page title",
       "section": "section-slug",
+      "outputFile": "01-stable-public-name.gif",
       "format": "wide",
       "layout": "semantic-map",
       "headline": "Page-specific claim",
@@ -67,9 +68,10 @@ radial, layered, and balanced arguments.
 
 Constraints:
 
-- A normal article storyboard should contain 2-3 candidate pages selected for complementary explanatory value. Do not mirror the article section list.
-- MDX may reference any approved subset of those candidates. A generated page does not have to appear in the article, but every retained GIF must remain listed in the storyboard and manifest.
-- Use one page only when the source genuinely offers a single useful visual argument. Use more than three only for a renderer canary, layout development, or an explicit user request.
+- A normal article storyboard should contain 4-5 candidate pages selected for complementary explanatory value. Do not mirror the article section list or repeat layouts merely to reach the target count.
+- `outputFile` is an optional stable public filename. It must be a safe basename ending in `.gif`. When absent, the renderer assigns and persists a numbered default. Preserve it when pages are reordered or pruned.
+- An initial uncurated draft may reference all generated candidates. After explicit human selection, MDX must reference only the retained subset; remove unselected pages and run a full render so stale GIFs are deleted and the manifest is rebuilt from the selection.
+- Use fewer than four only when the source cannot support four strong visual arguments without filler. Use more than five only for a renderer canary, layout development, or an explicit user request.
 - Use 2-6 nodes and at most 12 edges per page. Six is a hard ceiling.
 - Require `position` on every `semantic-map` node. Use normalized x coordinates from 0.08 to 0.92 and y coordinates from 0.28 to 0.86.
 - Treat `semantic-map` positions as relative anchors. The renderer fits those anchors into the available content frame after the title and headline, so do not use coordinates to reserve header space or outer padding.
@@ -92,4 +94,5 @@ Layout ordering contracts:
 - `retrieval-loop`: put the three main-path nodes first and the memory or retrieval nodes last.
 - `scatter-gather`: put the source first, parallel workers in the middle, and the merged result last.
 - `hourglass`: put broad inputs first, the bottleneck next, and narrowed outcomes last.
+- `funnel`: put broad inputs before progressively narrower stages. Its backdrop gate stays fixed at the bottleneck and may only breathe subtly in width or opacity; never author or expect a vertically sweeping line.
 - `spiral`: order nodes from the broad outer state toward the refined inner state.

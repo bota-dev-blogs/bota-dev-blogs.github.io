@@ -1,0 +1,17 @@
+{
+  "pipeline": "ai-gif-pipeline-1",
+  "source": "storyboard.json",
+  "assetSlug": "speech-to-speech-translation-live-voice",
+  "title": "Live Speech-to-Speech Translation: A Systems Guide",
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-translation-waiting-tradeoff.gif",
+      "02-translation-session-controls.gif"
+    ]
+  },
+  "pages": [
+    "01-translation-waiting-tradeoff.gif",
+    "02-translation-session-controls.gif"
+  ]
+}

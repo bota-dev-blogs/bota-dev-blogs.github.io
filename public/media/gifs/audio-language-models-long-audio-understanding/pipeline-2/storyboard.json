@@ -135,7 +135,170 @@
           "pathStyle": "curve",
           "bend": 0.34
         }
-      ]
+      ],
+      "outputFile": "01-article-summary.gif"
+    },
+    {
+      "title": "Long Recordings Need A Retrieval Loop",
+      "section": "long-audio-retrieval-loop",
+      "format": "wide",
+      "layout": "retrieval-loop",
+      "headline": "A question should retrieve compact evidence windows while preserving recording-level context and provenance",
+      "nodes": [
+        {
+          "id": "question",
+          "type": "input",
+          "label": "User question",
+          "caption": "Names an event, speaker, topic, or time relation",
+          "visual": "search",
+          "shape": "card"
+        },
+        {
+          "id": "reasoner",
+          "type": "process",
+          "label": "Audio reasoner",
+          "caption": "Interprets retrieved audio with nearby context",
+          "visual": "reasoning",
+          "shape": "card"
+        },
+        {
+          "id": "answer",
+          "type": "result",
+          "label": "Grounded answer",
+          "caption": "Returns a claim with timestamped supporting windows",
+          "visual": "document",
+          "shape": "illustration"
+        },
+        {
+          "id": "index",
+          "type": "context",
+          "label": "Segment index",
+          "caption": "Stores acoustic, text, speaker, and time representations",
+          "visual": "embedding",
+          "shape": "card"
+        },
+        {
+          "id": "policy",
+          "type": "decision",
+          "label": "Retrieval policy",
+          "caption": "Balances local detail with broader recording context",
+          "visual": "filter",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "question",
+          "to": "reasoner",
+          "label": "asks",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "reasoner",
+          "to": "answer",
+          "label": "answers",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "index",
+          "to": "policy",
+          "label": "offers",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "policy",
+          "to": "reasoner",
+          "label": "grounds",
+          "labelPriority": "essential",
+          "relation": "supervision",
+          "pathStyle": "curve",
+          "bend": -0.18
+        }
+      ],
+      "outputFile": "03-long-audio-retrieval-loop.gif"
+    },
+    {
+      "title": "From Waveform To Citable Evidence",
+      "section": "timestamp-evidence-path",
+      "format": "wide",
+      "layout": "signal-path",
+      "headline": "Long-audio understanding becomes trustworthy when every derived claim can return to a source interval",
+      "nodes": [
+        {
+          "id": "audio",
+          "type": "input",
+          "label": "Long recording",
+          "caption": "Speech, music, events, silence, and overlapping sources",
+          "visual": "waveform",
+          "shape": "illustration"
+        },
+        {
+          "id": "segments",
+          "type": "process",
+          "label": "Time segments",
+          "caption": "Windows preserve offsets and neighboring acoustic context",
+          "visual": "clock",
+          "shape": "card"
+        },
+        {
+          "id": "representations",
+          "type": "process",
+          "label": "Audio representations",
+          "caption": "Embeddings and text support several retrieval modes",
+          "visual": "embedding",
+          "shape": "card"
+        },
+        {
+          "id": "evidence",
+          "type": "evidence",
+          "label": "Evidence windows",
+          "caption": "Relevant moments retain source and model lineage",
+          "visual": "alignment",
+          "shape": "card"
+        },
+        {
+          "id": "answer",
+          "type": "result",
+          "label": "Citable response",
+          "caption": "Claims point back to inspectable audio intervals",
+          "visual": "document",
+          "shape": "illustration"
+        }
+      ],
+      "edges": [
+        {
+          "from": "audio",
+          "to": "segments",
+          "label": "feeds",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "segments",
+          "to": "representations",
+          "label": "refines",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "representations",
+          "to": "evidence",
+          "label": "gates",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "evidence",
+          "to": "answer",
+          "label": "publishes",
+          "labelPriority": "essential",
+          "relation": "flow"
+        }
+      ],
+      "outputFile": "04-timestamp-evidence-path.gif"
     }
   ]
 }

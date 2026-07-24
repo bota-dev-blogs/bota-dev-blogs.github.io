@@ -6,16 +6,12 @@
   "outputs": {
     "storyboard": "storyboard.json",
     "gifs": [
-      "01-platform-layers.gif",
       "02-connection-policy.gif",
-      "03-upload-trust.gif",
       "04-context-lifecycle.gif"
     ]
   },
   "pages": [
-    "01-platform-layers.gif",
     "02-connection-policy.gif",
-    "03-upload-trust.gif",
     "04-context-lifecycle.gif"
   ]
 }

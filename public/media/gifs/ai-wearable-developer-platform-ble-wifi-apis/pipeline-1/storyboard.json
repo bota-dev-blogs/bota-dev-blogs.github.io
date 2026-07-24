@@ -4,38 +4,6 @@
   "title": "AI Wearable Developer Platform",
   "pages": [
     {
-      "title": "From Microphone to Developer Primitive",
-      "section": "platform-layers",
-      "fileSlug": "platform-layers",
-      "layout": "console",
-      "composition": "system-map",
-      "introStyle": "quiet",
-      "titleTreatment": "none",
-      "kicker": "Hardware complexity should resolve into stable SDK calls, API objects, and product events.",
-      "cards": [
-        {
-          "title": "Wearable capture",
-          "body": "Microphones, local storage, battery, firmware, and device identity remain reliable at the edge.",
-          "icon": "wearable"
-        },
-        {
-          "title": "Mobile SDK",
-          "body": "Pairing, reconnect, streaming sync, backlog recovery, and device health become product operations.",
-          "icon": "sdk"
-        },
-        {
-          "title": "Recording API",
-          "body": "One durable recording ID survives route changes, retries, and processing revisions.",
-          "icon": "api"
-        },
-        {
-          "title": "Versioned events",
-          "body": "Signed webhooks publish state changes without forcing the product backend to poll.",
-          "icon": "webhook"
-        }
-      ]
-    },
-    {
       "title": "One Recording, Three Radios",
       "section": "connection-policy",
       "fileSlug": "connection-policy",
@@ -65,39 +33,8 @@
           "body": "Field coverage trades more power and cost for independence from phone and Wi-Fi.",
           "icon": "cellular"
         }
-      ]
-    },
-    {
-      "title": "An Upload Is a Trust Sequence",
-      "section": "upload-trust",
-      "fileSlug": "upload-trust",
-      "layout": "route-map",
-      "composition": "flow",
-      "introStyle": "ribbon",
-      "titleTreatment": "underline",
-      "kicker": "Narrow credentials, durable bytes, validation, and events form one recoverable lifecycle.",
-      "cards": [
-        {
-          "title": "Scoped credential",
-          "body": "A device may create and upload only recordings authorized for its current binding.",
-          "icon": "credential"
-        },
-        {
-          "title": "Presigned upload",
-          "body": "Large audio reaches object storage without exposing broad cloud credentials.",
-          "icon": "upload"
-        },
-        {
-          "title": "Validate bytes",
-          "body": "Parts, format, byte count, timestamps, and checksums are verified before processing.",
-          "icon": "checksum"
-        },
-        {
-          "title": "Publish state",
-          "body": "Retryable webhooks report lifecycle changes to the product backend.",
-          "icon": "webhook"
-        }
-      ]
+      ],
+      "outputFile": "02-connection-policy.gif"
     },
     {
       "title": "Offline Audio Becomes Agent Context",
@@ -129,7 +66,8 @@
           "body": "An agent can retrieve, draft, confirm, commit, or abstain inside the workflow.",
           "icon": "agent"
         }
-      ]
+      ],
+      "outputFile": "04-context-lifecycle.gif"
     }
   ]
 }

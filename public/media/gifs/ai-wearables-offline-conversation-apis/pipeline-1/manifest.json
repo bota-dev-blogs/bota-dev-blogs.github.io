@@ -1,0 +1,17 @@
+{
+  "pipeline": "ai-gif-pipeline-1",
+  "source": "storyboard.json",
+  "assetSlug": "ai-wearables-offline-conversation-apis",
+  "title": "Who Buys AI Wearables and Offline Conversation APIs?",
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-customer-fit-signals.gif",
+      "03-buyer-evaluation.gif"
+    ]
+  },
+  "pages": [
+    "01-customer-fit-signals.gif",
+    "03-buyer-evaluation.gif"
+  ]
+}

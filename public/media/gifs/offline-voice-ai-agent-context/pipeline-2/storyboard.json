@@ -135,7 +135,192 @@
           "pathStyle": "curve",
           "bend": 0.34
         }
-      ]
+      ],
+      "outputFile": "01-article-summary.gif"
+    },
+    {
+      "title": "Six Contracts Protect One Conversation",
+      "section": "offline-voice-contract-stack",
+      "format": "wide",
+      "layout": "layered-stack",
+      "headline": "An offline voice product is reliable only when each boundary has an explicit contract",
+      "nodes": [
+        {
+          "id": "capture",
+          "type": "input",
+          "label": "Capture contract",
+          "caption": "Recording state, local durability, and source identity",
+          "visual": "microphone",
+          "shape": "card"
+        },
+        {
+          "id": "identity",
+          "type": "process",
+          "label": "Identity contract",
+          "caption": "Device, user, tenant, and consent binding",
+          "visual": "credential",
+          "shape": "card"
+        },
+        {
+          "id": "transport",
+          "type": "process",
+          "label": "Transport contract",
+          "caption": "Chunks, retries, checksums, and route recovery",
+          "visual": "sync",
+          "shape": "card"
+        },
+        {
+          "id": "speech",
+          "type": "process",
+          "label": "Speech contract",
+          "caption": "Transcript, speakers, timing, confidence, and versions",
+          "visual": "asr",
+          "shape": "card"
+        },
+        {
+          "id": "context",
+          "type": "process",
+          "label": "Context contract",
+          "caption": "Provenance, permissions, corrections, and freshness",
+          "visual": "context",
+          "shape": "card"
+        },
+        {
+          "id": "action",
+          "type": "result",
+          "label": "Action contract",
+          "caption": "Draft, confirmation, execution, and abstention",
+          "visual": "guardrail",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "capture",
+          "to": "identity",
+          "label": "feeds",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "identity",
+          "to": "transport",
+          "label": "refines",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "transport",
+          "to": "speech",
+          "label": "gates",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "speech",
+          "to": "context",
+          "label": "publishes",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "context",
+          "to": "action",
+          "label": "returns",
+          "labelPriority": "essential",
+          "relation": "flow"
+        }
+      ],
+      "outputFile": "02-offline-voice-contract-stack.gif"
+    },
+    {
+      "title": "Offline Recovery Is A Closed Loop",
+      "section": "offline-recovery-loop",
+      "format": "wide",
+      "layout": "control-loop",
+      "headline": "Every interrupted route should reconcile into one recording before speech artifacts are published",
+      "nodes": [
+        {
+          "id": "record",
+          "type": "input",
+          "label": "Local recording",
+          "caption": "Capture continues while phone and network disappear",
+          "visual": "wearable",
+          "shape": "illustration"
+        },
+        {
+          "id": "sync",
+          "type": "process",
+          "label": "Resumable sync",
+          "caption": "Sequence numbers and offsets recover missing chunks",
+          "visual": "sync",
+          "shape": "card"
+        },
+        {
+          "id": "validate",
+          "type": "process",
+          "label": "Byte validation",
+          "caption": "Checksums and timestamps confirm durable completion",
+          "visual": "checksum",
+          "shape": "card"
+        },
+        {
+          "id": "process",
+          "type": "process",
+          "label": "Speech processing",
+          "caption": "Versioned jobs publish independent artifacts",
+          "visual": "asr",
+          "shape": "card"
+        },
+        {
+          "id": "reconcile",
+          "type": "result",
+          "label": "State reconciliation",
+          "caption": "Retries return to one recording and context object",
+          "visual": "merge",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "record",
+          "to": "sync",
+          "label": "transfer",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "sync",
+          "to": "validate",
+          "label": "verify",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "validate",
+          "to": "process",
+          "label": "release",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "process",
+          "to": "reconcile",
+          "label": "publish",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "reconcile",
+          "to": "sync",
+          "label": "recover",
+          "labelPriority": "essential",
+          "relation": "supervision",
+          "pathStyle": "curve",
+          "bend": 0.22
+        }
+      ],
+      "outputFile": "03-offline-recovery-loop.gif"
     }
   ]
 }

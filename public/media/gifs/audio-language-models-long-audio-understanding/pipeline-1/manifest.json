@@ -1,0 +1,15 @@
+{
+  "pipeline": "ai-gif-pipeline-1",
+  "source": "storyboard.json",
+  "assetSlug": "audio-language-models-long-audio-understanding",
+  "title": "Audio-Language Models: How Long-Audio Understanding Works",
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "02-long-audio-constraints.gif"
+    ]
+  },
+  "pages": [
+    "02-long-audio-constraints.gif"
+  ]
+}

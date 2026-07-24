@@ -10,6 +10,7 @@
       "title": "Short page title",
       "section": "stable-section-slug",
       "fileSlug": "short-output-slug",
+      "outputFile": "02-stable-public-name.gif",
       "layout": "bento",
       "composition": "compact-grid",
       "introStyle": "quiet",
@@ -30,10 +31,18 @@
 Required per page: `title`, `section`, and 1-4 `cards`. Every card requires
 `title`, `body`, and a valid shared `icon`.
 
-Candidate contract: a normal blog storyboard contains exactly one page and
-therefore produces exactly one Pipeline 1 candidate GIF. The article may omit
-that candidate after curation. Multiple pages are allowed only for renderer
-canaries, layout development, or an explicit user request.
+`outputFile` is an optional stable public filename. It must be a safe basename
+ending in `.gif`. When omitted, the renderer assigns and persists a numbered
+default. Keep it when reordering or pruning pages so selected public URLs do not
+change.
+
+Candidate contract: a normal blog storyboard contains 3-4 pages using distinct,
+best-fit layouts and therefore produces 3-4 Pipeline 1 candidate GIFs. Use
+fewer only when the source cannot support three useful visuals without filler;
+use more than four only for canaries, layout development, or an explicit user
+request. An initial draft may reference all candidates. After the human names a
+retained subset, remove unselected pages and run a full render so stale GIFs are
+deleted and the manifest contains only selected outputs.
 
 Allowed `composition` values: `flow`, `comparison`, `checklist`, `system-map`,
 `failure-map`, `evidence-map`, `compact-grid`, `spotlight`. Composition is

@@ -134,7 +134,8 @@
           "pathStyle": "curve",
           "bend": 0.2
         }
-      ]
+      ],
+      "outputFile": "01-article-summary.gif"
     },
     {
       "title": "Model Family Map",
@@ -236,7 +237,201 @@
           "pathStyle": "curve",
           "bend": -0.32
         }
-      ]
+      ],
+      "outputFile": "02-model-family-map.gif"
+    },
+    {
+      "title": "Tool-Using Speech Needs A Control Loop",
+      "section": "voice-agent-control-loop",
+      "format": "wide",
+      "layout": "control-loop",
+      "headline": "Model interpretation becomes external authority only after policy, confirmation, and audit",
+      "nodes": [
+        {
+          "id": "audio",
+          "type": "input",
+          "label": "Live speech",
+          "caption": "Words, timing, noise, overlap, and prosody arrive together",
+          "visual": "microphone",
+          "shape": "illustration"
+        },
+        {
+          "id": "model",
+          "type": "process",
+          "label": "Speech model",
+          "caption": "Produces text, response audio, or tool intent",
+          "visual": "omni",
+          "shape": "card"
+        },
+        {
+          "id": "policy",
+          "type": "decision",
+          "label": "Control plane",
+          "caption": "Validates evidence, timing, permissions, and risk",
+          "visual": "guardrail",
+          "shape": "card"
+        },
+        {
+          "id": "action",
+          "type": "result",
+          "label": "Tool action",
+          "caption": "Changes external state only after authorization",
+          "visual": "function-call",
+          "shape": "card"
+        },
+        {
+          "id": "audit",
+          "type": "evidence",
+          "label": "Trace and feedback",
+          "caption": "Records outcomes, cancellation, errors, and user correction",
+          "visual": "audit",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "audio",
+          "to": "model",
+          "label": "interpret",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "model",
+          "to": "policy",
+          "label": "propose",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "policy",
+          "to": "action",
+          "label": "authorize",
+          "labelPriority": "essential",
+          "relation": "constraint"
+        },
+        {
+          "from": "action",
+          "to": "audit",
+          "label": "record",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "audit",
+          "to": "policy",
+          "label": "correct",
+          "labelPriority": "essential",
+          "relation": "supervision",
+          "pathStyle": "curve",
+          "bend": 0.22
+        }
+      ],
+      "outputFile": "03-voice-agent-control-loop.gif"
+    },
+    {
+      "title": "A Hybrid Stack Preserves Observability",
+      "section": "hybrid-speech-observability",
+      "format": "wide",
+      "layout": "swimlanes",
+      "headline": "Speech participation and tool authority can evolve independently while sharing one event trace",
+      "nodes": [
+        {
+          "id": "recognition",
+          "type": "input",
+          "label": "ASR evidence",
+          "caption": "Words, timing, confidence, and speaker state",
+          "visual": "asr",
+          "shape": "card"
+        },
+        {
+          "id": "understanding",
+          "type": "process",
+          "label": "Audio understanding",
+          "caption": "Events, prosody, and long-context interpretation",
+          "visual": "reasoning",
+          "shape": "card"
+        },
+        {
+          "id": "response",
+          "type": "result",
+          "label": "Spoken response",
+          "caption": "Streaming voice with interruption and cancellation",
+          "visual": "tts",
+          "shape": "card"
+        },
+        {
+          "id": "schema",
+          "type": "context",
+          "label": "Tool schema",
+          "caption": "Defines valid actions and typed arguments",
+          "visual": "schema",
+          "shape": "card"
+        },
+        {
+          "id": "confirm",
+          "type": "decision",
+          "label": "Confirmation",
+          "caption": "Applies user and risk-specific authority rules",
+          "visual": "guardrail",
+          "shape": "card"
+        },
+        {
+          "id": "trace",
+          "type": "result",
+          "label": "Unified trace",
+          "caption": "Joins evidence, timing, calls, results, and corrections",
+          "visual": "audit",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "recognition",
+          "to": "understanding",
+          "label": "grounds",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "understanding",
+          "to": "response",
+          "label": "guides",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "schema",
+          "to": "confirm",
+          "label": "constrains",
+          "labelPriority": "essential",
+          "relation": "constraint"
+        },
+        {
+          "from": "confirm",
+          "to": "trace",
+          "label": "authorizes",
+          "labelPriority": "essential",
+          "relation": "constraint"
+        },
+        {
+          "from": "response",
+          "to": "trace",
+          "label": "logs",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "understanding",
+          "to": "confirm",
+          "label": "proposes",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "pathStyle": "curve",
+          "bend": 0.16
+        }
+      ],
+      "outputFile": "04-hybrid-speech-observability.gif"
     }
   ]
 }

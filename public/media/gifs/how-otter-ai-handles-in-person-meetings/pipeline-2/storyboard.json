@@ -95,7 +95,8 @@
           "edgeGroup": "physical",
           "pathStyle": "straight"
         }
-      ]
+      ],
+      "outputFile": "01-article-summary.gif"
     },
     {
       "title": "Build Or Integrate",
@@ -195,7 +196,168 @@
           "edgeGroup": "api",
           "pathStyle": "straight"
         }
-      ]
+      ],
+      "outputFile": "02-build-or-integrate.gif"
+    },
+    {
+      "title": "Different Capture Routes Converge On One Meeting",
+      "section": "meeting-capture-convergence",
+      "format": "wide",
+      "layout": "converging",
+      "headline": "Laptop, mobile, and room audio should create the same reviewable meeting artifact",
+      "nodes": [
+        {
+          "id": "laptop",
+          "type": "input",
+          "label": "Laptop capture",
+          "caption": "Convenient for small rooms and ad hoc sessions",
+          "visual": "phone",
+          "shape": "card"
+        },
+        {
+          "id": "mobile",
+          "type": "input",
+          "label": "Mobile capture",
+          "caption": "Portable recording for field and in-person work",
+          "visual": "microphone",
+          "shape": "card"
+        },
+        {
+          "id": "room",
+          "type": "input",
+          "label": "Room audio",
+          "caption": "Dedicated microphones for repeatable shared spaces",
+          "visual": "room",
+          "shape": "card"
+        },
+        {
+          "id": "meeting",
+          "type": "process",
+          "label": "Meeting record",
+          "caption": "One identity, timeline, participants, and source audio",
+          "visual": "document",
+          "shape": "card"
+        },
+        {
+          "id": "review",
+          "type": "result",
+          "label": "Reviewed transcript",
+          "caption": "Corrected words, speakers, decisions, and tasks",
+          "visual": "check",
+          "shape": "illustration"
+        }
+      ],
+      "edges": [
+        {
+          "from": "laptop",
+          "to": "meeting",
+          "label": "capture",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "mobile",
+          "to": "meeting",
+          "label": "capture",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "room",
+          "to": "meeting",
+          "label": "capture",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "meeting",
+          "to": "review",
+          "label": "review",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        }
+      ],
+      "outputFile": "03-meeting-capture-convergence.gif"
+    },
+    {
+      "title": "Room Speech Becomes A Reviewable Record",
+      "section": "in-person-processing-path",
+      "format": "wide",
+      "layout": "signal-path",
+      "headline": "The useful product path preserves room audio evidence through recognition and human correction",
+      "nodes": [
+        {
+          "id": "room",
+          "type": "input",
+          "label": "Room conversation",
+          "caption": "Distance, overlap, noise, and several participants",
+          "visual": "room",
+          "shape": "illustration"
+        },
+        {
+          "id": "capture",
+          "type": "process",
+          "label": "Captured audio",
+          "caption": "One source timeline with clear recording state",
+          "visual": "waveform",
+          "shape": "card"
+        },
+        {
+          "id": "asr",
+          "type": "process",
+          "label": "Speech recognition",
+          "caption": "Words and timing remain separate from speaker labels",
+          "visual": "asr",
+          "shape": "card"
+        },
+        {
+          "id": "speakers",
+          "type": "process",
+          "label": "Speaker turns",
+          "caption": "Provisional attribution handles overlap and corrections",
+          "visual": "diarization",
+          "shape": "card"
+        },
+        {
+          "id": "record",
+          "type": "result",
+          "label": "Meeting record",
+          "caption": "A reviewer confirms decisions, names, and actions",
+          "visual": "document",
+          "shape": "illustration"
+        }
+      ],
+      "edges": [
+        {
+          "from": "room",
+          "to": "capture",
+          "label": "feeds",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "capture",
+          "to": "asr",
+          "label": "refines",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "asr",
+          "to": "speakers",
+          "label": "gates",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "speakers",
+          "to": "record",
+          "label": "publishes",
+          "labelPriority": "essential",
+          "relation": "flow"
+        }
+      ],
+      "outputFile": "04-in-person-processing-path.gif"
     }
   ]
 }

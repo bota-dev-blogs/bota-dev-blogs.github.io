@@ -13,7 +13,8 @@ Use this layout consistently:
 
 ```text
 src/content/blog/<slug>.mdx
-public/media/<slug>/<asset>
+public/media/featured/<slug>/featured.png
+public/media/assets/<slug>/<asset>
 public/media/gifs/<asset-slug>/
 .exports/bota/<slug>/
 .exports/bota-site/
@@ -26,7 +27,7 @@ Do not use root-level `blogs/`, `media/`, or `assets/` folders. They are ignored
 ## Publishing Flow
 
 1. Write or edit a post in `src/content/blog/<slug>.mdx`.
-2. Put permanent media under `public/media/<slug>/`.
+2. Put featured images under `public/media/featured/<slug>/` and other permanent media under `public/media/assets/<slug>/`.
 3. If the post needs generated GIFs, run one of the root GIF commands.
 4. Run a local build.
 5. Export the post bundle for bota.dev.
@@ -183,7 +184,7 @@ cover:
 Use absolute public paths in MDX:
 
 ```yaml
-src: "/media/post-slug/demo.mp3"
+src: "/media/assets/post-slug/demo.mp3"
 ```
 
 ```mdx
@@ -195,10 +196,10 @@ For audio/video captions, prefer WebVTT:
 ```yaml
 media:
   - title: "Demo"
-    src: "/media/post-slug/demo.mp4"
+    src: "/media/assets/post-slug/demo.mp4"
     type: "video"
     tracks:
-      - src: "/media/post-slug/demo.vtt"
+      - src: "/media/assets/post-slug/demo.vtt"
         kind: "subtitles"
         srclang: "en"
         label: "English"
@@ -211,6 +212,7 @@ Standalone `.srt` and `.vtt` files can also be listed as media panel items. Do n
 Before copying to production:
 
 ```bash
+npm run media:check
 npm run build
 npm run export:bota -- post-slug
 ```

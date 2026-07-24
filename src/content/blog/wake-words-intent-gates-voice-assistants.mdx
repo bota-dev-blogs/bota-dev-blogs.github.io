@@ -4,7 +4,7 @@ slug: "wake-words-intent-gates-voice-assistants"
 description: "How wake word detection, small-footprint KWS, zero-shot keywords, device-directed speech, and intent gates shape voice assistant entry."
 authors: ["Editorial Team"]
 date: "2026-07-08"
-modifiedDate: "2026-07-23"
+modifiedDate: "2026-07-24"
 readTime: "16 min read"
 contentType: "research-digest"
 tags:
@@ -23,32 +23,36 @@ keywords:
   - "semantic VAD"
   - "wearable AI voice interface"
 cover:
-  src: "/media/wake-words-intent-gates-voice-assistants/featured.png"
+  src: "/media/featured/wake-words-intent-gates-voice-assistants/featured.png"
   alt: "Futuristic voice assistant intent gate with wake word detection and edge AI devices"
   width: 1600
   height: 900
   fit: "cover"
 media:
-  - title: "Wake word research map"
-    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/01-article-summary.gif"
-    type: "image"
-    note: "Pipeline 2 research-map GIF for the article."
-  - title: "Operating point trade-off"
-    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/02-operating-point.gif"
-    type: "image"
-    note: "Pipeline 2 visual of FAR, FRR, and deployment thresholds."
-  - title: "Research frontier map"
-    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/03-research-frontier.gif"
-    type: "image"
-    note: "Pipeline 2 visual of zero-shot KWS, personalization, distillation, and semantic turn-taking."
-  - title: "Wake strategy checklist"
-    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/04-design-checklist.gif"
-    type: "image"
-    note: "Pipeline 2 visual checklist for designing a voice-entry system."
-  - title: "Layered gate explainer"
+  - title: "Layered Voice Intent Gate"
     src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-1/01-layered-gate.gif"
     type: "image"
-    note: "Pipeline 1 explainer card from the article."
+    note: "Small gates decide when larger voice AI should wake"
+  - title: "The Threshold Chooses The Product"
+    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-1/02-wake-operating-point.gif"
+    type: "image"
+    note: "Wake detection trades missed intent against false activation, privacy exposure, and interruption."
+  - title: "A Wearable Has Three Compute Tiers"
+    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-1/03-wearable-wake-budget.gif"
+    type: "image"
+    note: "Always-on interaction works by escalating from tiny local sensing to larger models only when needed."
+  - title: "Wake Word Research Map"
+    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/01-article-summary.gif"
+    type: "image"
+    note: "From fixed triggers to layered intent gates"
+  - title: "Operating Point"
+    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/02-operating-point.gif"
+    type: "image"
+    note: "Wake systems are tuned around FAR, FRR, power, and risk"
+  - title: "Wake Strategy Checklist"
+    src: "/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/04-design-checklist.gif"
+    type: "image"
+    note: "A voice-entry policy should be designed like a safety system"
 ---
 
 ## Research Question
@@ -103,6 +107,8 @@ The design pattern is simple: spend tiny compute all the time, then spend larger
 ## The Operating Point Is The Real Product
 
 Benchmarks often report accuracy, but deployed wake word systems live or die by their operating point.
+
+![The Threshold Chooses The Product](/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-1/02-wake-operating-point.gif)
 
 [False accepts](https://www.sciencedirect.com/topics/computer-science/false-acceptance-rate) are cases where background speech, television, music, or another person triggers the assistant. False rejects are cases where the intended wake phrase is missed. For a detector whose score increases with confidence, lowering the threshold usually reduces false rejects but increases false accepts; raising it can reduce interruptions and privacy exposure at the cost of more missed activations.
 
@@ -168,11 +174,11 @@ A capable teacher model for intent gating may be too large for always-on inferen
 
 Classical VAD asks whether speech exists. A voice agent needs a harder question: should the assistant respond now? This overlaps with [turn-taking](https://en.wikipedia.org/wiki/Turn-taking), interruption handling, hesitation, backchannels, and semantic completion. Modern real-time voice APIs expose this problem directly through turn-detection settings; OpenAI's [Realtime API reference](https://developers.openai.com/api/reference/resources/realtime) is one visible example.
 
-![Research frontier map](/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-2/03-research-frontier.gif)
-
 ## Wearables Make The Research Problem Sharper
 
 Wearable voice devices are attractive because they are close to the user. They are difficult because the acoustic scene is unstable.
+
+![A Wearable Has Three Compute Tiers](/media/gifs/wake-words-intent-gates-voice-assistants/pipeline-1/03-wearable-wake-budget.gif)
 
 An earbud hears wind, jaw motion, and body noise. A watch is often far from the mouth and moves with the wrist. Smart glasses can use head direction and near-mouth microphones but operate in public spaces. A pendant or pin may rub against clothing, face the wrong direction, or capture nearby people more clearly than intended.
 

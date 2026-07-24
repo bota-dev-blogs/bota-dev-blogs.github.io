@@ -4,7 +4,7 @@ slug: "neural-audio-codecs-speech-tokens"
 description: "How neural audio codecs create semantic and acoustic speech tokens, and why token rate shapes latency, quality, and real-time voice AI."
 authors: ["Editorial Team"]
 date: "2026-07-14"
-modifiedDate: "2026-07-23"
+modifiedDate: "2026-07-24"
 readTime: "12 min read"
 contentType: "research-digest"
 tags:
@@ -23,20 +23,40 @@ keywords:
   - "Moshi speech model"
   - "speech-to-speech AI"
 cover:
-  src: "/media/neural-audio-codecs-speech-tokens/featured.png"
+  src: "/media/featured/neural-audio-codecs-speech-tokens/featured.png"
   alt: "Technical map of a neural audio codec converting speech waveforms into semantic and acoustic tokens"
   width: 1600
   height: 900
   fit: "cover"
 media:
-  - title: "Neural audio codec and speech-token map"
+  - title: "Inside A Neural Audio Codec"
+    src: "/media/gifs/neural-audio-codecs-speech-tokens/pipeline-1/01-codec-anatomy.gif"
+    type: "image"
+    note: "A learned bottleneck turns dense waveforms into discrete symbols a sequence model can predict."
+  - title: "Token Rate Changes The Product"
+    src: "/media/gifs/neural-audio-codecs-speech-tokens/pipeline-1/02-token-rate-tradeoffs.gif"
+    type: "image"
+    note: "Codec efficiency trades against context length, latency, acoustic detail, and robustness."
+  - title: "The Codec Can Hide Failure"
+    src: "/media/gifs/neural-audio-codecs-speech-tokens/pipeline-1/03-codec-hidden-failures.gif"
+    type: "image"
+    note: "Pleasant reconstruction can still alter words, identity, timing, or streaming continuity."
+  - title: "Speech Becomes Tokens"
     src: "/media/gifs/neural-audio-codecs-speech-tokens/pipeline-2/01-article-summary.gif"
     type: "image"
-    note: "A graphical abstract of waveform encoding, semantic and acoustic codebooks, token modeling, and speech reconstruction."
-  - title: "Speech codec release gate"
+    note: "A neural codec turns dense waveforms into a compact language-model interface"
+  - title: "Test What Compression Changes"
     src: "/media/gifs/neural-audio-codecs-speech-tokens/pipeline-2/02-codec-evaluation.gif"
     type: "image"
-    note: "A practical evaluation map connecting reconstruction quality, intelligibility, identity, prosody, and streaming behavior."
+    note: "A pleasant reconstruction can still lose a name, a speaker cue, or a clean interruption"
+  - title: "Residual Codebooks Refine The Signal"
+    src: "/media/gifs/neural-audio-codecs-speech-tokens/pipeline-2/03-rvq-refinement.gif"
+    type: "image"
+    note: "Residual vector quantization adds acoustic detail in successive learned layers"
+  - title: "Duplex Speech Runs As A Token Control Loop"
+    src: "/media/gifs/neural-audio-codecs-speech-tokens/pipeline-2/04-duplex-token-loop.gif"
+    type: "image"
+    note: "A real-time model listens and speaks through synchronized token streams while handling interruption"
 ---
 
 ## Speech Models Needed An Alphabet Between Waveforms And Words
@@ -57,6 +77,8 @@ These representations become product-visible in [speech-to-speech translation](/
 
 A conventional audio codec compresses a waveform for storage or transmission. A neural codec learns that compression process from data.
 
+![Inside A Neural Audio Codec](/media/gifs/neural-audio-codecs-speech-tokens/pipeline-1/01-codec-anatomy.gif)
+
 A typical system has three parts:
 
 1. An **encoder** converts waveform segments into a lower-rate continuous representation.
@@ -70,6 +92,8 @@ The difficult step is [vector quantization](https://en.wikipedia.org/wiki/Vector
 ## Why Residual Vector Quantization Uses Several Codebooks
 
 Systems such as [SoundStream](https://arxiv.org/abs/2107.03312) and [EnCodec](https://arxiv.org/abs/2210.13438) use variants of **residual vector quantization**, or RVQ.
+
+![Residual Codebooks Refine The Signal](/media/gifs/neural-audio-codecs-speech-tokens/pipeline-2/03-rvq-refinement.gif)
 
 The first codebook approximates the encoder output. A second codebook encodes what the first one missed. Later codebooks continue refining the residual. This creates a coarse-to-fine representation: early codebooks carry a large share of the signal, while later ones restore detail.
 
@@ -94,6 +118,8 @@ That matters for controllability. A product cannot assume that dropping an acous
 ## Token Rate Is A Product Parameter
 
 Text models may use a handful of tokens per second of speech. Neural codec representations can require dozens or hundreds of token predictions per second once all codebooks are counted.
+
+![Token Rate Changes The Product](/media/gifs/neural-audio-codecs-speech-tokens/pipeline-1/02-token-rate-tradeoffs.gif)
 
 Token rate affects:
 
@@ -127,6 +153,8 @@ The hybrid design also makes failures easier to diagnose. Teams can ask whether 
 
 Offline speech generation can wait until an entire response is known. A real-time voice system cannot.
 
+![Duplex Speech Runs As A Token Control Loop](/media/gifs/neural-audio-codecs-speech-tokens/pipeline-2/04-duplex-token-loop.gif)
+
 In [full-duplex](https://en.wikipedia.org/wiki/Duplex_(telecommunications)) dialogue, listening and speaking may overlap. The model must process incoming user tokens while producing assistant tokens, react to interruptions, preserve causal timing, and avoid generating audio faster than it can be played.
 
 Moshi is an important public research example because its architecture treats dialogue as synchronized audio streams rather than alternating text turns. The codec's low frame rate helps make that synchronization tractable.
@@ -136,6 +164,8 @@ This does not mean a token-native model automatically solves turn-taking. Endpoi
 ## The Codec Can Become The Hidden Failure Source
 
 When a generated voice sounds wrong, teams often blame the language model or vocoder. The codec interface can be the real source.
+
+![The Codec Can Hide Failure](/media/gifs/neural-audio-codecs-speech-tokens/pipeline-1/03-codec-hidden-failures.gif)
 
 **Phonetic deletion** occurs when compression removes a consonant or short syllable that sounded perceptually minor during training but changes a word.
 

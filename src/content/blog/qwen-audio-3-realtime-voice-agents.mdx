@@ -4,7 +4,7 @@ slug: "qwen-audio-3-realtime-voice-agents"
 description: "How Qwen-Audio-3.0-Realtime supports streaming speech, turn detection, voice output, WebSocket events, and tool-using voice agents."
 authors: ["Editorial Team"]
 date: "2026-07-02"
-modifiedDate: "2026-07-23"
+modifiedDate: "2026-07-24"
 readTime: "13 min read"
 contentType: "research-digest"
 tags:
@@ -24,20 +24,32 @@ keywords:
   - "smart turn detection"
   - "WebSocket voice AI"
 cover:
-  src: "/media/qwen-audio-3-realtime-voice-agents/featured.png"
+  src: "/media/featured/qwen-audio-3-realtime-voice-agents/featured.png"
   alt: "Static cover frame showing the Qwen-Audio Realtime voice-agent stack"
   width: 1600
   height: 900
   fit: "cover"
 media:
-  - title: "Qwen-Audio Realtime field map"
-    src: "/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-2/01-article-summary.gif"
-    type: "image"
-    note: "Animated map of real-time speech input, turn detection, streaming output, and tool use."
-  - title: "Builder checklist"
+  - title: "Demo Evaluation Checklist (Conversation)"
     src: "/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-1/01-demo-evaluation-checklist.gif"
     type: "image"
-    note: "Product questions for teams evaluating a real-time voice model."
+    note: "Rate these dimensions to gauge real-world readiness."
+  - title: "The Application Owns Authority"
+    src: "/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-1/03-realtime-authority-boundary.gif"
+    type: "image"
+    note: "Function Calling makes the model useful, but it does not make model intent trustworthy by default."
+  - title: "Qwen-Audio-3.0-Realtime Field Guide"
+    src: "/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-2/01-article-summary.gif"
+    type: "image"
+    note: "Understanding the API shape is key to successful voice agent product des"
+  - title: "A Voice Session Cycles Through Events"
+    src: "/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-2/02-qwen-session-lifecycle.gif"
+    type: "image"
+    note: "Real-time interaction repeatedly streams audio, detects a turn, emits a response, and handles interruption"
+  - title: "Choose The Model From The Product Artifact"
+    src: "/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-2/03-qwen-model-fit.gif"
+    type: "image"
+    note: "Qwen-Audio Realtime fits live interaction, while transcript and analysis products may need different centers"
 ---
 
 ## Why Qwen-Audio-3.0-Realtime Matters
@@ -88,6 +100,8 @@ This is why Qwen-Audio-3.0-Realtime belongs in an "industry frontier" series. It
 ## Read The API Shape, Not Just The Marketing Copy
 
 The most important part of the documentation is the API shape.
+
+![A Voice Session Cycles Through Events](/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-2/02-qwen-session-lifecycle.gif)
 
 The Qwen-Audio Realtime API uses a persistent [WebSocket](https://en.wikipedia.org/wiki/WebSocket) connection. A client sends events such as `session.update` and `input_audio_buffer.append`. The server returns events such as `response.audio.delta`, `response.text.delta`, `response.output_item.added`, and `response.done`.
 
@@ -179,6 +193,8 @@ This is one important direction for audio AI: moving from passive recognition to
 
 Qwen-Audio-3.0-Realtime is not the answer to every speech problem.
 
+![Choose The Model From The Product Artifact](/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-2/03-qwen-model-fit.gif)
+
 Consider a conventional ASR model when the main artifact is a transcript: captions, search, indexing, meeting minutes, legal review, or compliance.
 
 Consider a large audio-language model when the task is analysis: audio question answering, sound-event understanding, long-recording review, or multi-speaker reasoning.
@@ -225,6 +241,8 @@ The design rule is straightforward: a real-time speech model supplies a capable 
 ## The Main Boundary
 
 Qwen-Audio-3.0-Realtime is a current example of voice-agent capabilities being packaged behind a product API. Its documentation covers real-time speech input and output, low-latency streaming, smart turn detection, context management, system and cloned voices, and Function Calling.
+
+![The Application Owns Authority](/media/gifs/qwen-audio-3-realtime-voice-agents/pipeline-1/03-realtime-authority-boundary.gif)
 
 But the boundary is equally important. A real-time model is not a complete product. It does not remove the need for UX design, tool permissions, transcript logging, fallback modes, domain evaluation, privacy review, and production observability.
 

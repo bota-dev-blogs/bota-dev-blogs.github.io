@@ -9,12 +9,14 @@
     "gifs": [
       "01-article-summary.gif",
       "02-darija-bottlenecks.gif",
-      "03-quality-gates.gif"
+      "03-quality-gates.gif",
+      "04-multilingual-localization-stack.gif"
     ]
   },
   "pages": [
     "01-article-summary.gif",
     "02-darija-bottlenecks.gif",
-    "03-quality-gates.gif"
+    "03-quality-gates.gif",
+    "04-multilingual-localization-stack.gif"
   ]
 }

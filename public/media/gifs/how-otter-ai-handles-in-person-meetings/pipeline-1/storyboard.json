@@ -4,30 +4,37 @@
   "title": "In-Person Meeting Capture",
   "pages": [
     {
-      "title": "In-Person Meeting Capture",
-      "section": "What is Otter.ai?",
-      "pageLabel": "1",
-      "kicker": "Virtual bots are easy; physical rooms need capture infrastructure",
+      "title": "Room Audio Needs Review",
+      "section": "meeting-quality-factors",
+      "fileSlug": "meeting-quality-factors",
+      "layout": "checklist",
+      "composition": "checklist",
+      "introStyle": "quiet",
+      "titleTreatment": "none",
+      "kicker": "A transcript is only as reliable as capture, attribution, consent, and correction.",
       "cards": [
         {
-          "title": "Virtual meeting",
-          "body": "A bot can join the call because the audio stream already exists online.",
-          "icon": "cloud"
+          "title": "Microphone placement",
+          "body": "Distance, reverberation, overlap, and HVAC noise shape recognition quality.",
+          "icon": "microphone"
         },
         {
-          "title": "Physical meeting",
-          "body": "A room needs microphones, placement, connectivity, and secure sync.",
-          "icon": "room"
+          "title": "Speaker attribution",
+          "body": "Diarization labels remain provisional until participants or reviewers confirm them.",
+          "icon": "diarization"
         },
         {
-          "title": "Product gap",
-          "body": "Phones work for small rooms but do not scale cleanly to enterprise capture.",
-          "icon": "alert"
+          "title": "Consent boundary",
+          "body": "The product must make recording state and retention understandable.",
+          "icon": "shield"
+        },
+        {
+          "title": "Human correction",
+          "body": "Names, decisions, and action items need an editable source-backed record.",
+          "icon": "document"
         }
       ],
-      "fileSlug": "what-is-otter-ai",
-      "layout": "split-focus",
-      "composition": "comparison"
+      "outputFile": "03-meeting-quality-factors.gif"
     }
   ]
 }

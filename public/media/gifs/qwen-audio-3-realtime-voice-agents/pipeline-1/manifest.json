@@ -6,10 +6,12 @@
   "outputs": {
     "storyboard": "storyboard.json",
     "gifs": [
-      "01-demo-evaluation-checklist.gif"
+      "01-demo-evaluation-checklist.gif",
+      "03-realtime-authority-boundary.gif"
     ]
   },
   "pages": [
-    "01-demo-evaluation-checklist.gif"
+    "01-demo-evaluation-checklist.gif",
+    "03-realtime-authority-boundary.gif"
   ]
 }

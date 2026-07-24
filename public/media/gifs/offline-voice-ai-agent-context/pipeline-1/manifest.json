@@ -6,10 +6,14 @@
   "outputs": {
     "storyboard": "storyboard.json",
     "gifs": [
-      "01-reliability-checklist.gif"
+      "01-reliability-checklist.gif",
+      "02-offline-latency-ladder.gif",
+      "03-consent-provenance-chain.gif"
     ]
   },
   "pages": [
-    "01-reliability-checklist.gif"
+    "01-reliability-checklist.gif",
+    "02-offline-latency-ladder.gif",
+    "03-consent-provenance-chain.gif"
   ]
 }

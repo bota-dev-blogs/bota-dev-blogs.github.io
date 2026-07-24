@@ -8,11 +8,15 @@
     "storyboard": "storyboard.json",
     "gifs": [
       "01-article-summary.gif",
-      "02-build-or-integrate.gif"
+      "02-build-or-integrate.gif",
+      "03-meeting-capture-convergence.gif",
+      "04-in-person-processing-path.gif"
     ]
   },
   "pages": [
     "01-article-summary.gif",
-    "02-build-or-integrate.gif"
+    "02-build-or-integrate.gif",
+    "03-meeting-capture-convergence.gif",
+    "04-in-person-processing-path.gif"
   ]
 }

@@ -124,7 +124,8 @@
           "pathStyle": "curve",
           "bend": 0.14
         }
-      ]
+      ],
+      "outputFile": "01-article-summary.gif"
     },
     {
       "title": "One WER Cannot Approve A Language",
@@ -243,7 +244,177 @@
           "pathStyle": "curve",
           "bend": 0.13
         }
-      ]
+      ],
+      "outputFile": "02-local-release-gate.gif"
+    },
+    {
+      "title": "Foundation Breadth Needs Local Adaptation",
+      "section": "selective-adaptation-bridge",
+      "format": "wide",
+      "layout": "bridge",
+      "headline": "A multilingual foundation becomes a product only after local data, policy, and release evidence",
+      "nodes": [
+        {
+          "id": "foundation",
+          "type": "input",
+          "label": "Shared foundation",
+          "caption": "Broad multilingual speech representations and transfer",
+          "visual": "model",
+          "shape": "illustration"
+        },
+        {
+          "id": "local-data",
+          "type": "process",
+          "label": "Local speech data",
+          "caption": "Target varieties, devices, domains, and negatives",
+          "visual": "dataset",
+          "shape": "card"
+        },
+        {
+          "id": "adapt",
+          "type": "process",
+          "label": "Selective adaptation",
+          "caption": "Adapters, vocabulary, routing, and correction policy",
+          "visual": "transformer",
+          "shape": "card"
+        },
+        {
+          "id": "gate",
+          "type": "process",
+          "label": "Local release gate",
+          "caption": "Measures critical errors under deployment conditions",
+          "visual": "gate",
+          "shape": "card"
+        },
+        {
+          "id": "product",
+          "type": "result",
+          "label": "Supported experience",
+          "caption": "Ships only where evidence meets the workflow threshold",
+          "visual": "check",
+          "shape": "illustration"
+        }
+      ],
+      "edges": [
+        {
+          "from": "foundation",
+          "to": "local-data",
+          "label": "feeds",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "local-data",
+          "to": "adapt",
+          "label": "refines",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "adapt",
+          "to": "gate",
+          "label": "gates",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "gate",
+          "to": "product",
+          "label": "publishes",
+          "labelPriority": "essential",
+          "relation": "flow"
+        }
+      ],
+      "outputFile": "03-selective-adaptation-bridge.gif"
+    },
+    {
+      "title": "Local Errors Drive The Next Adaptation Cycle",
+      "section": "community-adaptation-loop",
+      "format": "wide",
+      "layout": "control-loop",
+      "headline": "Low-resource ASR improves when native review and product errors return to training and policy",
+      "nodes": [
+        {
+          "id": "speech",
+          "type": "input",
+          "label": "Local speech",
+          "caption": "Dialect, code-switching, names, and target devices",
+          "visual": "microphone",
+          "shape": "illustration"
+        },
+        {
+          "id": "model",
+          "type": "process",
+          "label": "Multilingual ASR",
+          "caption": "Produces text, language confidence, and alternatives",
+          "visual": "asr",
+          "shape": "card"
+        },
+        {
+          "id": "errors",
+          "type": "evidence",
+          "label": "Structured errors",
+          "caption": "Separates entities, scripts, acoustics, and routing failures",
+          "visual": "alert",
+          "shape": "card"
+        },
+        {
+          "id": "review",
+          "type": "decision",
+          "label": "Community review",
+          "caption": "Defines conventions and identifies systematic harm",
+          "visual": "person",
+          "shape": "card"
+        },
+        {
+          "id": "adapt",
+          "type": "result",
+          "label": "Targeted update",
+          "caption": "Refreshes data, adapters, vocabulary, and thresholds",
+          "visual": "retry",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "speech",
+          "to": "model",
+          "label": "decode",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "model",
+          "to": "errors",
+          "label": "measure",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "errors",
+          "to": "review",
+          "label": "review",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "review",
+          "to": "adapt",
+          "label": "approve",
+          "labelPriority": "essential",
+          "relation": "supervision"
+        },
+        {
+          "from": "adapt",
+          "to": "model",
+          "label": "update",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "pathStyle": "curve",
+          "bend": 0.24
+        }
+      ],
+      "outputFile": "04-community-adaptation-loop.gif"
     }
   ]
 }

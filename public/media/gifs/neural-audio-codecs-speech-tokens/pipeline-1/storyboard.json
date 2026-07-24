@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "style": "pastel-handdrawn",
+  "title": "Neural Audio Codecs: How Speech Tokens Power Voice AI",
+  "pages": [
+    {
+      "title": "Inside A Neural Audio Codec",
+      "section": "codec-anatomy",
+      "fileSlug": "codec-anatomy",
+      "layout": "flow-board",
+      "composition": "flow",
+      "introStyle": "ribbon",
+      "titleTreatment": "none",
+      "kicker": "A learned bottleneck turns dense waveforms into discrete symbols a sequence model can predict.",
+      "cards": [
+        {
+          "title": "Encoder",
+          "body": "Compress waveform frames into a lower-rate continuous representation.",
+          "icon": "transformer"
+        },
+        {
+          "title": "Quantizer",
+          "body": "Replace vectors with entries from learned codebooks.",
+          "icon": "audio-token"
+        },
+        {
+          "title": "Codebook stack",
+          "body": "Residual layers add coarse-to-fine acoustic detail.",
+          "icon": "layers"
+        },
+        {
+          "title": "Decoder",
+          "body": "Reconstruct playable audio from predicted token streams.",
+          "icon": "waveform"
+        }
+      ],
+      "outputFile": "01-codec-anatomy.gif"
+    },
+    {
+      "title": "Token Rate Changes The Product",
+      "section": "token-rate-tradeoffs",
+      "fileSlug": "token-rate-tradeoffs",
+      "layout": "matrix",
+      "composition": "comparison",
+      "introStyle": "quiet",
+      "titleTreatment": "none",
+      "kicker": "Codec efficiency trades against context length, latency, acoustic detail, and robustness.",
+      "cards": [
+        {
+          "title": "Lower frame rate",
+          "body": "Fewer autoregressive decisions can reduce latency and cost.",
+          "icon": "latency"
+        },
+        {
+          "title": "More acoustic detail",
+          "body": "Additional codebooks preserve timbre, prosody, and fine timing.",
+          "icon": "prosody"
+        },
+        {
+          "title": "Longer context",
+          "body": "Compact streams fit more conversation into a fixed model window.",
+          "icon": "memory"
+        },
+        {
+          "title": "Error exposure",
+          "body": "Dense token streams create more places for loss and drift.",
+          "icon": "alert"
+        }
+      ],
+      "outputFile": "02-token-rate-tradeoffs.gif"
+    },
+    {
+      "title": "The Codec Can Hide Failure",
+      "section": "codec-hidden-failures",
+      "fileSlug": "codec-hidden-failures",
+      "layout": "failure-focus",
+      "composition": "failure-map",
+      "introStyle": "badge",
+      "titleTreatment": "none",
+      "kicker": "Pleasant reconstruction can still alter words, identity, timing, or streaming continuity.",
+      "cards": [
+        {
+          "title": "Phonetic deletion",
+          "body": "Compression can erase a short sound that changes a critical word.",
+          "icon": "phoneme"
+        },
+        {
+          "title": "Speaker drift",
+          "body": "Identity cues can vary across a long generated response.",
+          "icon": "voiceprint"
+        },
+        {
+          "title": "Prosody flattening",
+          "body": "Pitch, stress, pauses, and emotion may lose contrast.",
+          "icon": "prosody"
+        },
+        {
+          "title": "Streaming breaks",
+          "body": "Lost tokens or decoder resets can create clicks and repetition.",
+          "icon": "network"
+        }
+      ],
+      "outputFile": "03-codec-hidden-failures.gif"
+    }
+  ]
+}

@@ -8,124 +8,6 @@
   },
   "pages": [
     {
-      "title": "Listen Beyond Words",
-      "section": "article-summary",
-      "format": "wide",
-      "layout": "diverging",
-      "headline": "The useful signal may be a species call, bearing fault, alarm, or acoustic scene",
-      "nodes": [
-        {
-          "id": "sensor",
-          "type": "input",
-          "label": "Continuous sound",
-          "caption": "Field microphones, machines, rooms, weather, and overlap",
-          "visual": "sensor",
-          "shape": "illustration"
-        },
-        {
-          "id": "encoder",
-          "type": "process",
-          "label": "Audio representation",
-          "caption": "General encoders turn waveform context into reusable features",
-          "visual": "embedding",
-          "shape": "card"
-        },
-        {
-          "id": "ecology",
-          "type": "evidence",
-          "label": "Bioacoustics",
-          "caption": "Species calls, habitat activity, migration, and human noise",
-          "visual": "ear",
-          "shape": "card"
-        },
-        {
-          "id": "machines",
-          "type": "evidence",
-          "label": "Machine health",
-          "caption": "Normal operating sound, faults, load, and maintenance context",
-          "visual": "gear",
-          "shape": "card"
-        },
-        {
-          "id": "events",
-          "type": "process",
-          "label": "Open-world events",
-          "caption": "Known labels, novel sounds, anomalies, and time boundaries",
-          "visual": "search",
-          "shape": "illustration"
-        },
-        {
-          "id": "evidence",
-          "type": "result",
-          "label": "Reviewable alert",
-          "caption": "Timestamp, source, confidence, model version, and human status",
-          "visual": "alert",
-          "shape": "card"
-        }
-      ],
-      "edges": [
-        {
-          "from": "sensor",
-          "to": "encoder",
-          "label": "sample",
-          "labelPriority": "optional",
-          "relation": "flow",
-          "edgeGroup": "capture",
-          "pathStyle": "straight"
-        },
-        {
-          "from": "encoder",
-          "to": "ecology",
-          "label": "transfer",
-          "labelPriority": "optional",
-          "relation": "evidence",
-          "edgeGroup": "domains",
-          "pathStyle": "curve",
-          "bend": -0.16
-        },
-        {
-          "from": "encoder",
-          "to": "machines",
-          "label": "adapt",
-          "labelPriority": "optional",
-          "relation": "evidence",
-          "edgeGroup": "domains",
-          "pathStyle": "curve",
-          "bend": 0.16
-        },
-        {
-          "from": "ecology",
-          "to": "events",
-          "label": "detect",
-          "labelPriority": "essential",
-          "relation": "flow",
-          "edgeGroup": "reason",
-          "pathStyle": "curve",
-          "bend": 0.12
-        },
-        {
-          "from": "machines",
-          "to": "events",
-          "label": "compare",
-          "labelPriority": "essential",
-          "relation": "constraint",
-          "edgeGroup": "reason",
-          "pathStyle": "curve",
-          "bend": -0.13
-        },
-        {
-          "from": "events",
-          "to": "evidence",
-          "label": "ground",
-          "labelPriority": "essential",
-          "relation": "evidence",
-          "edgeGroup": "trust",
-          "pathStyle": "curve",
-          "bend": 0.13
-        }
-      ]
-    },
-    {
       "title": "Unknown Sounds Need A Route",
       "section": "open-world-evaluation",
       "format": "wide",
@@ -242,7 +124,204 @@
           "pathStyle": "curve",
           "bend": 0.13
         }
-      ]
+      ],
+      "outputFile": "02-open-world-evaluation.gif"
+    },
+    {
+      "title": "One Sound Stream Feeds Several Detectors",
+      "section": "parallel-audio-jobs",
+      "format": "wide",
+      "layout": "scatter-gather",
+      "headline": "Parallel acoustic tasks should preserve independent evidence before producing a domain alert",
+      "nodes": [
+        {
+          "id": "stream",
+          "type": "input",
+          "label": "Sensor audio",
+          "caption": "Continuous sound with device and time provenance",
+          "visual": "waveform",
+          "shape": "illustration"
+        },
+        {
+          "id": "events",
+          "type": "process",
+          "label": "Event detector",
+          "caption": "Names known sounds and estimates their intervals",
+          "visual": "sensor",
+          "shape": "pill"
+        },
+        {
+          "id": "anomaly",
+          "type": "process",
+          "label": "Anomaly model",
+          "caption": "Flags deviations without naming every failure",
+          "visual": "alert",
+          "shape": "pill"
+        },
+        {
+          "id": "retrieval",
+          "type": "process",
+          "label": "Embedding search",
+          "caption": "Finds sounds similar to a text or audio query",
+          "visual": "embedding",
+          "shape": "pill"
+        },
+        {
+          "id": "timing",
+          "type": "evidence",
+          "label": "Time localizer",
+          "caption": "Separates short events from broad scene context",
+          "visual": "clock",
+          "shape": "pill"
+        },
+        {
+          "id": "alert",
+          "type": "result",
+          "label": "Reviewable alert",
+          "caption": "Links a cautious claim to its exact source window",
+          "visual": "audit",
+          "shape": "illustration"
+        }
+      ],
+      "edges": [
+        {
+          "from": "stream",
+          "to": "events",
+          "label": "detect",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "stream",
+          "to": "anomaly",
+          "label": "compare",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "stream",
+          "to": "retrieval",
+          "label": "embed",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "stream",
+          "to": "timing",
+          "label": "localize",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "events",
+          "to": "alert",
+          "label": "labels",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "anomaly",
+          "to": "alert",
+          "label": "flags",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "retrieval",
+          "to": "alert",
+          "label": "matches",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "timing",
+          "to": "alert",
+          "label": "grounds",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        }
+      ],
+      "outputFile": "03-parallel-audio-jobs.gif"
+    },
+    {
+      "title": "Edge Audio Becomes Selective Evidence",
+      "section": "edge-cloud-sensing-path",
+      "format": "wide",
+      "layout": "signal-path",
+      "headline": "Continuous sensing needs a local gate, a retained buffer, and an auditable cloud decision",
+      "nodes": [
+        {
+          "id": "microphone",
+          "type": "input",
+          "label": "Field sensor",
+          "caption": "Runs continuously under power, bandwidth, and privacy limits",
+          "visual": "microphone",
+          "shape": "illustration"
+        },
+        {
+          "id": "edge",
+          "type": "process",
+          "label": "Edge model",
+          "caption": "Detects candidates or computes compact acoustic features",
+          "visual": "edge-device",
+          "shape": "card"
+        },
+        {
+          "id": "gate",
+          "type": "decision",
+          "label": "Evidence gate",
+          "caption": "Selects windows while preserving pre-event context",
+          "visual": "filter",
+          "shape": "card"
+        },
+        {
+          "id": "cloud",
+          "type": "process",
+          "label": "Deep analysis",
+          "caption": "Uses larger models and domain context on selected audio",
+          "visual": "cloud",
+          "shape": "card"
+        },
+        {
+          "id": "record",
+          "type": "result",
+          "label": "Auditable record",
+          "caption": "Stores timing, provenance, confidence, and review state",
+          "visual": "audit",
+          "shape": "illustration"
+        }
+      ],
+      "edges": [
+        {
+          "from": "microphone",
+          "to": "edge",
+          "label": "feeds",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "edge",
+          "to": "gate",
+          "label": "refines",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "gate",
+          "to": "cloud",
+          "label": "gates",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "cloud",
+          "to": "record",
+          "label": "publishes",
+          "labelPriority": "essential",
+          "relation": "flow"
+        }
+      ],
+      "outputFile": "04-edge-cloud-sensing-path.gif"
     }
   ]
 }

@@ -4,7 +4,7 @@ slug: "how-otter.ai-handles-in-person-meetings"
 description: "How Otter.ai records in-person meetings, where mobile capture works, and when third-party hardware or embedded meeting infrastructure fits."
 authors: ["Editorial Team"]
 date: "2025-11-02"
-modifiedDate: "2026-07-23"
+modifiedDate: "2026-07-24"
 readTime: "8 min read"
 contentType: "product-analysis"
 tags:
@@ -21,24 +21,32 @@ keywords:
   - "offline meeting capture"
   - "meeting intelligence API"
 cover:
-  src: "/media/how-otter.ai-handles-in-person-meetings/featured.png"
+  src: "/media/featured/how-otter.ai-handles-in-person-meetings/featured.png"
   alt: "Illustration of an in-person meeting capture and transcription system"
   width: 1600
   height: 900
   fit: "cover"
 media:
-  - title: "In-person meeting capture map"
+  - title: "Room Audio Needs Review"
+    src: "/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-1/03-meeting-quality-factors.gif"
+    type: "image"
+    note: "A transcript is only as reliable as capture, attribution, consent, and correction."
+  - title: "In-Person Meeting Capture Map"
     src: "/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-2/01-article-summary.gif"
     type: "image"
-    note: "A map of virtual and physical meeting capture paths."
-  - title: "In-person capture explainer"
-    src: "/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-1/01-what-is-otter-ai.gif"
-    type: "image"
-    note: "The main differences between online and in-person meeting capture."
-  - title: "Build versus integrate trade-off"
+    note: "Virtual meetings have audio streams; physical rooms need capture infrastructure"
+  - title: "Build Or Integrate"
     src: "/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-2/02-build-or-integrate.gif"
     type: "image"
-    note: "A product decision map for adding physical meeting capture."
+    note: "The in-room decision is a trade-off between speed, control, and operations"
+  - title: "Different Capture Routes Converge On One Meeting"
+    src: "/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-2/03-meeting-capture-convergence.gif"
+    type: "image"
+    note: "Laptop, mobile, and room audio should create the same reviewable meeting artifact"
+  - title: "Room Speech Becomes A Reviewable Record"
+    src: "/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-2/04-in-person-processing-path.gif"
+    type: "image"
+    note: "The useful product path preserves room audio evidence through recognition and human correction"
 ---
 
 ## The Short Answer
@@ -59,6 +67,8 @@ This review is based on Otter's public product and help-center material availabl
 
 Otter's help center provides a general guide to [recording a conversation](https://help.otter.ai/hc/en-us/articles/360048269733-Record-a-conversation) and a separate set of [best practices for in-person recordings](https://help.otter.ai/hc/en-us/articles/31672594631063-Getting-the-most-out-of-Otter-ai-Best-Practices-for-in-person-recordings). The workflow is software-led:
 
+![Different Capture Routes Converge On One Meeting](/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-2/03-meeting-capture-convergence.gif)
+
 1. Open Otter on a supported device.
 2. Place the device where the microphone can capture the participants.
 3. Start and stop the recording in the app.
@@ -66,8 +76,6 @@ Otter's help center provides a general guide to [recording a conversation](https
 5. Review speaker labels, text, and generated outputs before sharing or acting on them.
 
 This is a sensible default for individuals and small teams because it uses hardware they already carry. It also means that capture quality depends on the recording device and the room.
-
-![In-person meeting capture explainer](/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-1/01-what-is-otter-ai.gif)
 
 ## Does Otter Sell Dedicated Room Hardware?
 
@@ -84,6 +92,8 @@ The relevant product question is therefore not simply whether hardware exists. I
 ## Mobile Capture Is Useful, But Context Matters
 
 Phone-based recording is not inherently low quality. In a quiet one-to-one conversation, a modern phone placed close to both speakers may be entirely adequate. The same phone at one end of a large table, inside a noisy restaurant, or beside a loud HVAC vent may produce a very different result.
+
+![Room Speech Becomes A Reviewable Record](/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-2/04-in-person-processing-path.gif)
 
 The main variables are:
 
@@ -140,6 +150,8 @@ Generated notes also need review. ASR can miss names and domain terms; speaker d
 ## What To Measure
 
 Teams evaluating in-person meeting capture should test more than transcript accuracy:
+
+![Room Audio Needs Review](/media/gifs/how-otter-ai-handles-in-person-meetings/pipeline-1/03-meeting-quality-factors.gif)
 
 - Recording-start success and unexpected-stop rate.
 - Usable speech coverage by seat and room type.

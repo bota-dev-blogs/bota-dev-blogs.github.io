@@ -14,6 +14,10 @@ leaving every card readable in the first frame.
 | `compare`, `lanes`, `matrix`, `triptych` | stable separation with alternating emphasis | alternatives, dimensions, or parallel views |
 | `failure-focus`, `spotlight` | one pulse ring around the decision or risk | one dominant failure, risk, or result |
 
+`signal-board` should use the available board height when placing its upper and
+lower cards. Balance the two rows around the signal rail instead of capping the
+content height and leaving unused space below the composition.
+
 ## Density
 
 - Use 1-4 cards. A card is a claim, not a paragraph.

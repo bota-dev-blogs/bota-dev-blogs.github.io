@@ -1,0 +1,17 @@
+{
+  "pipeline": "ai-gif-pipeline-1",
+  "source": "storyboard.json",
+  "assetSlug": "real-time-asr-2026-streaming-recognition",
+  "title": "Real-Time ASR in 2026: Streaming Recognition Explained",
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-streaming-asr-clocks.gif",
+      "02-transcript-stability-states.gif"
+    ]
+  },
+  "pages": [
+    "01-streaming-asr-clocks.gif",
+    "02-transcript-stability-states.gif"
+  ]
+}

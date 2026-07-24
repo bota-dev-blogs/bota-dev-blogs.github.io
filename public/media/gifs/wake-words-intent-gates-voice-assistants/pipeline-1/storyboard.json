@@ -27,7 +27,69 @@
       ],
       "fileSlug": "layered-gate",
       "layout": "system-board",
-      "composition": "system-map"
+      "composition": "system-map",
+      "outputFile": "01-layered-gate.gif"
+    },
+    {
+      "title": "The Threshold Chooses The Product",
+      "section": "wake-operating-point",
+      "fileSlug": "wake-operating-point",
+      "layout": "compare",
+      "composition": "comparison",
+      "introStyle": "split",
+      "titleTreatment": "none",
+      "kicker": "Wake detection trades missed intent against false activation, privacy exposure, and interruption.",
+      "cards": [
+        {
+          "title": "Lower threshold",
+          "body": "Fewer missed activations, but more background speech crosses the gate.",
+          "icon": "ear"
+        },
+        {
+          "title": "Higher threshold",
+          "body": "Fewer false wakes, but accents and weak speech are rejected more often.",
+          "icon": "gate"
+        },
+        {
+          "title": "Risk-aware policy",
+          "body": "Sensitive actions need stronger evidence than harmless follow-up questions.",
+          "icon": "guardrail"
+        }
+      ],
+      "outputFile": "02-wake-operating-point.gif"
+    },
+    {
+      "title": "A Wearable Has Three Compute Tiers",
+      "section": "wearable-wake-budget",
+      "fileSlug": "wearable-wake-budget",
+      "layout": "dashboard",
+      "composition": "system-map",
+      "introStyle": "badge",
+      "titleTreatment": "none",
+      "kicker": "Always-on interaction works by escalating from tiny local sensing to larger models only when needed.",
+      "cards": [
+        {
+          "title": "Wearable sensing",
+          "body": "Low-power VAD, wake detection, controls, and short buffering run continuously.",
+          "icon": "battery"
+        },
+        {
+          "title": "Phone assistance",
+          "body": "Denoising, speaker checks, and session state use nearby compute.",
+          "icon": "phone"
+        },
+        {
+          "title": "Cloud reasoning",
+          "body": "Long-context models and tools run only after the gate passes.",
+          "icon": "cloud"
+        },
+        {
+          "title": "Visible privacy",
+          "body": "Indicators and physical controls explain listening, upload, and mute state.",
+          "icon": "shield"
+        }
+      ],
+      "outputFile": "03-wearable-wake-budget.gif"
     }
   ]
 }

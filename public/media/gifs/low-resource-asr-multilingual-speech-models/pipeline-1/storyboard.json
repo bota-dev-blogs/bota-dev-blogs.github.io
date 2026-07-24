@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "style": "pastel-handdrawn",
+  "title": "Multilingual ASR at 1,000 Languages: What Still Breaks",
+  "pages": [
+    {
+      "title": "Scarcity Has Several Levers",
+      "section": "low-resource-data-levers",
+      "fileSlug": "low-resource-data-levers",
+      "layout": "staircase",
+      "composition": "flow",
+      "introStyle": "ribbon",
+      "titleTreatment": "none",
+      "kicker": "Multilingual pretraining lowers the starting cost, but local evidence still decides whether a model can ship.",
+      "cards": [
+        {
+          "title": "Shared pretraining",
+          "body": "Large multilingual encoders transfer acoustic and linguistic structure.",
+          "icon": "model"
+        },
+        {
+          "title": "Targeted adaptation",
+          "body": "Adapters and contextual biasing focus limited local data.",
+          "icon": "transformer"
+        },
+        {
+          "title": "Error-driven data",
+          "body": "Collect consented examples around systematic product failures.",
+          "icon": "dataset"
+        },
+        {
+          "title": "Community review",
+          "body": "Native speakers define conventions and approve release behavior.",
+          "icon": "person"
+        }
+      ],
+      "outputFile": "02-low-resource-data-levers.gif"
+    },
+    {
+      "title": "Local Release Signals",
+      "section": "local-release-signals",
+      "fileSlug": "local-release-signals",
+      "layout": "dashboard",
+      "composition": "evidence-map",
+      "introStyle": "badge",
+      "titleTreatment": "none",
+      "kicker": "One aggregate WER cannot represent who is served well or what errors remain dangerous.",
+      "cards": [
+        {
+          "title": "Critical entities",
+          "body": "Measure names, numbers, addresses, dates, and domain terms separately.",
+          "icon": "target"
+        },
+        {
+          "title": "Language varieties",
+          "body": "Report dialect, region, script, age, and code-switch patterns.",
+          "icon": "language"
+        },
+        {
+          "title": "Target acoustics",
+          "body": "Test the real microphone, noise, distance, codec, and packet loss.",
+          "icon": "noise"
+        },
+        {
+          "title": "Failure confidence",
+          "body": "Track wrong-language output, silence hallucination, and calibration.",
+          "icon": "confidence"
+        }
+      ],
+      "outputFile": "03-local-release-signals.gif"
+    }
+  ]
+}

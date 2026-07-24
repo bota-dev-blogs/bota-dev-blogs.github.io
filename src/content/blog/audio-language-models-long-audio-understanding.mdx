@@ -4,7 +4,7 @@ slug: "audio-language-models-long-audio-understanding"
 description: "How audio-language models handle long recordings through windowing, retrieval, timestamp grounding, and hybrid transcript-waveform reasoning."
 authors: ["Editorial Team"]
 date: "2026-07-03"
-modifiedDate: "2026-07-23"
+modifiedDate: "2026-07-24"
 readTime: "12 min read"
 contentType: "research-digest"
 tags:
@@ -23,16 +23,28 @@ keywords:
   - "timestamp grounded audio QA"
   - "long recording analysis"
 cover:
-  src: "/media/audio-language-models-long-audio-understanding/featured.png"
+  src: "/media/featured/audio-language-models-long-audio-understanding/featured.png"
   alt: "Map of an audio-language model turning a long recording into grounded answers and evidence"
   width: 1600
   height: 900
   fit: "cover"
 media:
-  - title: "Long-audio understanding map"
+  - title: "Why Long Audio Is Hard"
+    src: "/media/gifs/audio-language-models-long-audio-understanding/pipeline-1/02-long-audio-constraints.gif"
+    type: "image"
+    note: "Hours of audio turn context length into a retrieval and evidence problem."
+  - title: "Long Audio Needs Evidence"
     src: "/media/gifs/audio-language-models-long-audio-understanding/pipeline-2/01-article-summary.gif"
     type: "image"
-    note: "A graphical abstract of audio windows, retrieval, multimodal reasoning, timestamps, and evidence."
+    note: "Audio-language models need retrieval, time grounding, and uncertainty"
+  - title: "Long Recordings Need A Retrieval Loop"
+    src: "/media/gifs/audio-language-models-long-audio-understanding/pipeline-2/03-long-audio-retrieval-loop.gif"
+    type: "image"
+    note: "A question should retrieve compact evidence windows while preserving recording-level context and provenance"
+  - title: "From Waveform To Citable Evidence"
+    src: "/media/gifs/audio-language-models-long-audio-understanding/pipeline-2/04-timestamp-evidence-path.gif"
+    type: "image"
+    note: "Long-audio understanding becomes trustworthy when every derived claim can return to a source interval"
 ---
 
 ## The Transcript Is A Useful View, Not The Whole Audio
@@ -76,6 +88,8 @@ These are not identical systems, and their public claims should be tested agains
 
 The phrase "long-audio understanding" hides several separate problems.
 
+![Why Long Audio Is Hard](/media/gifs/audio-language-models-long-audio-understanding/pipeline-1/02-long-audio-constraints.gif)
+
 ### Context Size
 
 An hour of audio is much larger than a typical short utterance. Passing every waveform frame or every transcript token into one model can be expensive, slow, or impossible within the model's context window.
@@ -114,6 +128,8 @@ An audio-language model can reason over these cues, but it should not be assumed
 
 For long recordings, an answer without a time range is difficult to verify. A grounded system should return:
 
+![From Waveform To Citable Evidence](/media/gifs/audio-language-models-long-audio-understanding/pipeline-2/04-timestamp-evidence-path.gif)
+
 ```json
 {
   "answer": "A smoke alarm is audible shortly before the evacuation discussion.",
@@ -132,6 +148,8 @@ This also changes how teams build evaluation sets. A correct answer with the wro
 ## Common Long-Audio Architectures
 
 There is no single best architecture, but four patterns appear repeatedly.
+
+![Long Recordings Need A Retrieval Loop](/media/gifs/audio-language-models-long-audio-understanding/pipeline-2/03-long-audio-retrieval-loop.gif)
 
 ### Full-Context Inference
 

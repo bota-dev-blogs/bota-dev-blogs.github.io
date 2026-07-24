@@ -4,7 +4,7 @@ slug: "emotion-aware-asr-research-digest"
 description: "A guide to emotion-aware ASR: acoustic and lexical signals, self-supervised encoders, speech emotion datasets, and deployment risks."
 authors: ["Editorial Team"]
 date: "2026-07-19"
-modifiedDate: "2026-07-23"
+modifiedDate: "2026-07-24"
 readTime: "15 min read"
 contentType: "research-digest"
 tags:
@@ -24,32 +24,36 @@ keywords:
   - "speech representation learning"
   - "multimodal emotion recognition"
 cover:
-  src: "/media/emotion-aware-asr-research-digest/featured.png"
+  src: "/media/featured/emotion-aware-asr-research-digest/featured.png"
   alt: "Futuristic AI laboratory visualizing emotion-aware ASR signals and speech emotion recognition"
   width: 1600
   height: 900
   fit: "cover"
 media:
-  - title: "Emotion-aware ASR research map"
-    src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-2/01-article-summary.gif"
-    type: "image"
-    note: "Animated survey map of acoustic, lexical, and policy layers."
-  - title: "Research design questions"
+  - title: "Emotion-Aware ASR"
     src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-1/01-design-questions.gif"
     type: "image"
-    note: "Three practical questions for product and research teams."
-  - title: "Model families for ASR emotion"
+    note: "Do not turn affect into a single transcript label"
+  - title: "Four Signals, Four Boundaries"
+    src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-1/02-emotion-signal-boundaries.gif"
+    type: "image"
+    note: "Emotion-aware ASR should keep linguistic, acoustic, speaker, and contextual evidence distinct."
+  - title: "Emotion Labels Are Noisy"
+    src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-1/03-emotion-label-problem.gif"
+    type: "image"
+    note: "The hardest errors often begin with ambiguous labels rather than model architecture."
+  - title: "Emotion-Aware ASR Map"
+    src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-2/01-article-summary.gif"
+    type: "image"
+    note: "Words, voice cues, context, and policy should stay separate"
+  - title: "Model Families"
     src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-2/02-model-families.gif"
     type: "image"
-    note: "How classical acoustic features, ASR transfer, SSL encoders, and multimodal systems relate."
-  - title: "Data and evaluation cautions"
-    src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-2/03-data-and-evaluation.gif"
-    type: "image"
-    note: "Dataset, annotation, and evaluation issues for speech emotion recognition."
-  - title: "Deployment checklist"
+    note: "SER moved from hand-built acoustics to speech foundation models"
+  - title: "Deployment Checklist"
     src: "/media/gifs/emotion-aware-asr-research-digest/pipeline-2/04-deployment-checklist.gif"
     type: "image"
-    note: "How to expose affect signals without collapsing them into psychological claims."
+    note: "Use affect as calibrated evidence, not as a psychological verdict"
 ---
 
 ## Research Question
@@ -147,6 +151,8 @@ That last layer is not decorative. It is the difference between "this segment co
 
 Acoustic emotion models may be sensitive to signals associated with elevated arousal, laughter, crying, hesitation, or unusual intensity even when the transcript is bland. They can also over-read accents, speaking style, microphone conditions, health, fatigue, or noise.
 
+![Four Signals, Four Boundaries](/media/gifs/emotion-aware-asr-research-digest/pipeline-1/02-emotion-signal-boundaries.gif)
+
 Transcript-based models can work well when emotion is explicit in words. They are weaker when emotion is conveyed by irony, politeness, short replies, or local context. They also depend on ASR quality. If emotional speech increases WER, a text-based emotion classifier can become confidently wrong for exactly the turns where the product most wants care.
 
 Multimodal and contextual models can improve robustness, especially for conversations. [MELD](https://arxiv.org/abs/1810.02508), for example, frames emotion recognition as a multimodal multi-party conversation problem with text, audio, and visual modalities. But context also raises the stakes: the model may infer more than the user expects.
@@ -157,6 +163,8 @@ The safest research framing is therefore probabilistic. Emotion-aware ASR should
 
 The field's progress is shaped by its datasets. The [IEMOCAP](https://sail.usc.edu/iemocap/) database remains a widely used benchmark because it offers acted, multimodal, multi-speaker sessions with categorical and dimensional emotion labels. It is useful, but it is not the same as messy everyday voice traffic.
 
+![Emotion Labels Are Noisy](/media/gifs/emotion-aware-asr-research-digest/pipeline-1/03-emotion-label-problem.gif)
+
 Naturalistic data is harder. The [MSP-Podcast](https://lab-msp.com/MSP/MSP-Podcast.html) corpus is important because it uses podcast speech and large-scale affect annotation. Its public documentation describes version 2.0 as 264,705 speaking turns and 409 hours, with categorical labels and activation, dominance, and valence dimensions.
 
 The dataset problem has three parts:
@@ -164,8 +172,6 @@ The dataset problem has three parts:
 1. Labels are subjective. Emotion annotations vary across raters, cultures, contexts, and label schemas.
 2. Recording conditions matter. Clean acted speech, meeting audio, phone calls, cars, earbuds, and podcasts produce different acoustic distributions.
 3. Evaluation is easy to overfit. A model that performs well on IEMOCAP may still fail on noisy, cross-cultural, or long-tail production speech.
-
-![Data and evaluation cautions](/media/gifs/emotion-aware-asr-research-digest/pipeline-2/03-data-and-evaluation.gif)
 
 ## Where The Frontier Is Moving
 

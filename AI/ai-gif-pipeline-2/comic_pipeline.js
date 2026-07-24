@@ -115,7 +115,8 @@ function sanitizeStoryboardText(storyboard) {
     storyboard.visualDirection.character = sanitizeVisibleText(storyboard.visualDirection.character);
     storyboard.visualDirection.recurringMetaphor = sanitizeVisibleText(storyboard.visualDirection.recurringMetaphor);
   }
-  for (const page of storyboard.pages || []) {
+  for (const [index, page] of (storyboard.pages || []).entries()) {
+    page.outputFile = page.outputFile || defaultOutputName(page, index, storyboard.pages.length);
     page.title = sanitizeVisibleText(page.title);
     page.section = sanitizeVisibleText(page.section);
     page.headline = sanitizeVisibleText(page.headline);
@@ -129,10 +130,20 @@ function sanitizeStoryboardText(storyboard) {
   return storyboard;
 }
 
+function isSafeGifBasename(fileName) {
+  return typeof fileName === 'string'
+    && path.basename(fileName) === fileName
+    && /^[A-Za-z0-9][A-Za-z0-9._-]*\.gif$/.test(fileName);
+}
+
 function validateStoryboard(sb) {
   if (!sb || sb.version !== 2 || !Array.isArray(sb.pages) || !sb.pages.length) throw new Error('storyboard v2 requires non-empty pages');
+  const outputFiles = new Set();
   sb.pages.forEach((p, i) => {
     if (!p.title || !p.section || !LAYOUTS.has(p.layout)) throw new Error(`page ${i + 1}: invalid title, section, or layout`);
+    if (!isSafeGifBasename(p.outputFile)) throw new Error(`page ${i + 1}: outputFile must be a safe basename ending in .gif`);
+    if (outputFiles.has(p.outputFile)) throw new Error(`page ${i + 1}: duplicate outputFile "${p.outputFile}"`);
+    outputFiles.add(p.outputFile);
     if (!Array.isArray(p.nodes) || p.nodes.length < 2 || p.nodes.length > 6) throw new Error(`page ${i + 1}: nodes must contain 2-6 items`);
     const ids = new Set(p.nodes.map(n => n.id));
     if (ids.size !== p.nodes.length) throw new Error(`page ${i + 1}: node ids must be unique`);
@@ -618,11 +629,14 @@ function drawLayoutBackdrop(ctx, page, points, frame, t) {
       ctx.lineTo(W / 2 + half, y - 78);
       ctx.stroke();
     });
-    const aperture = top + height * (.15 + .7 * pulse);
-    ctx.globalAlpha = .34;
+    const lastLevel = levels[levels.length - 1] ?? (top + height * .78);
+    const previousLevel = levels[levels.length - 2] ?? (top + height * .58);
+    const apertureY = (previousLevel + lastLevel) / 2;
+    const apertureHalfWidth = width * (.09 + .025 * pulse);
+    ctx.globalAlpha = .24 + .08 * pulse;
     ctx.beginPath();
-    ctx.moveTo(W / 2 - width * .22, aperture);
-    ctx.lineTo(W / 2 + width * .22, aperture);
+    ctx.moveTo(W / 2 - apertureHalfWidth, apertureY);
+    ctx.lineTo(W / 2 + apertureHalfWidth, apertureY);
     ctx.stroke();
   } else if (layout === 'semantic-map') {
     ctx.strokeStyle = accent;
@@ -823,8 +837,12 @@ function cleanStaleGifs(outDir, outputs) {
   }
 }
 
-function outputName(page, index, total) {
+function defaultOutputName(page, index, total) {
   return total===1?'01-article-summary.gif':`${String(index+1).padStart(2,'0')}-${slug(page.section)}.gif`;
+}
+
+function outputName(page, index, total) {
+  return page.outputFile || defaultOutputName(page, index, total);
 }
 
 function main() {

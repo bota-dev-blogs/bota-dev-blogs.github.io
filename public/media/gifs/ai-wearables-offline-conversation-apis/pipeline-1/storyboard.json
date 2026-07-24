@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "style": "pastel-handdrawn",
+  "title": "Who Buys AI Wearables and Offline Conversation APIs?",
+  "pages": [
+    {
+      "title": "Four Signals Of Customer Fit",
+      "section": "customer-fit-signals",
+      "fileSlug": "customer-fit-signals",
+      "layout": "checklist",
+      "composition": "checklist",
+      "introStyle": "quiet",
+      "titleTreatment": "none",
+      "kicker": "The strongest buyers can turn missing offline context into measurable workflow value.",
+      "cards": [
+        {
+          "title": "Frequent offline work",
+          "body": "Important conversations happen beyond online meeting integrations.",
+          "icon": "room"
+        },
+        {
+          "title": "Measurable next step",
+          "body": "Captured context changes a CRM, clinical, legal, or field workflow.",
+          "icon": "target"
+        },
+        {
+          "title": "Acceptable capture",
+          "body": "Users understand the device, consent boundary, and review process.",
+          "icon": "wearable"
+        },
+        {
+          "title": "Sustainable economics",
+          "body": "Workflow value can support hardware, processing, and fleet operations.",
+          "icon": "graph"
+        }
+      ],
+      "outputFile": "01-customer-fit-signals.gif"
+    },
+    {
+      "title": "What Buyers Must Inspect",
+      "section": "buyer-evaluation",
+      "fileSlug": "buyer-evaluation",
+      "layout": "dashboard",
+      "composition": "evidence-map",
+      "introStyle": "badge",
+      "titleTreatment": "none",
+      "kicker": "A polished transcript demo says little about infrastructure quality at fleet scale.",
+      "cards": [
+        {
+          "title": "Capture reliability",
+          "body": "Test interruption, backlog recovery, battery, storage, and route changes.",
+          "icon": "sync"
+        },
+        {
+          "title": "Governance",
+          "body": "Verify tenancy, consent, retention, deletion, audit, and export behavior.",
+          "icon": "lock"
+        },
+        {
+          "title": "Fleet burden",
+          "body": "Price inventory, replacement, firmware, returns, and end-user support.",
+          "icon": "fleet"
+        },
+        {
+          "title": "Exit path",
+          "body": "Keep source audio, identifiers, schemas, and event semantics portable.",
+          "icon": "upload"
+        }
+      ],
+      "outputFile": "03-buyer-evaluation.gif"
+    }
+  ]
+}

@@ -7,11 +7,13 @@
     "storyboard": "storyboard.json",
     "gifs": [
       "01-project-overview.gif",
-      "02-darija-lessons.gif"
+      "02-darija-lessons.gif",
+      "03-localization-quality-axes.gif"
     ]
   },
   "pages": [
     "01-project-overview.gif",
-    "02-darija-lessons.gif"
+    "02-darija-lessons.gif",
+    "03-localization-quality-axes.gif"
   ]
 }

@@ -4,7 +4,7 @@ slug: "offline-voice-ai-agent-context"
 description: "How offline voice AI turns wearable audio into agent context through resilient sync, ASR, diarization, provenance, consent, and action controls."
 authors: ["Editorial Team"]
 date: "2026-07-20"
-modifiedDate: "2026-07-23"
+modifiedDate: "2026-07-24"
 readTime: "13 min read"
 contentType: "research-digest"
 tags:
@@ -24,20 +24,36 @@ keywords:
   - "wearable AI API"
   - "real-world context for AI agents"
 cover:
-  src: "/media/offline-voice-ai-agent-context/featured.png"
+  src: "/media/featured/offline-voice-ai-agent-context/featured.png"
   alt: "System map showing wearable audio becoming governed context for an AI agent"
   width: 1600
   height: 900
   fit: "cover"
 media:
-  - title: "Offline voice AI field map"
-    src: "/media/gifs/offline-voice-ai-agent-context/pipeline-2/01-article-summary.gif"
-    type: "image"
-    note: "Animated map of capture, transport, speech intelligence, context packaging, and action control."
-  - title: "Reliability checklist"
+  - title: "Four Reliability Gates"
     src: "/media/gifs/offline-voice-ai-agent-context/pipeline-1/01-reliability-checklist.gif"
     type: "image"
-    note: "Four system contracts to test before treating a recording as agent-ready context."
+    note: "A recording becomes useful context only when every contract holds"
+  - title: "Latency Is A Readiness Ladder"
+    src: "/media/gifs/offline-voice-ai-agent-context/pipeline-1/02-offline-latency-ladder.gif"
+    type: "image"
+    note: "Offline voice systems should expose when audio, text, context, and actions become safe to use."
+  - title: "Consent Must Travel With Data"
+    src: "/media/gifs/offline-voice-ai-agent-context/pipeline-1/03-consent-provenance-chain.gif"
+    type: "image"
+    note: "Recording permission is not a one-time checkbox; it constrains every downstream artifact and action."
+  - title: "From Audio to Agent Context"
+    src: "/media/gifs/offline-voice-ai-agent-context/pipeline-2/01-article-summary.gif"
+    type: "image"
+    note: "A recording needs durable transport, evidence, provenance, and policy before an agent can trust it"
+  - title: "Six Contracts Protect One Conversation"
+    src: "/media/gifs/offline-voice-ai-agent-context/pipeline-2/02-offline-voice-contract-stack.gif"
+    type: "image"
+    note: "An offline voice product is reliable only when each boundary has an explicit contract"
+  - title: "Offline Recovery Is A Closed Loop"
+    src: "/media/gifs/offline-voice-ai-agent-context/pipeline-2/03-offline-recovery-loop.gif"
+    type: "image"
+    note: "Every interrupted route should reconcile into one recording before speech artifacts are published"
 ---
 
 ## The Missing Half of Agent Memory
@@ -62,6 +78,8 @@ That distinction separates a clever recorder demo from production infrastructure
 
 Online meeting software starts with a generous technical environment. The audio is already digital. Participants have identities. The meeting has a scheduled start and end. A bot can receive separate media streams, and network loss is visible immediately.
 
+![Offline Recovery Is A Closed Loop](/media/gifs/offline-voice-ai-agent-context/pipeline-2/03-offline-recovery-loop.gif)
+
 Physical conversations remove most of those assumptions.
 
 | System question | Online meeting | Physical conversation |
@@ -78,6 +96,8 @@ This is why simply putting a microphone in a wearable does not solve the product
 ## The Six Contracts of an Offline Voice Stack
 
 The most useful way to reason about the stack is as six contracts. Each contract creates evidence that the next layer can trust.
+
+![Six Contracts Protect One Conversation](/media/gifs/offline-voice-ai-agent-context/pipeline-2/02-offline-voice-contract-stack.gif)
 
 ### 1. The Capture Contract
 
@@ -186,6 +206,8 @@ Passing three of four is not enough. A perfectly transcribed conversation that s
 
 Voice AI products often advertise a single latency figure. Offline context has several clocks:
 
+![Latency Is A Readiness Ladder](/media/gifs/offline-voice-ai-agent-context/pipeline-1/02-offline-latency-ladder.gif)
+
 - **Capture acknowledgement:** how quickly the user knows recording has started.
 - **Durability latency:** how long until audio survives loss of the device.
 - **Availability latency:** how long until another product can access the recording.
@@ -199,6 +221,8 @@ The right target is therefore not "lowest latency." It is the lowest latency tha
 ## Consent Must Travel With the Data
 
 Consent cannot remain a one-time checkbox in a mobile app. It should be represented as state attached to the recording and its derived artifacts.
+
+![Consent Must Travel With Data](/media/gifs/offline-voice-ai-agent-context/pipeline-1/03-consent-provenance-chain.gif)
 
 At minimum, the system should know who initiated capture, what notice was presented, which policy applied, which uses are allowed, when retention ends, and whether processing was later restricted or revoked. Jurisdiction and use case can change the legal requirements, so product teams need qualified legal review rather than a universal recording rule.
 

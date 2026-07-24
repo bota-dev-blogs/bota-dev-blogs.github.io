@@ -5,7 +5,7 @@ import { absoluteUrl, formatDisplayDate, SITE } from "../lib/site.js";
 const { posts, path = "/blogs/" } = Astro.props;
 const canonicalUrl = absoluteUrl("/blogs/");
 const pageUrl = absoluteUrl(path);
-const pageTitle = "Bota Blogs";
+const pageTitle = "Bota";
 const pageDescription = SITE.description;
 const latestDate = posts[0]?.modifiedDate || posts[0]?.date;
 const collectionJsonLd = {
@@ -58,11 +58,11 @@ const collectionJsonLd = {
     {latestDate && <meta property="og:updated_time" content={new Date(latestDate).toISOString()}>}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@600;700;800&family=DM+Mono&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@600;700;800&family=DM+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="https://framerusercontent.com/images/OfZg5Oz9V0OXYHYcWVjJnWeyaU.svg">
     <script type="application/ld+json" set:html={JSON.stringify(collectionJsonLd)} />
   </head>
-  <body>
+  <body class="blog-index-page">
     <div class="page">
       <header class="topbar" aria-label="Bota">
         <a class="brand" href="/" aria-label="Bota home">
@@ -72,8 +72,7 @@ const collectionJsonLd = {
 
       <main class="blog-index">
         <section class="hero blog-index-hero" aria-labelledby="blogs-title">
-          <p class="eyebrow">Bota Blog</p>
-          <h1 id="blogs-title">Blogs</h1>
+          <h1 class="blog-index-title" id="blogs-title"><span>Bota</span> Blog</h1>
           <p class="dek">{pageDescription}</p>
         </section>
 

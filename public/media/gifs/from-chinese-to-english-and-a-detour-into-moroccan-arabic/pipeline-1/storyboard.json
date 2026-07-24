@@ -27,7 +27,8 @@
       ],
       "fileSlug": "project-overview",
       "layout": "flow-board",
-      "composition": "flow"
+      "composition": "flow",
+      "outputFile": "01-project-overview.gif"
     },
     {
       "title": "AI Video Localization Pipeline",
@@ -53,7 +54,41 @@
       ],
       "fileSlug": "darija-lessons",
       "layout": "failure-focus",
-      "composition": "failure-map"
+      "composition": "failure-map",
+      "outputFile": "02-darija-lessons.gif"
+    },
+    {
+      "title": "Localization Has Four Quality Axes",
+      "section": "localization-quality-axes",
+      "fileSlug": "localization-quality-axes",
+      "layout": "dashboard",
+      "composition": "evidence-map",
+      "introStyle": "badge",
+      "titleTreatment": "none",
+      "kicker": "A localized video succeeds only when meaning, voice, timing, and local language all survive.",
+      "cards": [
+        {
+          "title": "Meaning",
+          "body": "Translation must preserve intent, names, terminology, and implied relationships.",
+          "icon": "translate"
+        },
+        {
+          "title": "Voice identity",
+          "body": "Cloned speech should remain stable without obscuring consent or provenance.",
+          "icon": "voiceprint"
+        },
+        {
+          "title": "Timing",
+          "body": "Generated speech must fit cuts, pauses, subtitles, and visible mouth movement.",
+          "icon": "alignment"
+        },
+        {
+          "title": "Local review",
+          "body": "Native reviewers catch register, dialect, and cultural errors missed by metrics.",
+          "icon": "person"
+        }
+      ],
+      "outputFile": "03-localization-quality-axes.gif"
     }
   ]
 }

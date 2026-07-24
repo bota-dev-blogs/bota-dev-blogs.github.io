@@ -167,8 +167,9 @@ function sanitizeVisibleText(value) {
 
 function sanitizeStoryboardText(storyboard) {
   storyboard.title = sanitizeVisibleText(storyboard.title);
-  storyboard.pages.forEach((page) => {
+  storyboard.pages.forEach((page, index) => {
     page.fileSlug = page.fileSlug || slug(page.section);
+    page.outputFile = page.outputFile || defaultOutputName(page, index);
     page.title = sanitizeVisibleText(page.title);
     page.section = sanitizeVisibleText(page.section);
     page.kicker = sanitizeVisibleText(page.kicker);
@@ -179,6 +180,12 @@ function sanitizeStoryboardText(storyboard) {
     });
   });
   return storyboard;
+}
+
+function isSafeGifBasename(fileName) {
+  return typeof fileName === 'string'
+    && path.basename(fileName) === fileName
+    && /^[A-Za-z0-9][A-Za-z0-9._-]*\.gif$/.test(fileName);
 }
 
 function compositionLabelFor(composition) {
@@ -196,8 +203,12 @@ function compositionLabelFor(composition) {
 
 function validateStoryboard(sb) {
   if (!sb || !Array.isArray(sb.pages) || !sb.pages.length) throw new Error('storyboard.pages must be a non-empty array');
+  const outputFiles = new Set();
   sb.pages.forEach((p, i) => {
     if (!p.title || !p.section) throw new Error(`page ${i + 1}: title and section are required`);
+    if (!isSafeGifBasename(p.outputFile)) throw new Error(`page ${i + 1}: outputFile must be a safe basename ending in .gif`);
+    if (outputFiles.has(p.outputFile)) throw new Error(`page ${i + 1}: duplicate outputFile "${p.outputFile}"`);
+    outputFiles.add(p.outputFile);
     if (!Array.isArray(p.cards) || p.cards.length < 1 || p.cards.length > 4) throw new Error(`page ${i + 1}: cards must contain 1–4 items`);
     if (p.layout && !LAYOUTS.includes(p.layout)) throw new Error(`page ${i + 1}: unsupported layout "${p.layout}"`);
     if (p.composition && !COMPOSITIONS.includes(p.composition)) throw new Error(`page ${i + 1}: unsupported composition "${p.composition}"`);
@@ -1389,7 +1400,7 @@ function drawSignalBoardLayout(ctx, cards, top, t) {
   if (cards.length < 3) return drawTimelineLayout(ctx, cards, top, t);
   drawBoardSurface(ctx, top, 163, { fill: 'rgba(255,255,255,.18)' });
   const y = top + 18;
-  const height = Math.min(548, BOARD_BOTTOM - y);
+  const height = BOARD_BOTTOM - y;
   const railY = y + height / 2;
   const rail = Array.from({ length: 17 }, (_, index) => {
     const progress = index / 16;
@@ -1399,9 +1410,10 @@ function drawSignalBoardLayout(ctx, cards, top, t) {
   drawAnimatedRail(ctx, rail, t, ACCENTS[5], { alpha: .26, width: 4, dotRadius: 6, speed: .7 });
   const cardW = cards.length === 3 ? 250 : 210;
   const xs = cards.length === 3 ? [92, 375, 658] : [70, 290, 510, 730];
-  const cardH = 190;
+  const cardH = Math.min(cards.length === 3 ? 224 : 216, Math.max(150, (height - 96) / 2));
+  const railGap = Math.min(32, Math.max(20, (height - cardH * 2) / 4));
   cards.forEach((card, index) => {
-    const cardY = index % 2 ? railY + 38 : railY - cardH - 38;
+    const cardY = index % 2 ? railY + railGap : railY - cardH - railGap;
     const anchorX = xs[index] + cardW / 2;
     ctx.save();
     ctx.strokeStyle = ACCENTS[index % ACCENTS.length];
@@ -1499,8 +1511,17 @@ function cleanStaleGifs(outDir, outputs) {
   }
 }
 
-function outputName(page, index) {
+function defaultOutputName(page, index) {
   return `${String(index + 1).padStart(2, '0')}-${page.fileSlug || slug(page.section)}.gif`;
+}
+
+function outputName(page, index) {
+  return page.outputFile || defaultOutputName(page, index);
+}
+
+function renderIndex(page, index) {
+  const match = /^(\d+)-/.exec(page.outputFile || '');
+  return match ? Math.max(0, Number(match[1]) - 1) : index;
 }
 
 function main() {
@@ -1515,7 +1536,7 @@ function main() {
   }
   fs.mkdirSync(outDir,{recursive:true});fs.writeFileSync(path.join(outDir,'storyboard.json'),JSON.stringify(storyboard,null,2));
   const expectedOutputs=storyboard.pages.map(outputName);
-  pageIndexes.forEach(i=>{const page=storyboard.pages[i],name=expectedOutputs[i];renderGif(page,i,storyboard.pages.length,path.join(outDir,name));console.log(`Rendered ${name}`);});
+  pageIndexes.forEach(i=>{const page=storyboard.pages[i],name=expectedOutputs[i];renderGif(page,renderIndex(page,i),storyboard.pages.length,path.join(outDir,name));console.log(`Rendered ${name}`);});
   if(args.page===undefined)cleanStaleGifs(outDir,expectedOutputs);
   const outputs=args.page===undefined?expectedOutputs:expectedOutputs.filter(name=>fs.existsSync(path.join(outDir,name)));
   fs.writeFileSync(path.join(outDir,'manifest.json'),JSON.stringify({

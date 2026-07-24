@@ -34,7 +34,41 @@
           "icon": "branch"
         }
       ],
-      "fileSlug": "demo-evaluation-checklist"
+      "fileSlug": "demo-evaluation-checklist",
+      "outputFile": "01-demo-evaluation-checklist.gif"
+    },
+    {
+      "title": "The Application Owns Authority",
+      "section": "realtime-authority-boundary",
+      "fileSlug": "realtime-authority-boundary",
+      "layout": "checklist",
+      "composition": "checklist",
+      "introStyle": "quiet",
+      "titleTreatment": "none",
+      "kicker": "Function Calling makes the model useful, but it does not make model intent trustworthy by default.",
+      "cards": [
+        {
+          "title": "Model intent",
+          "body": "Treat function-call arguments as a proposal from uncertain audio.",
+          "icon": "function-call"
+        },
+        {
+          "title": "Schema validation",
+          "body": "Reject malformed, missing, stale, or out-of-policy arguments.",
+          "icon": "schema"
+        },
+        {
+          "title": "Confirmation",
+          "body": "Require explicit approval before consequential external actions.",
+          "icon": "guardrail"
+        },
+        {
+          "title": "Audit trail",
+          "body": "Store events, tool results, cancellations, and latency traces.",
+          "icon": "audit"
+        }
+      ],
+      "outputFile": "03-realtime-authority-boundary.gif"
     }
   ]
 }

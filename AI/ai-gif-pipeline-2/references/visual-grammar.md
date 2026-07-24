@@ -4,11 +4,11 @@ Choose a layout from the relationship the page must communicate.
 
 ## Article set selection
 
-- Generate 2-3 Pipeline 2 candidate GIFs for a normal article, then embed only the approved subset.
+- Generate 4-5 Pipeline 2 candidate GIFs for a normal article, then wait for explicit human selection before embedding the final subset.
 - Rank candidate visuals by explanatory value and keep only the strongest complementary set.
 - Give each GIF a distinct job, such as synthesis, architecture, trade-off, lifecycle, comparison, or operating model.
-- Do not turn every heading into a GIF. Use more than three pages only for a renderer canary, layout development, or an explicit user request.
-- Use one GIF only when the source genuinely has a single visual argument worth publishing.
+- Do not turn every heading into a GIF or duplicate topology to fill the quota. Use more than five pages only for a renderer canary, layout development, or an explicit user request.
+- Use fewer than four only when additional candidates would be filler rather than useful visual arguments.
 
 ## Single-canvas synthesis
 
@@ -129,7 +129,7 @@ Use `illustration` for a visually distinctive actor or object, `pill` for compac
   boundaries legible without adding more edges.
 - `parallel-lanes` and `swimlanes`: use lane bands and one moving scan per lane;
   do not add duplicate labels to every connection.
-- `funnel`: use narrowing stage gates and one moving aperture to show filtering.
+- `funnel`: use narrowing stage gates and one stationary bottleneck aperture that softly changes width and opacity. Do not move a decorative line vertically through the content.
 - `timeline`: use a baseline, event ticks, and one traveling marker.
 - `cycle`, `constellation`, and `hub-spoke`: use one orbit ring and a rotating
   marker; do not turn peer nodes into a dense web.

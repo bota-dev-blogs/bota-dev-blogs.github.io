@@ -4,7 +4,7 @@ slug: "offline-context-infrastructure-ai-agents"
 description: "Why AI agents need offline conversation context, with capture, durable ingestion, provenance, permissions, retrieval, and safe downstream actions."
 authors: ["Editorial Team"]
 date: "2026-07-07"
-modifiedDate: "2026-07-23"
+modifiedDate: "2026-07-24"
 readTime: "15 min read"
 contentType: "research-digest"
 tags:
@@ -23,20 +23,40 @@ keywords:
   - "agent memory"
   - "conversation intelligence"
 cover:
-  src: "/media/offline-context-infrastructure-ai-agents/featured.png"
+  src: "/media/featured/offline-context-infrastructure-ai-agents/featured.png"
   alt: "Concept map showing an AI agent receiving governed context from offline conversations"
   width: 1600
   height: 900
   fit: "cover"
 media:
-  - title: "The missing context layer"
+  - title: "Transcript And Context Are Different"
+    src: "/media/gifs/offline-context-infrastructure-ai-agents/pipeline-1/01-transcript-versus-context.gif"
+    type: "image"
+    note: "Words become agent memory only after evidence, permission, and version state are attached."
+  - title: "Four Layers Of Offline Context"
+    src: "/media/gifs/offline-context-infrastructure-ai-agents/pipeline-1/02-offline-context-layers.gif"
+    type: "image"
+    note: "Reliable agent memory begins before transcription and ends after governed retrieval."
+  - title: "Agent Actions Need Boundaries"
+    src: "/media/gifs/offline-context-infrastructure-ai-agents/pipeline-1/03-agent-action-boundaries.gif"
+    type: "image"
+    note: "Offline context should support useful action without converting uncertain speech into silent authority."
+  - title: "The Missing Context Layer"
     src: "/media/gifs/offline-context-infrastructure-ai-agents/pipeline-2/01-article-summary.gif"
     type: "image"
-    note: "A graphical abstract of physical conversations becoming durable, searchable, and permissioned agent context."
-  - title: "Context contract for AI agents"
+    note: "Agents see digital records but miss the conversations that create them"
+  - title: "Give The Agent A Context Contract"
     src: "/media/gifs/offline-context-infrastructure-ai-agents/pipeline-2/02-context-contract.gif"
     type: "image"
-    note: "A map of evidence, provenance, freshness, permissions, and action boundaries around offline context."
+    note: "More memory is useful only when source, uncertainty, permission, and freshness remain visible"
+  - title: "Agent Requests Need A Governed Retrieval Loop"
+    src: "/media/gifs/offline-context-infrastructure-ai-agents/pipeline-2/03-offline-context-retrieval-loop.gif"
+    type: "image"
+    note: "The agent should receive selected evidence and policy state, not an unrestricted transcript dump"
+  - title: "Raw Speech Narrows Into Allowed Actions"
+    src: "/media/gifs/offline-context-infrastructure-ai-agents/pipeline-2/04-context-action-hourglass.gif"
+    type: "image"
+    note: "Interpretations should pass through one governed context contract before an agent can act"
 ---
 
 ## AI Agents Have A Digital Memory Gap
@@ -84,6 +104,8 @@ Offline context infrastructure exists between those extremes. It turns a physica
 
 A transcript is an important artifact, but it is not the whole context.
 
+![Transcript And Context Are Different](/media/gifs/offline-context-infrastructure-ai-agents/pipeline-1/01-transcript-versus-context.gif)
+
 ### A Conversation Has A Source
 
 The system should know when and where the recording was created, which device or application captured it, whether capture was user-initiated, and whether audio was missing during part of the event.
@@ -117,6 +139,8 @@ Context needs versioning and freshness, not just storage.
 ## The Four Layers Of Offline Context Infrastructure
 
 The category becomes clearer when separated into four layers.
+
+![Four Layers Of Offline Context](/media/gifs/offline-context-infrastructure-ai-agents/pipeline-1/02-offline-context-layers.gif)
 
 ### 1. Acquisition At The Edge
 
@@ -166,6 +190,8 @@ This is where [retrieval-augmented generation](https://arxiv.org/abs/2005.11401)
 ## The Agent Should Receive A Context Contract
 
 An agent does not need an undifferentiated archive. It needs a contract describing what each artifact means.
+
+![Agent Requests Need A Governed Retrieval Loop](/media/gifs/offline-context-infrastructure-ai-agents/pipeline-2/03-offline-context-retrieval-loop.gif)
 
 A useful context object can be thought of as five fields:
 
@@ -233,6 +259,8 @@ Across these examples, the opportunity is not generic "conversation intelligence
 
 Offline context is powerful precisely because it observes more of everyday work. That creates a larger responsibility than simply adding a privacy policy page.
 
+![Agent Actions Need Boundaries](/media/gifs/offline-context-infrastructure-ai-agents/pipeline-1/03-agent-action-boundaries.gif)
+
 A durable system should make it possible to:
 
 - Show recording state and provide an understandable stop mechanism.
@@ -266,6 +294,8 @@ The last question is the one that matters commercially. A beautiful transcript t
 ## Build, Integrate, Or Stay Narrow
 
 Not every AI company needs to own microphones, device management, connectivity, and speech processing.
+
+![Raw Speech Narrows Into Allowed Actions](/media/gifs/offline-context-infrastructure-ai-agents/pipeline-2/04-context-action-hourglass.gif)
 
 Build the full stack when hardware behavior, edge inference, data custody, or the capture environment is the core product advantage. Integrate an infrastructure layer when the differentiated value lies in the domain workflow and the physical capture problem is necessary but not unique.
 

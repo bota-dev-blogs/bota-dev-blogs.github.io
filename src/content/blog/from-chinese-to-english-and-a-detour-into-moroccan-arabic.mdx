@@ -4,7 +4,7 @@ slug: "from-chinese-to-english-and-a-detour-into-moroccan-arabic"
 description: "An engineering retrospective on Chinese-to-English video localization, voice cloning, and why the same TTS stack failed on Moroccan Arabic."
 authors: ["Adam Maytoussi", "Soulaymane Temimi"]
 date: "2026-07-11"
-modifiedDate: "2026-07-23"
+modifiedDate: "2026-07-24"
 readTime: "10 min read"
 contentType: "project-retrospective"
 tags:
@@ -23,32 +23,40 @@ keywords:
   - "Moroccan Arabic"
   - "technical video localization"
 cover:
-  src: "/media/from-chinese-to-english-and-a-detour-into-moroccan-arabic/featured.png"
+  src: "/media/featured/from-chinese-to-english-and-a-detour-into-moroccan-arabic/featured.png"
   alt: "Futuristic AI video localization pipeline from Chinese to English and Moroccan Arabic"
   width: 1600
   height: 900
   fit: "cover"
 media:
-  - title: "Project research map"
-    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/01-article-summary.gif"
-    type: "image"
-    note: "Pipeline 2 summary map for the video localization project."
-  - title: "Project explainer"
+  - title: "AI Video Localization Pipeline"
     src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-1/01-project-overview.gif"
     type: "image"
-    note: "Pipeline 1 explainer GIF for the main Chinese-to-English workflow."
-  - title: "Darija bottleneck map"
-    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/02-darija-bottlenecks.gif"
-    type: "image"
-    note: "Why the Moroccan Arabic fine-tuning experiment did not converge."
-  - title: "Lessons from the negative result"
+    note: "Same video, new language, familiar speaker identity"
+  - title: "AI Video Localization Pipeline"
     src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-1/02-darija-lessons.gif"
     type: "image"
-    note: "Pipeline 1 explainer GIF for data and writing-system lessons."
-  - title: "Localization quality gates"
+    note: "The negative result pointed to data, script, and pronunciation"
+  - title: "Localization Has Four Quality Axes"
+    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-1/03-localization-quality-axes.gif"
+    type: "image"
+    note: "A localized video succeeds only when meaning, voice, timing, and local language all survive."
+  - title: "Video Localization Map"
+    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/01-article-summary.gif"
+    type: "image"
+    note: "The working path localizes video; the Darija branch exposes speech data limits"
+  - title: "Darija Bottlenecks"
+    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/02-darija-bottlenecks.gif"
+    type: "image"
+    note: "The failure came from data, writing, speakers, and pronunciation ambiguity"
+  - title: "Quality Gates"
     src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/03-quality-gates.gif"
     type: "image"
-    note: "Checks that keep a translated and voice-cloned video usable."
+    note: "Each model output needs an artifact, a check, and a rerun path"
+  - title: "A Localized Video Is A Controlled Relay"
+    src: "/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/04-multilingual-localization-stack.gif"
+    type: "image"
+    note: "Every stage can preserve or distort meaning, speaker identity, and timing"
 ---
 
 ## Project Overview
@@ -67,6 +75,8 @@ This retrospective focuses on an offline localization pipeline. The related [liv
 
 The working pipeline combines several components:
 
+![A Localized Video Is A Controlled Relay](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-2/04-multilingual-localization-stack.gif)
+
 1. **Transcription** - [faster-whisper](https://github.com/SYSTRAN/faster-whisper) converts the Chinese audio into timed text segments.
 2. **Translation** - [DeepL](https://www.deepl.com/) produces the first English translation, followed by a [Gemini](https://deepmind.google/technologies/gemini/) review pass for GitHub-specific terminology such as "pull request", "commit", and "branch".
 3. **Speaker diarization** - [pyannote.audio](https://github.com/pyannote/pyannote-audio) identifies who spoke when, so each speaker can receive a separate reference voice.
@@ -81,6 +91,8 @@ A [Streamlit](https://streamlit.io/) interface ties the workflow together. It le
 ## Why This Is More Than Translation
 
 Text translation can ignore time. Video localization cannot.
+
+![Localization Has Four Quality Axes](/media/gifs/from-chinese-to-english-and-a-detour-into-moroccan-arabic/pipeline-1/03-localization-quality-axes.gif)
 
 If the English sentence is too long, it can overflow the original segment. If diarization assigns a segment to the wrong speaker, the system can use the wrong voice reference. If the reference clip contains noise, the synthetic voice can inherit that weakness. If loudness varies between segments, the final video feels stitched together.
 

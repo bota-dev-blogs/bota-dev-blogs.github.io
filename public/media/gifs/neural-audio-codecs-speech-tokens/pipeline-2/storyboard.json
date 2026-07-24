@@ -123,7 +123,8 @@
           "pathStyle": "curve",
           "bend": 0.12
         }
-      ]
+      ],
+      "outputFile": "01-article-summary.gif"
     },
     {
       "title": "Test What Compression Changes",
@@ -242,7 +243,177 @@
           "pathStyle": "curve",
           "bend": 0.12
         }
-      ]
+      ],
+      "outputFile": "02-codec-evaluation.gif"
+    },
+    {
+      "title": "Residual Codebooks Refine The Signal",
+      "section": "rvq-refinement",
+      "format": "wide",
+      "layout": "spiral",
+      "headline": "Residual vector quantization adds acoustic detail in successive learned layers",
+      "nodes": [
+        {
+          "id": "encoded",
+          "type": "input",
+          "label": "Encoded frame",
+          "caption": "A compact continuous representation of the waveform",
+          "visual": "embedding",
+          "shape": "illustration"
+        },
+        {
+          "id": "coarse",
+          "type": "process",
+          "label": "Coarse token",
+          "caption": "The first codebook captures the largest signal structure",
+          "visual": "audio-token",
+          "shape": "card"
+        },
+        {
+          "id": "residual",
+          "type": "process",
+          "label": "Residual layers",
+          "caption": "Later codebooks encode what earlier choices missed",
+          "visual": "layers",
+          "shape": "card"
+        },
+        {
+          "id": "tokens",
+          "type": "process",
+          "label": "Token bundle",
+          "caption": "Parallel indices carry content and acoustic detail",
+          "visual": "codec",
+          "shape": "card"
+        },
+        {
+          "id": "audio",
+          "type": "result",
+          "label": "Reconstructed audio",
+          "caption": "The decoder restores a playable waveform",
+          "visual": "waveform",
+          "shape": "illustration"
+        }
+      ],
+      "edges": [
+        {
+          "from": "encoded",
+          "to": "coarse",
+          "label": "feeds",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "coarse",
+          "to": "residual",
+          "label": "refines",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "residual",
+          "to": "tokens",
+          "label": "gates",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "tokens",
+          "to": "audio",
+          "label": "publishes",
+          "labelPriority": "essential",
+          "relation": "flow"
+        }
+      ],
+      "outputFile": "03-rvq-refinement.gif"
+    },
+    {
+      "title": "Duplex Speech Runs As A Token Control Loop",
+      "section": "duplex-token-loop",
+      "format": "wide",
+      "layout": "control-loop",
+      "headline": "A real-time model listens and speaks through synchronized token streams while handling interruption",
+      "nodes": [
+        {
+          "id": "user",
+          "type": "input",
+          "label": "User audio",
+          "caption": "Incoming speech continues while the system may respond",
+          "visual": "microphone",
+          "shape": "illustration"
+        },
+        {
+          "id": "encode",
+          "type": "process",
+          "label": "Token encoder",
+          "caption": "Produces low-rate semantic and acoustic streams",
+          "visual": "codec",
+          "shape": "card"
+        },
+        {
+          "id": "dialogue",
+          "type": "process",
+          "label": "Dialogue model",
+          "caption": "Reasons over incoming tokens and conversation state",
+          "visual": "model",
+          "shape": "card"
+        },
+        {
+          "id": "decode",
+          "type": "process",
+          "label": "Token decoder",
+          "caption": "Turns generated codebooks into streaming speech",
+          "visual": "tts",
+          "shape": "card"
+        },
+        {
+          "id": "playback",
+          "type": "result",
+          "label": "Live playback",
+          "caption": "Stops or revises future audio when the user interrupts",
+          "visual": "interruption",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "user",
+          "to": "encode",
+          "label": "encode",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "encode",
+          "to": "dialogue",
+          "label": "listen",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "dialogue",
+          "to": "decode",
+          "label": "generate",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "decode",
+          "to": "playback",
+          "label": "play",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "playback",
+          "to": "dialogue",
+          "label": "interrupt",
+          "labelPriority": "essential",
+          "relation": "supervision",
+          "pathStyle": "curve",
+          "bend": 0.24
+        }
+      ],
+      "outputFile": "04-duplex-token-loop.gif"
     }
   ]
 }

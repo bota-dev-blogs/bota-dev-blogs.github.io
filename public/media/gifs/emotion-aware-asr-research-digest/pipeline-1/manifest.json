@@ -6,10 +6,14 @@
   "outputs": {
     "storyboard": "storyboard.json",
     "gifs": [
-      "01-design-questions.gif"
+      "01-design-questions.gif",
+      "02-emotion-signal-boundaries.gif",
+      "03-emotion-label-problem.gif"
     ]
   },
   "pages": [
-    "01-design-questions.gif"
+    "01-design-questions.gif",
+    "02-emotion-signal-boundaries.gif",
+    "03-emotion-label-problem.gif"
   ]
 }

@@ -7,10 +7,14 @@
   "outputs": {
     "storyboard": "storyboard.json",
     "gifs": [
-      "01-article-summary.gif"
+      "01-article-summary.gif",
+      "03-long-audio-retrieval-loop.gif",
+      "04-timestamp-evidence-path.gif"
     ]
   },
   "pages": [
-    "01-article-summary.gif"
+    "01-article-summary.gif",
+    "03-long-audio-retrieval-loop.gif",
+    "04-timestamp-evidence-path.gif"
   ]
 }

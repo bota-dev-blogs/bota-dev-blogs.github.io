@@ -9,14 +9,12 @@
     "gifs": [
       "01-article-summary.gif",
       "02-model-families.gif",
-      "03-data-and-evaluation.gif",
       "04-deployment-checklist.gif"
     ]
   },
   "pages": [
     "01-article-summary.gif",
     "02-model-families.gif",
-    "03-data-and-evaluation.gif",
     "04-deployment-checklist.gif"
   ]
 }

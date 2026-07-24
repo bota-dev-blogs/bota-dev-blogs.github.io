@@ -5,7 +5,7 @@ export const SITE = {
   shortName: "Bota",
   url: siteUrl,
   locale: "en_US",
-  description: "Technical notes on meeting intelligence, voice systems, and offline context infrastructure.",
+  description: "Insights, updates, and thought leadership on conversation intelligence, AI wearables, and the future of in-person communication technology.",
   defaultImage: "https://framerusercontent.com/images/opUMlnDE0MfK2xaK6asGmcfPpj8.png?width=1200&height=800"
 };
 

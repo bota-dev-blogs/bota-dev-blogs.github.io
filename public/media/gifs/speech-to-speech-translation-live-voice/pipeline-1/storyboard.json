@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "style": "pastel-handdrawn",
+  "title": "Live Speech-to-Speech Translation: A Systems Guide",
+  "pages": [
+    {
+      "title": "Live Translation Trades Wait For Risk",
+      "section": "translation-waiting-tradeoff",
+      "fileSlug": "translation-waiting-tradeoff",
+      "layout": "compare",
+      "composition": "comparison",
+      "introStyle": "split",
+      "titleTreatment": "none",
+      "kicker": "The system must choose when enough source meaning is stable to begin speaking.",
+      "cards": [
+        {
+          "title": "Wait for context",
+          "body": "More source speech improves word order and ambiguity resolution.",
+          "icon": "clock"
+        },
+        {
+          "title": "Speak early",
+          "body": "Lower delay keeps conversation natural but increases commitment risk.",
+          "icon": "latency"
+        },
+        {
+          "title": "Revision policy",
+          "body": "Text can change quietly; spoken audio already played cannot.",
+          "icon": "retry"
+        }
+      ],
+      "outputFile": "01-translation-waiting-tradeoff.gif"
+    },
+    {
+      "title": "Translation Is Session-Controlled",
+      "section": "translation-session-controls",
+      "fileSlug": "translation-session-controls",
+      "layout": "checklist",
+      "composition": "checklist",
+      "introStyle": "quiet",
+      "titleTreatment": "none",
+      "kicker": "Terminology, speaker state, code-switching, and privacy should persist across the live session.",
+      "cards": [
+        {
+          "title": "Terminology",
+          "body": "Hotwords and named entities need scoped target-language forms.",
+          "icon": "target"
+        },
+        {
+          "title": "Speaker identity",
+          "body": "Voice preservation must remain consented and stable across turns.",
+          "icon": "voiceprint"
+        },
+        {
+          "title": "Code-switching",
+          "body": "Language routing should handle mixed speech without resetting context.",
+          "icon": "language"
+        },
+        {
+          "title": "Privacy boundary",
+          "body": "Visual and audio context expand what the session can expose.",
+          "icon": "shield"
+        }
+      ],
+      "outputFile": "02-translation-session-controls.gif"
+    }
+  ]
+}

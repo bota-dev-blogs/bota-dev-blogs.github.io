@@ -1,0 +1,19 @@
+{
+  "pipeline": "ai-gif-pipeline-1",
+  "source": "storyboard.json",
+  "assetSlug": "offline-context-infrastructure-ai-agents",
+  "title": "Why AI Agents Need Offline Conversation Context",
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-transcript-versus-context.gif",
+      "02-offline-context-layers.gif",
+      "03-agent-action-boundaries.gif"
+    ]
+  },
+  "pages": [
+    "01-transcript-versus-context.gif",
+    "02-offline-context-layers.gif",
+    "03-agent-action-boundaries.gif"
+  ]
+}

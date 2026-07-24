@@ -135,7 +135,286 @@
           "pathStyle": "curve",
           "bend": 0.34
         }
-      ]
+      ],
+      "outputFile": "01-article-summary.gif"
+    },
+    {
+      "title": "Three Translation Architectures Commit Differently",
+      "section": "translation-architectures",
+      "format": "wide",
+      "layout": "branching",
+      "headline": "Cascade, direct speech translation, and omni systems expose different artifacts and revision points",
+      "nodes": [
+        {
+          "id": "source",
+          "type": "input",
+          "label": "Source speech",
+          "caption": "A live stream with uncertain boundaries and language state",
+          "visual": "microphone",
+          "shape": "illustration"
+        },
+        {
+          "id": "cascade",
+          "type": "process",
+          "label": "ASR cascade",
+          "caption": "Text makes recognition and translation independently reviewable",
+          "visual": "asr",
+          "shape": "card"
+        },
+        {
+          "id": "direct",
+          "type": "process",
+          "label": "Direct S2ST",
+          "caption": "Maps source audio toward target speech with fewer text stages",
+          "visual": "translate",
+          "shape": "card"
+        },
+        {
+          "id": "omni",
+          "type": "process",
+          "label": "Omni model",
+          "caption": "Combines speech, context, translation, and generation events",
+          "visual": "omni",
+          "shape": "card"
+        },
+        {
+          "id": "output",
+          "type": "result",
+          "label": "Target speech",
+          "caption": "Playable audio carries timing and irreversible commitments",
+          "visual": "tts",
+          "shape": "illustration"
+        }
+      ],
+      "edges": [
+        {
+          "from": "source",
+          "to": "cascade",
+          "label": "transcribe",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "source",
+          "to": "direct",
+          "label": "translate",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "source",
+          "to": "omni",
+          "label": "reason",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "cascade",
+          "to": "output",
+          "label": "speak",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "direct",
+          "to": "output",
+          "label": "speak",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "omni",
+          "to": "output",
+          "label": "stream",
+          "labelPriority": "essential",
+          "relation": "flow"
+        }
+      ],
+      "outputFile": "02-translation-architectures.gif"
+    },
+    {
+      "title": "Simultaneous Translation Is A Commit Loop",
+      "section": "translation-commit-loop",
+      "format": "wide",
+      "layout": "control-loop",
+      "headline": "Each readable source unit updates meaning before the system commits target audio that cannot be silently revised",
+      "nodes": [
+        {
+          "id": "chunks",
+          "type": "input",
+          "label": "Source chunks",
+          "caption": "Incoming speech arrives before the sentence is complete",
+          "visual": "stream",
+          "shape": "illustration"
+        },
+        {
+          "id": "meaning",
+          "type": "process",
+          "label": "Semantic unit",
+          "caption": "The model estimates a stable translatable phrase",
+          "visual": "reasoning",
+          "shape": "card"
+        },
+        {
+          "id": "commit",
+          "type": "decision",
+          "label": "Commit policy",
+          "caption": "Balances context, latency, and revision risk",
+          "visual": "gate",
+          "shape": "card"
+        },
+        {
+          "id": "speech",
+          "type": "result",
+          "label": "Target audio",
+          "caption": "Synthesized speech begins after the unit is committed",
+          "visual": "tts",
+          "shape": "card"
+        },
+        {
+          "id": "feedback",
+          "type": "context",
+          "label": "Session feedback",
+          "caption": "Terminology, corrections, and interruption shape later units",
+          "visual": "context",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "chunks",
+          "to": "meaning",
+          "label": "interpret",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "meaning",
+          "to": "commit",
+          "label": "propose",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "commit",
+          "to": "speech",
+          "label": "release",
+          "labelPriority": "essential",
+          "relation": "constraint"
+        },
+        {
+          "from": "speech",
+          "to": "feedback",
+          "label": "observe",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "feedback",
+          "to": "meaning",
+          "label": "update",
+          "labelPriority": "essential",
+          "relation": "supervision",
+          "pathStyle": "curve",
+          "bend": 0.22
+        }
+      ],
+      "outputFile": "03-translation-commit-loop.gif"
+    },
+    {
+      "title": "A Production Interpreter Is A Staged Relay",
+      "section": "translation-production-stack",
+      "format": "wide",
+      "layout": "staged-flow",
+      "headline": "The system needs explicit boundaries for capture, recognition, translation, commitment, synthesis, and playback",
+      "nodes": [
+        {
+          "id": "capture",
+          "type": "input",
+          "label": "Audio capture",
+          "caption": "Maintains chunks, timing, language hints, and echo control",
+          "visual": "microphone",
+          "shape": "illustration"
+        },
+        {
+          "id": "recognize",
+          "type": "process",
+          "label": "Speech evidence",
+          "caption": "Produces source words or acoustic representations",
+          "visual": "asr",
+          "shape": "card"
+        },
+        {
+          "id": "translate",
+          "type": "process",
+          "label": "Translation model",
+          "caption": "Uses context and session terminology to infer meaning",
+          "visual": "translate",
+          "shape": "card"
+        },
+        {
+          "id": "commit",
+          "type": "decision",
+          "label": "Output policy",
+          "caption": "Chooses stable units and handles code-switching",
+          "visual": "gate",
+          "shape": "card"
+        },
+        {
+          "id": "synthesize",
+          "type": "process",
+          "label": "Voice synthesis",
+          "caption": "Preserves approved identity, prosody, and target language",
+          "visual": "tts",
+          "shape": "card"
+        },
+        {
+          "id": "play",
+          "type": "result",
+          "label": "Live playback",
+          "caption": "Streams audio and stops cleanly on interruption",
+          "visual": "headphones",
+          "shape": "illustration"
+        }
+      ],
+      "edges": [
+        {
+          "from": "capture",
+          "to": "recognize",
+          "label": "feeds",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "recognize",
+          "to": "translate",
+          "label": "refines",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "translate",
+          "to": "commit",
+          "label": "gates",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "commit",
+          "to": "synthesize",
+          "label": "publishes",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "synthesize",
+          "to": "play",
+          "label": "returns",
+          "labelPriority": "essential",
+          "relation": "flow"
+        }
+      ],
+      "outputFile": "04-translation-production-stack.gif"
     }
   ]
 }

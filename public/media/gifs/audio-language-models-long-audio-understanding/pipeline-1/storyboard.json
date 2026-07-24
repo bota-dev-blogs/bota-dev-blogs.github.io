@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "style": "pastel-handdrawn",
+  "title": "Audio-Language Models: How Long-Audio Understanding Works",
+  "pages": [
+    {
+      "title": "Why Long Audio Is Hard",
+      "section": "long-audio-constraints",
+      "fileSlug": "long-audio-constraints",
+      "layout": "bands",
+      "composition": "system-map",
+      "introStyle": "ribbon",
+      "titleTreatment": "none",
+      "kicker": "Hours of audio turn context length into a retrieval and evidence problem.",
+      "cards": [
+        {
+          "title": "Context budget",
+          "body": "Dense audio tokens can exhaust model windows before the recording ends.",
+          "icon": "memory"
+        },
+        {
+          "title": "Chunk boundaries",
+          "body": "Segmentation can split events, speakers, and cross-chunk references.",
+          "icon": "stream"
+        },
+        {
+          "title": "Retrieval quality",
+          "body": "The system must find relevant moments without losing global context.",
+          "icon": "retrieval"
+        },
+        {
+          "title": "Grounded answers",
+          "body": "Every important claim should return to a timestamped source window.",
+          "icon": "clock"
+        }
+      ],
+      "outputFile": "02-long-audio-constraints.gif"
+    }
+  ]
+}

@@ -4,7 +4,7 @@ slug: "speech-to-speech-translation-live-voice"
 description: "How live speech translation balances latency, revision, terminology, speaker identity, code-switching, and synthesized voice output."
 authors: ["Editorial Team"]
 date: "2026-07-16"
-modifiedDate: "2026-07-23"
+modifiedDate: "2026-07-24"
 readTime: "11 min read"
 contentType: "research-digest"
 tags:
@@ -23,16 +23,36 @@ keywords:
   - "Translatotron 2"
   - "streaming translation latency"
 cover:
-  src: "/media/speech-to-speech-translation-live-voice/featured.png"
+  src: "/media/featured/speech-to-speech-translation-live-voice/featured.png"
   alt: "System map of live speech moving through translation, revision, and synthesized voice output"
   width: 1600
   height: 900
   fit: "cover"
 media:
-  - title: "Live speech translation map"
+  - title: "Live Translation Trades Wait For Risk"
+    src: "/media/gifs/speech-to-speech-translation-live-voice/pipeline-1/01-translation-waiting-tradeoff.gif"
+    type: "image"
+    note: "The system must choose when enough source meaning is stable to begin speaking."
+  - title: "Translation Is Session-Controlled"
+    src: "/media/gifs/speech-to-speech-translation-live-voice/pipeline-1/02-translation-session-controls.gif"
+    type: "image"
+    note: "Terminology, speaker state, code-switching, and privacy should persist across the live session."
+  - title: "Translate While The Speaker Talks"
     src: "/media/gifs/speech-to-speech-translation-live-voice/pipeline-2/01-article-summary.gif"
     type: "image"
-    note: "A graphical abstract of streaming input, semantic units, revision policy, terminology, and voice output."
+    note: "Live translation balances waiting, stable meaning, terminology, and voice"
+  - title: "Three Translation Architectures Commit Differently"
+    src: "/media/gifs/speech-to-speech-translation-live-voice/pipeline-2/02-translation-architectures.gif"
+    type: "image"
+    note: "Cascade, direct speech translation, and omni systems expose different artifacts and revision points"
+  - title: "Simultaneous Translation Is A Commit Loop"
+    src: "/media/gifs/speech-to-speech-translation-live-voice/pipeline-2/03-translation-commit-loop.gif"
+    type: "image"
+    note: "Each readable source unit updates meaning before the system commits target audio that cannot be silently revised"
+  - title: "A Production Interpreter Is A Staged Relay"
+    src: "/media/gifs/speech-to-speech-translation-live-voice/pipeline-2/04-translation-production-stack.gif"
+    type: "image"
+    note: "The system needs explicit boundaries for capture, recognition, translation, commitment, synthesis, and playback"
 ---
 
 ## Live Translation Is A Waiting Problem
@@ -52,6 +72,8 @@ The [real-time ASR guide](/blogs/real-time-asr-2026-streaming-recognition/) cove
 ## Three Architectures, Different Trade-Offs
 
 ### Cascaded Translation
+
+![Three Translation Architectures Commit Differently](/media/gifs/speech-to-speech-translation-live-voice/pipeline-2/02-translation-architectures.gif)
 
 The conventional stack separates three components:
 
@@ -77,6 +99,8 @@ An announcement is not a substitute for independent evaluation. It is still usef
 
 Simultaneous interpretation research often studies policies that decide when to read more source input and when to write target output. One well-known family is [wait-k](https://arxiv.org/abs/1810.08398): the system waits for an initial number of source units, then alternates between reading and producing output.
 
+![Live Translation Trades Wait For Risk](/media/gifs/speech-to-speech-translation-live-voice/pipeline-1/01-translation-waiting-tradeoff.gif)
+
 The idea is simple, but speech makes the units difficult. A "unit" might be an audio chunk, a stable ASR token, a word, a phrase, a semantic segment, or a speaker turn. Fixed chunk sizes are easy to operate but may split meaning in the wrong place.
 
 A product therefore needs to choose an operating point across:
@@ -93,6 +117,8 @@ Lower delay is not automatically better. A translation that starts 300 milliseco
 
 A caption interface can replace an unstable phrase. The reader sees the corrected text. Spoken output is different: once the system says a word, the listener has already heard it.
 
+![Simultaneous Translation Is A Commit Loop](/media/gifs/speech-to-speech-translation-live-voice/pipeline-2/03-translation-commit-loop.gif)
+
 This creates three broad output policies.
 
 **Commit early:** speak quickly and accept a higher risk of incorrect phrasing. This minimizes delay but can mislead listeners.
@@ -106,6 +132,8 @@ The right policy depends on the domain. Casual conversation may tolerate repair.
 ## Terminology Is A Session-Level Control
 
 Names, product terms, acronyms, medications, and legal phrases can dominate perceived translation quality. The system may recognize the source words correctly yet choose an unacceptable target term.
+
+![Translation Is Session-Controlled](/media/gifs/speech-to-speech-translation-live-voice/pipeline-1/02-translation-session-controls.gif)
 
 A robust interface should support scoped terminology:
 
@@ -157,6 +185,8 @@ Visual context should be evaluated for incremental value. If a glossary solves t
 ## A Production Architecture
 
 A practical live translation stack can keep the following layers explicit even when one model implements several of them:
+
+![A Production Interpreter Is A Staged Relay](/media/gifs/speech-to-speech-translation-live-voice/pipeline-2/04-translation-production-stack.gif)
 
 1. **Capture:** microphone state, echo cancellation, sample timing, local buffering.
 2. **Source evidence:** partial transcript, language identity, speaker turns, confidence.

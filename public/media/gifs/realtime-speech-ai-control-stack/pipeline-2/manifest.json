@@ -8,11 +8,15 @@
     "storyboard": "storyboard.json",
     "gifs": [
       "01-article-summary.gif",
-      "02-model-family-map.gif"
+      "02-model-family-map.gif",
+      "03-voice-agent-control-loop.gif",
+      "04-hybrid-speech-observability.gif"
     ]
   },
   "pages": [
     "01-article-summary.gif",
-    "02-model-family-map.gif"
+    "02-model-family-map.gif",
+    "03-voice-agent-control-loop.gif",
+    "04-hybrid-speech-observability.gif"
   ]
 }

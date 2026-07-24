@@ -35,7 +35,74 @@
           "icon": "shield"
         }
       ],
-      "fileSlug": "reliability-checklist"
+      "fileSlug": "reliability-checklist",
+      "outputFile": "01-reliability-checklist.gif"
+    },
+    {
+      "title": "Latency Is A Readiness Ladder",
+      "section": "offline-latency-ladder",
+      "fileSlug": "offline-latency-ladder",
+      "layout": "staircase",
+      "composition": "flow",
+      "introStyle": "ribbon",
+      "titleTreatment": "none",
+      "kicker": "Offline voice systems should expose when audio, text, context, and actions become safe to use.",
+      "cards": [
+        {
+          "title": "Audio durable",
+          "body": "The complete source survives device, app, and network interruption.",
+          "icon": "storage"
+        },
+        {
+          "title": "Transcript ready",
+          "body": "Words and timing reach a declared version with confidence.",
+          "icon": "asr"
+        },
+        {
+          "title": "Context ready",
+          "body": "Speakers, provenance, corrections, and permissions are attached.",
+          "icon": "context"
+        },
+        {
+          "title": "Action ready",
+          "body": "Policy decides whether to draft, confirm, commit, or abstain.",
+          "icon": "workflow"
+        }
+      ],
+      "outputFile": "02-offline-latency-ladder.gif"
+    },
+    {
+      "title": "Consent Must Travel With Data",
+      "section": "consent-provenance-chain",
+      "fileSlug": "consent-provenance-chain",
+      "layout": "bands",
+      "composition": "system-map",
+      "introStyle": "quiet",
+      "titleTreatment": "none",
+      "kicker": "Recording permission is not a one-time checkbox; it constrains every downstream artifact and action.",
+      "cards": [
+        {
+          "title": "Visible capture",
+          "body": "People can understand when recording starts, stops, and uploads.",
+          "icon": "wearable"
+        },
+        {
+          "title": "Permission scope",
+          "body": "Purpose, participants, tenant, and allowed processing remain attached.",
+          "icon": "credential"
+        },
+        {
+          "title": "Retention",
+          "body": "Deletion and expiry apply to source audio and derived artifacts.",
+          "icon": "clock"
+        },
+        {
+          "title": "Tool authority",
+          "body": "Context access does not automatically grant permission to act.",
+          "icon": "guardrail"
+        }
+      ],
+      "outputFile": "03-consent-provenance-chain.gif"
     }
   ]
 }

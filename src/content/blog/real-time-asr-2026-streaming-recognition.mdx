@@ -4,7 +4,7 @@ slug: "real-time-asr-2026-streaming-recognition"
 description: "How production streaming ASR handles endpointing, partial transcript stability, hotwords, diarization, latency, and evaluation beyond WER."
 authors: ["Editorial Team"]
 date: "2026-07-13"
-modifiedDate: "2026-07-23"
+modifiedDate: "2026-07-24"
 readTime: "11 min read"
 contentType: "research-digest"
 tags:
@@ -23,16 +23,36 @@ keywords:
   - "streaming transcription API"
   - "ASR latency"
 cover:
-  src: "/media/real-time-asr-2026-streaming-recognition/featured.png"
+  src: "/media/featured/real-time-asr-2026-streaming-recognition/featured.png"
   alt: "System map of a real-time ASR stream from microphone audio to stable application events"
   width: 1600
   height: 900
   fit: "cover"
 media:
-  - title: "Real-time ASR systems map"
+  - title: "Four Clocks Shape Live ASR"
+    src: "/media/gifs/real-time-asr-2026-streaming-recognition/pipeline-1/01-streaming-asr-clocks.gif"
+    type: "image"
+    note: "Low latency is several competing delays, not one benchmark number."
+  - title: "Transcript States Need A Contract"
+    src: "/media/gifs/real-time-asr-2026-streaming-recognition/pipeline-1/02-transcript-stability-states.gif"
+    type: "image"
+    note: "Applications should know which text is provisional, stable, final, or authorized for action."
+  - title: "Streaming Recognition Contract"
     src: "/media/gifs/real-time-asr-2026-streaming-recognition/pipeline-2/01-article-summary.gif"
     type: "image"
-    note: "A graphical abstract of audio capture, incremental decoding, stability, endpointing, and application control."
+    note: "Real-time ASR must balance fast partials, stable text, and safe endpoints"
+  - title: "Streaming Models Expose Different Trade-Offs"
+    src: "/media/gifs/real-time-asr-2026-streaming-recognition/pipeline-2/02-streaming-model-families.gif"
+    type: "image"
+    note: "CTC, transducers, chunked transformers, and omni APIs differ in context, latency, and control"
+  - title: "Audio Chunks Become Stable Events"
+    src: "/media/gifs/real-time-asr-2026-streaming-recognition/pipeline-2/03-streaming-event-lifecycle.gif"
+    type: "image"
+    note: "A production recognizer should expose revision state instead of presenting every partial as final text"
+  - title: "One Test Stream Feeds Several Release Gates"
+    src: "/media/gifs/real-time-asr-2026-streaming-recognition/pipeline-2/04-streaming-asr-evaluation.gif"
+    type: "image"
+    note: "Recognition quality, latency, endpointing, and attribution should be measured independently before release"
 ---
 
 ## Real-Time ASR Is Not Batch ASR With A Faster Server
@@ -53,6 +73,8 @@ The adjacent entry problem is covered in the [wake word and intent-gate research
 
 "Latency" is often reported as one number, but live ASR has at least four clocks.
 
+![Four Clocks Shape Live ASR](/media/gifs/real-time-asr-2026-streaming-recognition/pipeline-1/01-streaming-asr-clocks.gif)
+
 **First partial latency** measures how long the user waits before any text appears. It shapes the feeling of responsiveness.
 
 **Revision latency** measures how long uncertain words remain unstable. A very fast partial hypothesis is not useful if it changes repeatedly.
@@ -67,6 +89,8 @@ These clocks conflict. More acoustic and linguistic context can improve recognit
 
 Several model families can support incremental recognition.
 
+![Streaming Models Expose Different Trade-Offs](/media/gifs/real-time-asr-2026-streaming-recognition/pipeline-2/02-streaming-model-families.gif)
+
 [Connectionist Temporal Classification](https://en.wikipedia.org/wiki/Connectionist_temporal_classification), or CTC, learns alignments between audio frames and output tokens without requiring frame-level labels. It is attractive for streaming because decoding can advance as audio arrives, although a language model or rescoring stage is often needed for stronger linguistic context.
 
 [Recurrent Neural Network Transducers](https://arxiv.org/abs/1211.3711), commonly shortened to RNN-T or transducers, combine an acoustic encoder with a prediction network and a joint network. They became a common production pattern because they can emit tokens incrementally while conditioning on previous outputs.
@@ -78,6 +102,8 @@ Newer audio-language and omnimodal systems may expose transcription inside a bro
 ## Partial Transcripts Need A Stability Contract
 
 Streaming decoders naturally revise their hypotheses. After hearing "book a flight to San...", the system may display "San Jose" and later revise it to "San Francisco." That is normal model behavior. It becomes a product problem when every revision redraws captions, changes an agent's interpretation, or triggers automation.
+
+![Transcript States Need A Contract](/media/gifs/real-time-asr-2026-streaming-recognition/pipeline-1/02-transcript-stability-states.gif)
 
 A useful API should distinguish at least three states:
 
@@ -142,6 +168,8 @@ The important signal is not one provider's model list. It is the shape of the de
 
 [Word error rate](https://en.wikipedia.org/wiki/Word_error_rate) remains useful, but one aggregate WER can hide the errors that matter most. A production evaluation should include:
 
+![One Test Stream Feeds Several Release Gates](/media/gifs/real-time-asr-2026-streaming-recognition/pipeline-2/04-streaming-asr-evaluation.gif)
+
 | Dimension | Useful measurements | Why it matters |
 | --- | --- | --- |
 | Recognition | WER, entity recall, number accuracy, punctuation | Measures textual fidelity |
@@ -157,6 +185,8 @@ Evaluation audio should resemble the deployment environment. A clean benchmark r
 ## A Practical Architecture
 
 A robust streaming stack usually keeps the following boundaries explicit:
+
+![Audio Chunks Become Stable Events](/media/gifs/real-time-asr-2026-streaming-recognition/pipeline-2/03-streaming-event-lifecycle.gif)
 
 1. **Capture** owns microphone permissions, sample format, local buffering, and clock continuity.
 2. **Transport** owns chunk sequence, retries, reconnects, and backpressure.

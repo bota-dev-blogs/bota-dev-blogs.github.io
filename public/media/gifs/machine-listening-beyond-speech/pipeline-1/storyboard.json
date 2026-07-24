@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "style": "pastel-handdrawn",
+  "title": "Machine Listening for Wildlife and Machine Faults",
+  "pages": [
+    {
+      "title": "An Alert Needs Evidence",
+      "section": "acoustic-evidence-contract",
+      "fileSlug": "acoustic-evidence-contract",
+      "layout": "checklist",
+      "composition": "checklist",
+      "introStyle": "quiet",
+      "titleTreatment": "none",
+      "kicker": "A sound score becomes useful only when operators can inspect its source and uncertainty.",
+      "cards": [
+        {
+          "title": "Time window",
+          "body": "Preserve onset, offset, recurrence, and neighboring context.",
+          "icon": "clock"
+        },
+        {
+          "title": "Sensor provenance",
+          "body": "Record device, location, channel, conditions, and model version.",
+          "icon": "sensor"
+        },
+        {
+          "title": "Confidence",
+          "body": "Calibrate known, ambiguous, and novel events separately.",
+          "icon": "confidence"
+        },
+        {
+          "title": "Review path",
+          "body": "Experts need the exact audio excerpt behind each claim.",
+          "icon": "person"
+        }
+      ],
+      "outputFile": "02-acoustic-evidence-contract.gif"
+    }
+  ]
+}

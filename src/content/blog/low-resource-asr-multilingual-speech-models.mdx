@@ -4,7 +4,7 @@ slug: "low-resource-asr-multilingual-speech-models"
 description: "Why low-resource multilingual ASR still struggles with scripts, code-switching, language identification, local evaluation, and responsible deployment."
 authors: ["Editorial Team"]
 date: "2026-07-05"
-modifiedDate: "2026-07-23"
+modifiedDate: "2026-07-24"
 readTime: "12 min read"
 contentType: "research-digest"
 tags:
@@ -23,20 +23,36 @@ keywords:
   - "language identification"
   - "multilingual speech evaluation"
 cover:
-  src: "/media/low-resource-asr-multilingual-speech-models/featured.png"
+  src: "/media/featured/low-resource-asr-multilingual-speech-models/featured.png"
   alt: "Research map showing community speech, multilingual pretraining, local evaluation, and an ASR release gate"
   width: 1600
   height: 900
   fit: "cover"
 media:
-  - title: "Low-resource multilingual ASR map"
+  - title: "Scarcity Has Several Levers"
+    src: "/media/gifs/low-resource-asr-multilingual-speech-models/pipeline-1/02-low-resource-data-levers.gif"
+    type: "image"
+    note: "Multilingual pretraining lowers the starting cost, but local evidence still decides whether a model can ship."
+  - title: "Local Release Signals"
+    src: "/media/gifs/low-resource-asr-multilingual-speech-models/pipeline-1/03-local-release-signals.gif"
+    type: "image"
+    note: "One aggregate WER cannot represent who is served well or what errors remain dangerous."
+  - title: "Breadth Needs Local Evidence"
     src: "/media/gifs/low-resource-asr-multilingual-speech-models/pipeline-2/01-article-summary.gif"
     type: "image"
-    note: "A graphical abstract of unlabeled speech, transcribed seed data, multilingual transfer, local tests, and deployment."
-  - title: "Local ASR release gate"
+    note: "A shared speech model becomes useful only after local language and domain tests"
+  - title: "One WER Cannot Approve A Language"
     src: "/media/gifs/low-resource-asr-multilingual-speech-models/pipeline-2/02-local-release-gate.gif"
     type: "image"
-    note: "A release checklist for script policy, code-switching, entities, acoustic conditions, and community review."
+    note: "Release decisions need script, switching, entity, acoustic, and community evidence"
+  - title: "Foundation Breadth Needs Local Adaptation"
+    src: "/media/gifs/low-resource-asr-multilingual-speech-models/pipeline-2/03-selective-adaptation-bridge.gif"
+    type: "image"
+    note: "A multilingual foundation becomes a product only after local data, policy, and release evidence"
+  - title: "Local Errors Drive The Next Adaptation Cycle"
+    src: "/media/gifs/low-resource-asr-multilingual-speech-models/pipeline-2/04-community-adaptation-loop.gif"
+    type: "image"
+    note: "Low-resource ASR improves when native review and product errors return to training and policy"
 ---
 
 ## A Language Count Is Not A Quality Guarantee
@@ -144,6 +160,8 @@ Language detection is not harmless metadata. It changes tokenization, vocabulary
 
 No single method solves low-resource ASR, but several methods compound well.
 
+![Scarcity Has Several Levers](/media/gifs/low-resource-asr-multilingual-speech-models/pipeline-1/02-low-resource-data-levers.gif)
+
 ### Self-Supervised Pretraining
 
 Unlabeled local audio helps the encoder adapt to phonetics, microphones, rooms, and speaking styles without requiring a full transcript.
@@ -168,9 +186,13 @@ Text corpora, pronunciation dictionaries, and contextual biasing can improve nam
 
 Native speakers and domain experts should define transcript conventions, inspect systematic errors, and identify harmful normalization. This is not a final localization step; it is part of model development.
 
+![Local Errors Drive The Next Adaptation Cycle](/media/gifs/low-resource-asr-multilingual-speech-models/pipeline-2/04-community-adaptation-loop.gif)
+
 ## Benchmark Progress Is Necessary, Not Sufficient
 
 Datasets such as [FLEURS](https://arxiv.org/abs/2205.12446) provide parallel speech evaluation across 102 languages. [Common Voice](https://commonvoice.mozilla.org/en/datasets) provides openly contributed speech across a broad and changing set of languages. [ML-SUPERB](https://arxiv.org/abs/2305.10615) evaluates multilingual speech models across languages and tasks.
+
+![Local Release Signals](/media/gifs/low-resource-asr-multilingual-speech-models/pipeline-1/03-local-release-signals.gif)
 
 These resources make cross-model comparisons possible. They do not certify a product for a clinic, call center, field device, or classroom.
 
@@ -208,6 +230,8 @@ The threshold should depend on use. Searchable voice notes can tolerate differen
 ## The Product Frontier Is Selective Adaptation
 
 The largest multilingual models make a strong starting point, but deploying the same untouched model everywhere is rarely the best end state.
+
+![Foundation Breadth Needs Local Adaptation](/media/gifs/low-resource-asr-multilingual-speech-models/pipeline-2/03-selective-adaptation-bridge.gif)
 
 A practical system can route among a shared encoder, language adapters, contextual vocabulary, and domain-specific correction while preserving one operational platform. It can also keep audio and language confidence available for reprocessing as models improve.
 

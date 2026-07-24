@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "style": "pastel-handdrawn",
+  "title": "Real-Time ASR in 2026: Streaming Recognition Explained",
+  "pages": [
+    {
+      "title": "Four Clocks Shape Live ASR",
+      "section": "streaming-asr-clocks",
+      "fileSlug": "streaming-asr-clocks",
+      "layout": "dashboard",
+      "composition": "evidence-map",
+      "introStyle": "badge",
+      "titleTreatment": "none",
+      "kicker": "Low latency is several competing delays, not one benchmark number.",
+      "cards": [
+        {
+          "title": "First partial",
+          "body": "How quickly any useful text appears after speech begins.",
+          "icon": "latency"
+        },
+        {
+          "title": "Revision",
+          "body": "How long uncertain words continue to change on screen.",
+          "icon": "retry"
+        },
+        {
+          "title": "Endpoint",
+          "body": "How long the system waits before declaring a turn complete.",
+          "icon": "gate"
+        },
+        {
+          "title": "Finalization",
+          "body": "When text becomes safe for storage, search, or action.",
+          "icon": "check"
+        }
+      ],
+      "outputFile": "01-streaming-asr-clocks.gif"
+    },
+    {
+      "title": "Transcript States Need A Contract",
+      "section": "transcript-stability-states",
+      "fileSlug": "transcript-stability-states",
+      "layout": "timeline",
+      "composition": "flow",
+      "introStyle": "ribbon",
+      "titleTreatment": "none",
+      "kicker": "Applications should know which text is provisional, stable, final, or authorized for action.",
+      "cards": [
+        {
+          "title": "Interim",
+          "body": "Fast hypotheses can revise as more acoustic context arrives.",
+          "icon": "stream"
+        },
+        {
+          "title": "Stable",
+          "body": "Anchored text changes rarely enough for local UI and reasoning.",
+          "icon": "confidence"
+        },
+        {
+          "title": "Final",
+          "body": "A completed segment can be persisted and reprocessed.",
+          "icon": "document"
+        },
+        {
+          "title": "Action gate",
+          "body": "Product policy decides whether final text may trigger anything.",
+          "icon": "guardrail"
+        }
+      ],
+      "outputFile": "02-transcript-stability-states.gif"
+    }
+  ]
+}

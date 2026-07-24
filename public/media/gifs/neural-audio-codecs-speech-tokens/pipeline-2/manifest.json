@@ -8,11 +8,15 @@
     "storyboard": "storyboard.json",
     "gifs": [
       "01-article-summary.gif",
-      "02-codec-evaluation.gif"
+      "02-codec-evaluation.gif",
+      "03-rvq-refinement.gif",
+      "04-duplex-token-loop.gif"
     ]
   },
   "pages": [
     "01-article-summary.gif",
-    "02-codec-evaluation.gif"
+    "02-codec-evaluation.gif",
+    "03-rvq-refinement.gif",
+    "04-duplex-token-loop.gif"
   ]
 }

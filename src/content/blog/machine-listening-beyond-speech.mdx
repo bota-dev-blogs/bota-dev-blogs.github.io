@@ -4,7 +4,7 @@ slug: "machine-listening-beyond-speech"
 description: "How machine listening detects wildlife, machine faults, and sound events, with a focus on open vocabulary, domain shift, and grounded alerts."
 authors: ["Editorial Team"]
 date: "2026-07-22"
-modifiedDate: "2026-07-23"
+modifiedDate: "2026-07-24"
 readTime: "12 min read"
 contentType: "research-digest"
 tags:
@@ -23,20 +23,28 @@ keywords:
   - "BirdNET"
   - "open vocabulary audio"
 cover:
-  src: "/media/machine-listening-beyond-speech/featured.png"
+  src: "/media/featured/machine-listening-beyond-speech/featured.png"
   alt: "Machine-listening system map connecting field sensors to wildlife, industrial, and environmental sound evidence"
   width: 1600
   height: 900
   fit: "cover"
 media:
-  - title: "Machine listening beyond words"
-    src: "/media/gifs/machine-listening-beyond-speech/pipeline-2/01-article-summary.gif"
+  - title: "An Alert Needs Evidence"
+    src: "/media/gifs/machine-listening-beyond-speech/pipeline-1/02-acoustic-evidence-contract.gif"
     type: "image"
-    note: "A graphical abstract of continuous sound, audio representations, domain detectors, temporal grounding, and reviewable alerts."
-  - title: "Open-world audio evaluation"
+    note: "A sound score becomes useful only when operators can inspect its source and uncertainty."
+  - title: "Unknown Sounds Need A Route"
     src: "/media/gifs/machine-listening-beyond-speech/pipeline-2/02-open-world-evaluation.gif"
     type: "image"
-    note: "An evaluation map for known events, unknown sounds, domain shift, time localization, and human review."
+    note: "A detector should separate known events, new sounds, drift, and operator overload"
+  - title: "One Sound Stream Feeds Several Detectors"
+    src: "/media/gifs/machine-listening-beyond-speech/pipeline-2/03-parallel-audio-jobs.gif"
+    type: "image"
+    note: "Parallel acoustic tasks should preserve independent evidence before producing a domain alert"
+  - title: "Edge Audio Becomes Selective Evidence"
+    src: "/media/gifs/machine-listening-beyond-speech/pipeline-2/04-edge-cloud-sensing-path.gif"
+    type: "image"
+    note: "Continuous sensing needs a local gate, a retained buffer, and an auditable cloud decision"
 ---
 
 ## The Most Valuable Sound May Contain No Words
@@ -47,8 +55,6 @@ Automatic speech recognition is designed around one privileged signal: words. **
 
 That shift opens a frontier much larger than transcription. Audio AI can support biodiversity monitoring, predictive maintenance, media search, building intelligence, healthcare sensing, and scientific observation. But these systems also encounter a harder version of the open world. They must recognize events that overlap, vary by environment, and may never have appeared in training.
 
-![Machine listening beyond words](/media/gifs/machine-listening-beyond-speech/pipeline-2/01-article-summary.gif)
-
 The interesting work is moving from closed benchmark classification toward persistent sensing with temporal evidence, uncertainty, and a path for unknown sounds.
 
 Machine listening typically predicts events or anomalies. The [audio-language model guide](/blogs/audio-language-models-long-audio-understanding/) covers the neighboring frontier of open-ended questions, long recordings, retrieval, and timestamp-grounded answers.
@@ -56,6 +62,8 @@ Machine listening typically predicts events or anomalies. The [audio-language mo
 ## Machine Listening Is Several Tasks, Not One
 
 The field includes related but distinct problems.
+
+![One Sound Stream Feeds Several Detectors](/media/gifs/machine-listening-beyond-speech/pipeline-2/03-parallel-audio-jobs.gif)
 
 **Audio classification** assigns one or more labels to a clip, such as "dog bark," "siren," or "engine."
 
@@ -129,6 +137,8 @@ Open vocabulary should therefore be treated as hypothesis generation. High-impac
 
 Large audio-language models can describe a recording in natural language. For sensing applications, a polished paragraph is often less useful than a precise interval.
 
+![An Alert Needs Evidence](/media/gifs/machine-listening-beyond-speech/pipeline-1/02-acoustic-evidence-contract.gif)
+
 A practical event record might contain:
 
 - Event: repeating metallic impact
@@ -189,6 +199,8 @@ The final metric may not be model accuracy. For ecology it could be expert revie
 ## Edge AI Will Matter
 
 Continuous audio creates bandwidth, privacy, and power constraints. Sending every waveform to a cloud service may be impractical.
+
+![Edge Audio Becomes Selective Evidence](/media/gifs/machine-listening-beyond-speech/pipeline-2/04-edge-cloud-sensing-path.gif)
 
 An edge system can run a small detector, anomaly model, or embedding extractor locally. It can upload only selected windows, compact features, or alerts. A larger server model can then perform deeper analysis.
 

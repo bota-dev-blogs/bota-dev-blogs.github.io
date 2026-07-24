@@ -7,11 +7,12 @@ The deployable site is intentionally small: MDX blog posts plus static media in 
 Use these paths only:
 
 ```text
-src/content/blog/     blog MDX files
-public/media/<slug>/  publishable audio, video, images, PDFs, transcripts
-public/media/gifs/    generated blog GIFs, grouped by filesystem-safe asset slug
-.exports/             temporary bota.dev handoff bundles
-AI/                   local-only GIF generation
+src/content/blog/                 blog MDX files
+public/media/featured/<slug>/     featured blog images
+public/media/assets/<slug>/       publishable audio, video, images, PDFs, transcripts
+public/media/gifs/<asset-slug>/   generated blog GIFs
+.exports/                         temporary bota.dev handoff bundles
+AI/                               local-only GIF generation
 ```
 
 Do not create top-level `blogs/`, `media/`, or `assets/` folders; those are ignored to prevent accidental website-mirror clutter.
@@ -29,11 +30,12 @@ Do not create top-level `blogs/`, `media/`, or `assets/` folders; those are igno
 
 ```bash
 npm install
+npm run media:check
 npm run dev
 npm run build
 ```
 
-Write posts in `src/content/blog/`. Put regular media in `public/media/<post-slug>/`. Generate GIFs with the root `npm run gif` wrapper, which writes publishable files under `public/media/gifs/<asset-slug>/`.
+Write posts in `src/content/blog/`. Put featured images in `public/media/featured/<post-slug>/` and other regular media in `public/media/assets/<post-slug>/`. Generate GIFs with the root `npm run gif` wrapper, which writes publishable files under `public/media/gifs/<asset-slug>/`.
 
 ## Write A Blog
 
@@ -55,24 +57,24 @@ keywords:
   - "voice capture"
   - "offline meetings"
 cover:
-  src: "/media/post-title/cover.jpg"
+  src: "/media/featured/post-title/featured.png"
   alt: "Cover image description"
   width: 1200
   height: 800
 media:
   - title: "Meeting audio"
-    src: "/media/post-title/meeting-audio.mp3"
+    src: "/media/assets/post-title/meeting-audio.mp3"
     type: "audio"
     tracks:
-      - src: "/media/post-title/meeting-audio.vtt"
+      - src: "/media/assets/post-title/meeting-audio.vtt"
         kind: "subtitles"
         srclang: "en"
         label: "English"
     note: "Optional note"
   - title: "Demo video"
-    src: "/media/post-title/demo.mp4"
+    src: "/media/assets/post-title/demo.mp4"
     type: "video"
-    poster: "/media/post-title/demo-poster.jpg"
+    poster: "/media/assets/post-title/demo-poster.jpg"
 ---
 
 ## Start Writing
@@ -80,7 +82,7 @@ media:
 Your article content goes here.
 ```
 
-Put audio, video, image, transcript, and PDF files in `public/media/<post-slug>/`. Reference them from MDX as `/media/<post-slug>/<filename>`.
+Put audio, video, supporting images, transcripts, and PDFs in `public/media/assets/<post-slug>/`. Reference them from MDX as `/media/assets/<post-slug>/<filename>`. Keep featured images separately under `public/media/featured/<post-slug>/` and reference them as `/media/featured/<post-slug>/featured.png`. Do not place article slug directories directly under `public/media/`.
 
 For scientific paper posts, add `contentType: "paper"`, visible tags such as `Paper` and `Frontier Paper`, and a `paper:` block with the original title, authors, source URL, venue, year, and code link when available. The layout renders that block as a prominent third-party attribution notice.
 
@@ -92,7 +94,7 @@ For paper posts and most editorial posts, keep the article voice neutral. Avoid 
 
 ## Generate Featured Images
 
-Featured images are generated with GPT Image models and written to `public/media/<post-slug>/featured.png`. Put OpenAI credentials in `scripts/.env` using `scripts/.env.example` as the template. Use `OPENAI_IMAGE_MODEL=gpt-image-2` for image generation; `OPENAI_MODEL` is for text LLM planning and should not be set to a text model for cover images.
+Featured images are generated with GPT Image models and written to `public/media/featured/<post-slug>/featured.png`. Put OpenAI credentials in `scripts/.env` using `scripts/.env.example` as the template. Use `OPENAI_IMAGE_MODEL=gpt-image-2` for image generation; `OPENAI_MODEL` is for text LLM planning and should not be set to a text model for cover images.
 
 ```bash
 npm run featured:images
@@ -126,11 +128,14 @@ intermediate `storyboard.json`. The renderers are deterministic and do not call
 an LLM API or read pipeline `.env` files. Pipeline 1 creates compact, arrow-free
 tile-board explainers; pipeline 2 creates article-wide research maps,
 architectures, comparisons, and graphical abstracts. For a normal article,
-generate one best-fit Pipeline 1 candidate and the best 2-3 complementary
-Pipeline 2 candidates; larger storyboards are for canaries or explicit
-requests. The article may reference only the approved subset. Use `--page <n>` when
-rerendering a selected storyboard page. Stale GIFs not listed by the latest
-manifest are removed automatically.
+generate 3-4 strong Pipeline 1 candidates with different layouts and the best
+4-5 complementary Pipeline 2 candidates; larger storyboards are for canaries
+or explicit requests. An initial uncurated draft may reference all candidates.
+Once the human names a retained subset, remove every other page from the
+storyboard, reference only the selected GIFs in MDX, and run a full render to
+delete stale files and rebuild the manifest. Preserve each selected page's
+`outputFile` so its public URL remains stable. Use `--page <n>` only when
+rerendering one retained storyboard page.
 
 Both pipelines use the shared semantic icon vocabulary in
 `AI/shared/semantic-icons.cjs`, with concrete AI/audio/mobile/edge/computing

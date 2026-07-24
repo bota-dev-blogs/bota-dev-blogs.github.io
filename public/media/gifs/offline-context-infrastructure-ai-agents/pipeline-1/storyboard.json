@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "style": "pastel-handdrawn",
+  "title": "Why AI Agents Need Offline Conversation Context",
+  "pages": [
+    {
+      "title": "Transcript And Context Are Different",
+      "section": "transcript-versus-context",
+      "fileSlug": "transcript-versus-context",
+      "layout": "compare",
+      "composition": "comparison",
+      "introStyle": "split",
+      "titleTreatment": "none",
+      "kicker": "Words become agent memory only after evidence, permission, and version state are attached.",
+      "cards": [
+        {
+          "title": "Raw transcript",
+          "body": "Text captures words but may hide source quality and interpretation.",
+          "icon": "document"
+        },
+        {
+          "title": "Governed context",
+          "body": "A context object carries provenance, permissions, freshness, and corrections.",
+          "icon": "context"
+        },
+        {
+          "title": "Evidence link",
+          "body": "Derived claims point back to the exact source interval.",
+          "icon": "alignment"
+        }
+      ],
+      "outputFile": "01-transcript-versus-context.gif"
+    },
+    {
+      "title": "Four Layers Of Offline Context",
+      "section": "offline-context-layers",
+      "fileSlug": "offline-context-layers",
+      "layout": "stacked",
+      "composition": "system-map",
+      "introStyle": "ribbon",
+      "titleTreatment": "none",
+      "kicker": "Reliable agent memory begins before transcription and ends after governed retrieval.",
+      "cards": [
+        {
+          "title": "Capture",
+          "body": "A device records with visible state, identity, and local durability.",
+          "icon": "microphone"
+        },
+        {
+          "title": "Durable ingestion",
+          "body": "Uploads, retries, checksums, and timestamps preserve one source object.",
+          "icon": "storage"
+        },
+        {
+          "title": "Context contract",
+          "body": "Artifacts retain provenance, permissions, confidence, and version history.",
+          "icon": "schema"
+        },
+        {
+          "title": "Agent retrieval",
+          "body": "Policy returns only relevant evidence for an allowed workflow.",
+          "icon": "retrieval"
+        }
+      ],
+      "outputFile": "02-offline-context-layers.gif"
+    },
+    {
+      "title": "Agent Actions Need Boundaries",
+      "section": "agent-action-boundaries",
+      "fileSlug": "agent-action-boundaries",
+      "layout": "checklist",
+      "composition": "checklist",
+      "introStyle": "quiet",
+      "titleTreatment": "none",
+      "kicker": "Offline context should support useful action without converting uncertain speech into silent authority.",
+      "cards": [
+        {
+          "title": "Retrieve",
+          "body": "Find relevant source-backed context within access and time limits.",
+          "icon": "search"
+        },
+        {
+          "title": "Draft",
+          "body": "Prepare a reversible note, update, or recommendation.",
+          "icon": "document"
+        },
+        {
+          "title": "Confirm",
+          "body": "Ask a human when evidence or authority is insufficient.",
+          "icon": "shield"
+        },
+        {
+          "title": "Commit or abstain",
+          "body": "Execute an allowed action or stop with a clear reason.",
+          "icon": "workflow"
+        }
+      ],
+      "outputFile": "03-agent-action-boundaries.gif"
+    }
+  ]
+}

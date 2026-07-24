@@ -7,10 +7,16 @@
   "outputs": {
     "storyboard": "storyboard.json",
     "gifs": [
-      "01-article-summary.gif"
+      "01-article-summary.gif",
+      "02-translation-architectures.gif",
+      "03-translation-commit-loop.gif",
+      "04-translation-production-stack.gif"
     ]
   },
   "pages": [
-    "01-article-summary.gif"
+    "01-article-summary.gif",
+    "02-translation-architectures.gif",
+    "03-translation-commit-loop.gif",
+    "04-translation-production-stack.gif"
   ]
 }

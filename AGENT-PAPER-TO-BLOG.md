@@ -63,10 +63,16 @@ Write the blog post here:
 src/content/blog/<slug>.mdx
 ```
 
-Put normal publishable assets here:
+Put featured images here:
 
 ```text
-public/media/<slug>/
+public/media/featured/<slug>/
+```
+
+Put other normal publishable assets here:
+
+```text
+public/media/assets/<slug>/
 ```
 
 Put generated GIF assets here:
@@ -78,7 +84,7 @@ public/media/gifs/<asset-slug>/pipeline-2/
 
 The asset slug is a filesystem-safe version of the post slug. Use it in media paths and generated GIF folders.
 
-Do not create root-level `blogs/`, `media/`, or `assets/` folders.
+Do not create root-level `blogs/`, `media/`, or `assets/` folders, or article slug directories directly under `public/media/`.
 
 ## SEO Title Strategy
 
@@ -306,13 +312,15 @@ public/media/gifs/<asset-slug>/pipeline-<n>/manifest.json
 ```
 
 For research digests or survey posts, pipeline 2 can contain multiple
-storyboard pages and normally generates the best 2-3 complementary research
+storyboard pages and normally generates the best 4-5 complementary research
 map candidates, such as:
 
 ```text
 01-article-summary.gif
 02-operating-point.gif
 03-research-frontier.gif
+04-method-architecture.gif
+05-deployment-tradeoffs.gif
 ```
 
 GIF rules:
@@ -320,12 +328,12 @@ GIF rules:
 - Generate original visual explanations.
 - Do not convert paper figures into GIFs.
 - Do not trace paper figures too closely.
-- Use pipeline 1 for one best-fit compact explainer candidate without arrows. Do not generate one Pipeline 1 GIF per section.
-- Use pipeline 2 for a method, architecture, data flow, graphical abstract, research landscape, comparison map, or practical checklist. Normal posts should generate the best 2-3 complementary Pipeline 2 candidates; exceed three only for a canary, renderer development, or an explicit user request.
-- Reference only the user-approved GIF subset from the article. Unselected candidates may remain in the pipeline folder when the storyboard and manifest still list them.
+- Use pipeline 1 for 3-4 strong compact explainer candidates with different best-fit layouts and no arrows. Do not generate one Pipeline 1 GIF per section.
+- Use pipeline 2 for a method, architecture, data flow, graphical abstract, research landscape, comparison map, or practical checklist. Normal posts should generate the best 4-5 complementary Pipeline 2 candidates; exceed five only for a canary, renderer development, or an explicit user request.
+- An initial uncurated draft may reference all generated candidates. Once the human explicitly names a retained subset, reference only those GIFs, remove every other page from the storyboard, and run a full render so stale binaries are deleted and the manifest is rebuilt. Preserve selected public filenames with each page's safe `.gif` `outputFile` value.
 - Do not let generated GIF artwork display internal editorial labels such as "takeaway". Use reader-facing labels such as "key idea", "design rule", "checklist", or the actual concept being explained.
 - Use the shared icon vocabulary in `AI/shared/semantic-icons.cjs`. Prefer concrete AI/audio/mobile/edge/computing icons such as ASR, TTS, microphone, waveform, phone, edge device, chip, GPU, server, router, dataset, embedding, model, gate, filter, and latency before generic idea/agent/schema icons. Keep fallback icons concrete and narrow; fallback should not select person, bot, idea, agent, schema, graph, or chat bubbles.
-- Give every published Pipeline 1 card and Pipeline 2 node an explicit canonical `icon` or `visual`; `npm run gif:check` rejects missing or unknown icons.
+- Give every retained Pipeline 1 card and Pipeline 2 node an explicit canonical `icon` or `visual`, including unselected candidates; `npm run gif:check` rejects missing or unknown icons.
 - For pipeline-2 semantic maps, treat coordinates as relative anchors. Do not add fake margin in coordinates; the renderer fits the map into the content frame.
 - Reference GIFs from MDX with public paths only.
 
@@ -373,6 +381,7 @@ Before publishing, check:
 Before handoff:
 
 ```bash
+npm run media:check
 npm run build
 SITE_URL=https://bota.dev npm run build
 npm run export:bota -- <slug>

@@ -27,7 +27,74 @@
       ],
       "fileSlug": "design-questions",
       "layout": "staircase",
-      "composition": "checklist"
+      "composition": "checklist",
+      "outputFile": "01-design-questions.gif"
+    },
+    {
+      "title": "Four Signals, Four Boundaries",
+      "section": "emotion-signal-boundaries",
+      "fileSlug": "emotion-signal-boundaries",
+      "layout": "matrix",
+      "composition": "evidence-map",
+      "introStyle": "quiet",
+      "titleTreatment": "none",
+      "kicker": "Emotion-aware ASR should keep linguistic, acoustic, speaker, and contextual evidence distinct.",
+      "cards": [
+        {
+          "title": "Words",
+          "body": "Lexical content can signal sentiment but misses vocal delivery.",
+          "icon": "asr"
+        },
+        {
+          "title": "Prosody",
+          "body": "Pitch, energy, rhythm, and pauses carry affective cues.",
+          "icon": "prosody"
+        },
+        {
+          "title": "Speaker baseline",
+          "body": "The same acoustic pattern can mean different things across people.",
+          "icon": "voiceprint"
+        },
+        {
+          "title": "Conversation context",
+          "body": "Turn history and situation change how an utterance should be interpreted.",
+          "icon": "context"
+        }
+      ],
+      "outputFile": "02-emotion-signal-boundaries.gif"
+    },
+    {
+      "title": "Emotion Labels Are Noisy",
+      "section": "emotion-label-problem",
+      "fileSlug": "emotion-label-problem",
+      "layout": "failure-focus",
+      "composition": "failure-map",
+      "introStyle": "badge",
+      "titleTreatment": "none",
+      "kicker": "The hardest errors often begin with ambiguous labels rather than model architecture.",
+      "cards": [
+        {
+          "title": "Acted emotion",
+          "body": "Studio performances may exaggerate cues absent from natural conversation.",
+          "icon": "mask"
+        },
+        {
+          "title": "Annotator disagreement",
+          "body": "Listeners often disagree on mixed, subtle, or culturally specific affect.",
+          "icon": "person"
+        },
+        {
+          "title": "Domain shift",
+          "body": "Models trained on one language or channel can fail elsewhere.",
+          "icon": "globe"
+        },
+        {
+          "title": "False certainty",
+          "body": "A single emotion label can hide uncertainty and multiple plausible readings.",
+          "icon": "confidence"
+        }
+      ],
+      "outputFile": "03-emotion-label-problem.gif"
     }
   ]
 }

@@ -4,7 +4,7 @@ This repo is an Astro static site for `https://bota-dev-blogs.github.io`.
 
 Blog content lives in the Markdown family: use `.mdx` files in `src/content/blog/`. Astro builds those files into static HTML for GitHub Pages.
 
-Permanent non-GIF assets should live under `public/media/<post-slug>/`. Generated GIF assets live under `public/media/gifs/<asset-slug>/`, where the asset slug is filesystem-safe. Do not use root-level `media/`, `assets/`, or `blogs/` folders.
+Featured images should live under `public/media/featured/<post-slug>/`. Other permanent non-GIF assets belong under `public/media/assets/<post-slug>/`. Generated GIF assets live under `public/media/gifs/<asset-slug>/`, where the asset slug is filesystem-safe. Do not create article slug directories directly under `public/media/`, or use root-level `media/`, `assets/`, or `blogs/` folders.
 
 ## Requirements
 
@@ -42,6 +42,7 @@ The root page and `/blogs/` both render the blog index directly.
 
 ```bash
 npm run build
+npm run media:check
 ```
 
 The generated static site is written to `dist/`.
@@ -80,24 +81,24 @@ keywords:
   - "voice capture"
   - "offline meetings"
 cover:
-  src: "/media/post-title/cover.jpg"
+  src: "/media/featured/post-title/featured.png"
   alt: "Cover image description"
   width: 1200
   height: 800
 media:
   - title: "Meeting audio"
-    src: "/media/post-title/meeting-audio.mp3"
+    src: "/media/assets/post-title/meeting-audio.mp3"
     type: "audio"
     tracks:
-      - src: "/media/post-title/meeting-audio.vtt"
+      - src: "/media/assets/post-title/meeting-audio.vtt"
         kind: "subtitles"
         srclang: "en"
         label: "English"
     note: "Optional note"
   - title: "Demo video"
-    src: "/media/post-title/demo.mp4"
+    src: "/media/assets/post-title/demo.mp4"
     type: "video"
-    poster: "/media/post-title/demo-poster.jpg"
+    poster: "/media/assets/post-title/demo-poster.jpg"
 ---
 
 ## Start Writing
@@ -158,21 +159,21 @@ The site automatically generates:
 
 ## Add Media
 
-Put permanent media files in `public/media/<post-slug>/`.
+Put featured images in `public/media/featured/<post-slug>/` and other permanent media files in `public/media/assets/<post-slug>/`.
 
 Examples:
 
 ```text
-public/media/post-title/demo.mp4
-public/media/post-title/meeting-audio.mp3
-public/media/post-title/meeting-audio.vtt
-public/media/post-title/cover.jpg
+public/media/featured/post-title/featured.png
+public/media/assets/post-title/demo.mp4
+public/media/assets/post-title/meeting-audio.mp3
+public/media/assets/post-title/meeting-audio.vtt
 ```
 
 Reference those files from MDX frontmatter as:
 
 ```yaml
-src: "/media/post-title/demo.mp4"
+src: "/media/assets/post-title/demo.mp4"
 ```
 
 Supported preview types:

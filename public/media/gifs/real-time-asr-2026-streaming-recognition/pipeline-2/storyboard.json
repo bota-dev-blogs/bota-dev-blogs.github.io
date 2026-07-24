@@ -135,7 +135,269 @@
           "pathStyle": "curve",
           "bend": 0.34
         }
-      ]
+      ],
+      "outputFile": "01-article-summary.gif"
+    },
+    {
+      "title": "Streaming Models Expose Different Trade-Offs",
+      "section": "streaming-model-families",
+      "format": "wide",
+      "layout": "matrix",
+      "headline": "CTC, transducers, chunked transformers, and omni APIs differ in context, latency, and control",
+      "nodes": [
+        {
+          "id": "ctc",
+          "type": "input",
+          "label": "CTC",
+          "caption": "Simple incremental alignment with external decoding options",
+          "visual": "alignment",
+          "shape": "card"
+        },
+        {
+          "id": "rnnt",
+          "type": "process",
+          "label": "RNN-T",
+          "caption": "Token prediction conditioned on audio and prior outputs",
+          "visual": "stream",
+          "shape": "card"
+        },
+        {
+          "id": "chunked",
+          "type": "process",
+          "label": "Chunked Conformer",
+          "caption": "Bounded windows trade look-ahead for richer context",
+          "visual": "attention",
+          "shape": "card"
+        },
+        {
+          "id": "omni",
+          "type": "result",
+          "label": "Omni speech API",
+          "caption": "Combines transcription with turn and response events",
+          "visual": "omni",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "ctc",
+          "to": "rnnt",
+          "label": "compare",
+          "labelPriority": "essential",
+          "relation": "contrast"
+        },
+        {
+          "from": "rnnt",
+          "to": "chunked",
+          "label": "compare",
+          "labelPriority": "essential",
+          "relation": "contrast"
+        },
+        {
+          "from": "chunked",
+          "to": "omni",
+          "label": "extends",
+          "labelPriority": "essential",
+          "relation": "contrast"
+        }
+      ],
+      "outputFile": "02-streaming-model-families.gif"
+    },
+    {
+      "title": "Audio Chunks Become Stable Events",
+      "section": "streaming-event-lifecycle",
+      "format": "wide",
+      "layout": "signal-path",
+      "headline": "A production recognizer should expose revision state instead of presenting every partial as final text",
+      "nodes": [
+        {
+          "id": "chunks",
+          "type": "input",
+          "label": "Audio chunks",
+          "caption": "Sequenced microphone frames arrive with timing continuity",
+          "visual": "waveform",
+          "shape": "illustration"
+        },
+        {
+          "id": "decoder",
+          "type": "process",
+          "label": "Streaming decoder",
+          "caption": "Updates token hypotheses as context accumulates",
+          "visual": "asr",
+          "shape": "card"
+        },
+        {
+          "id": "partial",
+          "type": "process",
+          "label": "Interim text",
+          "caption": "Fast words remain explicitly provisional",
+          "visual": "stream",
+          "shape": "card"
+        },
+        {
+          "id": "stable",
+          "type": "process",
+          "label": "Stable segment",
+          "caption": "Identifiers let the application replace rather than append",
+          "visual": "confidence",
+          "shape": "card"
+        },
+        {
+          "id": "final",
+          "type": "result",
+          "label": "Final event",
+          "caption": "Durable text can enter search, review, or turn policy",
+          "visual": "event",
+          "shape": "illustration"
+        }
+      ],
+      "edges": [
+        {
+          "from": "chunks",
+          "to": "decoder",
+          "label": "feeds",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "decoder",
+          "to": "partial",
+          "label": "refines",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "partial",
+          "to": "stable",
+          "label": "gates",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "stable",
+          "to": "final",
+          "label": "publishes",
+          "labelPriority": "essential",
+          "relation": "flow"
+        }
+      ],
+      "outputFile": "03-streaming-event-lifecycle.gif"
+    },
+    {
+      "title": "One Test Stream Feeds Several Release Gates",
+      "section": "streaming-asr-evaluation",
+      "format": "wide",
+      "layout": "scatter-gather",
+      "headline": "Recognition quality, latency, endpointing, and attribution should be measured independently before release",
+      "nodes": [
+        {
+          "id": "test",
+          "type": "input",
+          "label": "Deployment audio",
+          "caption": "Target microphones, accents, noise, codecs, and packet loss",
+          "visual": "microphone",
+          "shape": "illustration"
+        },
+        {
+          "id": "words",
+          "type": "evidence",
+          "label": "Recognition",
+          "caption": "WER, entities, numbers, punctuation, and hallucination",
+          "visual": "asr",
+          "shape": "pill"
+        },
+        {
+          "id": "timing",
+          "type": "evidence",
+          "label": "Streaming latency",
+          "caption": "First partial, stability, endpoint, and final delay",
+          "visual": "latency",
+          "shape": "pill"
+        },
+        {
+          "id": "turns",
+          "type": "evidence",
+          "label": "Endpoint quality",
+          "caption": "Cut-offs, over-wait, hesitation, and interruption",
+          "visual": "gate",
+          "shape": "pill"
+        },
+        {
+          "id": "speakers",
+          "type": "evidence",
+          "label": "Attribution",
+          "caption": "Diarization, overlap, provisional labels, and correction",
+          "visual": "diarization",
+          "shape": "pill"
+        },
+        {
+          "id": "release",
+          "type": "result",
+          "label": "Release decision",
+          "caption": "Chooses an operating point for the actual workflow",
+          "visual": "check",
+          "shape": "illustration"
+        }
+      ],
+      "edges": [
+        {
+          "from": "test",
+          "to": "words",
+          "label": "score",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "test",
+          "to": "timing",
+          "label": "time",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "test",
+          "to": "turns",
+          "label": "segment",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "test",
+          "to": "speakers",
+          "label": "attribute",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "words",
+          "to": "release",
+          "label": "evidence",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "timing",
+          "to": "release",
+          "label": "evidence",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "turns",
+          "to": "release",
+          "label": "evidence",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "speakers",
+          "to": "release",
+          "label": "evidence",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        }
+      ],
+      "outputFile": "04-streaming-asr-evaluation.gif"
     }
   ]
 }

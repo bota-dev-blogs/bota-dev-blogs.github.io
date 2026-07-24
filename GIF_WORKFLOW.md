@@ -19,13 +19,14 @@ contains `storyboard.json`, `manifest.json`, and the GIFs listed in the manifest
 Pipeline 1 creates compact, arrow-free tile-board explainers. Use it for section
 summaries, comparisons, checklists, evidence boards, failure focus, and practical
 concepts. It supports 24 layouts with 1-4 cards per page. A normal article gets
-one best-fit Pipeline 1 candidate, not one GIF per section.
+3-4 strong Pipeline 1 candidates using different best-fit layouts, not one GIF
+per section.
 
 Pipeline 2 is the renamed former pipeline 3. Use it for article-wide graphical
 abstracts, systems maps, AI/audio architectures, process diagrams, timelines,
 parallel tracks, convergence/divergence, decisions, and research landscapes. It
 supports 28 fixed and semantic layouts with 2-6 nodes per page. A normal article
-gets the best 2-3 complementary Pipeline 2 candidates. More than three is
+gets the best 4-5 complementary Pipeline 2 candidates. More than five is
 reserved for canary testing, renderer development, or an explicit request.
 
 The old PDF/diagram/Playwright pipeline was removed.
@@ -41,17 +42,17 @@ The old PDF/diagram/Playwright pipeline was removed.
 
 ## Candidate Curation
 
-- Treat renderer outputs as candidates. Reference only the user-approved subset from MDX.
-- It is valid for a post to use only one of several generated Pipeline 2 GIFs, or to omit the Pipeline 1 candidate.
-- Keep unselected candidates when they remain in both `storyboard.json` and `manifest.json`. Do not delete them merely because MDX does not reference them.
-- When the user identifies good and bad GIFs, preserve accepted files, regenerate only affected candidates, and update the article references to the selected set.
+- Treat renderer outputs as candidates. An initial uncurated draft may temporarily reference the full candidate set.
+- After selection, reference only the human-chosen subset. It may contain any number of generated GIFs from either pipeline.
+- A named human subset is authoritative. Remove unselected pages from `storyboard.json`, then run a full render to delete their GIF files and rebuild `manifest.json`; do not silently retain rejected candidates.
+- When the human identifies good and bad GIFs, preserve accepted files, regenerate only affected candidates, and update the article references only to the explicitly selected set.
 
 ## Storyboard-First Revisions
 
 - For an existing GIF, edit its current `storyboard.json` rather than recreating intermediate content from the article or another model.
-- Change only the affected page and preserve `section`, `fileSlug`, page order, and filenames unless a rename is intentional.
+- Change only the affected page and preserve `section`, `fileSlug`, and `outputFile` unless a rename is intentional. `outputFile` must be a safe basename ending in `.gif`; a renderer persists a numbered default when it is absent.
 - Treat the GIF binary and `manifest.json` as derived outputs. The renderer reads the edited storyboard, rewrites the GIF, and regenerates the manifest; normally edit neither by hand.
-- Use `--page <n>` for a one-page change. The renderer preserves the full storyboard and untouched GIFs. Use a full render for shared renderer changes, page reordering, or edits spanning several pages.
+- Use `--page <n>` for a one-page change. The renderer preserves the full storyboard and untouched GIFs. Use a full render for shared renderer changes, page reordering, edits spanning several pages, or pruning after human selection; only a full render removes stale GIFs.
 - When another text intermediate is introduced by a future pipeline, apply the same rule: edit the existing structured source and rerun deterministic rendering instead of rebuilding the entire asset chain.
 
 ## Pipeline Evolution

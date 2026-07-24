@@ -9,22 +9,14 @@
     "gifs": [
       "01-article-summary.gif",
       "02-connection-policy.gif",
-      "03-upload-lifecycle.gif",
-      "04-sdk-contract-rail.gif",
-      "05-context-retrieval-loop.gif",
       "06-parallel-speech-jobs.gif",
-      "07-recovery-hourglass.gif",
       "08-versioned-refinement-spiral.gif"
     ]
   },
   "pages": [
     "01-article-summary.gif",
     "02-connection-policy.gif",
-    "03-upload-lifecycle.gif",
-    "04-sdk-contract-rail.gif",
-    "05-context-retrieval-loop.gif",
     "06-parallel-speech-jobs.gif",
-    "07-recovery-hourglass.gif",
     "08-versioned-refinement-spiral.gif"
   ]
 }

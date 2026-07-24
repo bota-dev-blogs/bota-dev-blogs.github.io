@@ -1,0 +1,19 @@
+{
+  "pipeline": "ai-gif-pipeline-1",
+  "source": "storyboard.json",
+  "assetSlug": "neural-audio-codecs-speech-tokens",
+  "title": "Neural Audio Codecs: How Speech Tokens Power Voice AI",
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-codec-anatomy.gif",
+      "02-token-rate-tradeoffs.gif",
+      "03-codec-hidden-failures.gif"
+    ]
+  },
+  "pages": [
+    "01-codec-anatomy.gif",
+    "02-token-rate-tradeoffs.gif",
+    "03-codec-hidden-failures.gif"
+  ]
+}

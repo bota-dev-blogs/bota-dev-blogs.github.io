@@ -6,10 +6,14 @@
   "outputs": {
     "storyboard": "storyboard.json",
     "gifs": [
-      "01-layered-gate.gif"
+      "01-layered-gate.gif",
+      "02-wake-operating-point.gif",
+      "03-wearable-wake-budget.gif"
     ]
   },
   "pages": [
-    "01-layered-gate.gif"
+    "01-layered-gate.gif",
+    "02-wake-operating-point.gif",
+    "03-wearable-wake-budget.gif"
   ]
 }

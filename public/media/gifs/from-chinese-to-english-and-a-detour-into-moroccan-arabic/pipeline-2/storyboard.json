@@ -106,7 +106,8 @@
           "edgeGroup": "branch",
           "pathStyle": "straight"
         }
-      ]
+      ],
+      "outputFile": "01-article-summary.gif"
     },
     {
       "title": "Darija Bottlenecks",
@@ -207,7 +208,8 @@
           "edgeGroup": "next",
           "pathStyle": "straight"
         }
-      ]
+      ],
+      "outputFile": "02-darija-bottlenecks.gif"
     },
     {
       "title": "Quality Gates",
@@ -295,7 +297,103 @@
           "edgeGroup": "gates",
           "pathStyle": "straight"
         }
-      ]
+      ],
+      "outputFile": "03-quality-gates.gif"
+    },
+    {
+      "title": "A Localized Video Is A Controlled Relay",
+      "section": "multilingual-localization-stack",
+      "format": "wide",
+      "layout": "swimlanes",
+      "headline": "Every stage can preserve or distort meaning, speaker identity, and timing",
+      "nodes": [
+        {
+          "id": "source",
+          "type": "input",
+          "label": "Source video",
+          "caption": "Chinese speech, speakers, edits, music, and visual timing",
+          "visual": "video",
+          "shape": "illustration"
+        },
+        {
+          "id": "transcript",
+          "type": "process",
+          "label": "Timed transcript",
+          "caption": "Words, speakers, punctuation, and source intervals",
+          "visual": "asr",
+          "shape": "card"
+        },
+        {
+          "id": "translation",
+          "type": "process",
+          "label": "Target-language text",
+          "caption": "English or Darija with terminology and register",
+          "visual": "translate",
+          "shape": "card"
+        },
+        {
+          "id": "voice",
+          "type": "process",
+          "label": "Generated voices",
+          "caption": "Speaker-consistent speech with explicit consent",
+          "visual": "tts",
+          "shape": "card"
+        },
+        {
+          "id": "alignment",
+          "type": "process",
+          "label": "Timing alignment",
+          "caption": "Fits speech and subtitles back to the edited video",
+          "visual": "alignment",
+          "shape": "card"
+        },
+        {
+          "id": "review",
+          "type": "result",
+          "label": "Native review",
+          "caption": "Approves meaning, delivery, and audience fit",
+          "visual": "person",
+          "shape": "illustration"
+        }
+      ],
+      "edges": [
+        {
+          "from": "source",
+          "to": "transcript",
+          "label": "feeds",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "transcript",
+          "to": "translation",
+          "label": "refines",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "translation",
+          "to": "voice",
+          "label": "gates",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "voice",
+          "to": "alignment",
+          "label": "publishes",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "alignment",
+          "to": "review",
+          "label": "returns",
+          "labelPriority": "essential",
+          "relation": "flow"
+        }
+      ],
+      "outputFile": "04-multilingual-localization-stack.gif"
     }
   ]
 }

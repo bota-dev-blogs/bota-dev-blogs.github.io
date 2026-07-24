@@ -224,7 +224,7 @@ function updateCover(post) {
     /cover:\n  src: "([^"]+)"\n  alt: "([^"]+)"\n  width: [0-9]+\n  height: [0-9]+\n  fit: "([^"]+)"/,
     [
       "cover:",
-      `  src: "/media/${post.slug}/featured.png"`,
+      `  src: "/media/featured/${post.slug}/featured.png"`,
       `  alt: "${post.alt}"`,
       "  width: 1536",
       "  height: 864",
@@ -435,12 +435,12 @@ function writeLocalFallback(post, outDir) {
   fs.writeFileSync(svgPath, coverSvg(post));
   renderSvgToPng(svgPath, pngPath);
   updateCover(post);
-  console.log(`Wrote local fallback public/media/${post.slug}/featured.png`);
+  console.log(`Wrote local fallback public/media/featured/${post.slug}/featured.png`);
 }
 
 async function main() {
   for (const post of posts) {
-    const outDir = path.join(rootDir, "public", "media", post.slug);
+    const outDir = path.join(rootDir, "public", "media", "featured", post.slug);
     fs.mkdirSync(outDir, { recursive: true });
     const rawPath = path.join(outDir, "featured-raw.png");
     const finalPath = path.join(outDir, "featured.png");
@@ -459,7 +459,7 @@ async function main() {
       fs.rmSync(rawPath, { force: true });
       fs.rmSync(path.join(outDir, "featured.svg"), { force: true });
       updateCover(post);
-      console.log(`Wrote public/media/${post.slug}/featured.png using ${result.model}`);
+      console.log(`Wrote public/media/featured/${post.slug}/featured.png using ${result.model}`);
     } catch (error) {
       if (!allowLocalFallback) throw error;
       console.warn(`OpenAI image generation failed for ${post.slug}: ${error.message}`);

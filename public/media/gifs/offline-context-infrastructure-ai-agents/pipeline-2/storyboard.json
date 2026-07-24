@@ -124,7 +124,8 @@
           "pathStyle": "curve",
           "bend": 0.32
         }
-      ]
+      ],
+      "outputFile": "01-article-summary.gif"
     },
     {
       "title": "Give The Agent A Context Contract",
@@ -243,7 +244,170 @@
           "pathStyle": "curve",
           "bend": 0.14
         }
-      ]
+      ],
+      "outputFile": "02-context-contract.gif"
+    },
+    {
+      "title": "Agent Requests Need A Governed Retrieval Loop",
+      "section": "offline-context-retrieval-loop",
+      "format": "wide",
+      "layout": "retrieval-loop",
+      "headline": "The agent should receive selected evidence and policy state, not an unrestricted transcript dump",
+      "nodes": [
+        {
+          "id": "request",
+          "type": "input",
+          "label": "Workflow request",
+          "caption": "A task names the object, user, and intended action",
+          "visual": "workflow",
+          "shape": "card"
+        },
+        {
+          "id": "agent",
+          "type": "process",
+          "label": "Product agent",
+          "caption": "Drafts an answer or action from approved context",
+          "visual": "agent",
+          "shape": "card"
+        },
+        {
+          "id": "action",
+          "type": "result",
+          "label": "Reviewable action",
+          "caption": "Cites evidence and respects confirmation policy",
+          "visual": "guardrail",
+          "shape": "illustration"
+        },
+        {
+          "id": "store",
+          "type": "context",
+          "label": "Context store",
+          "caption": "Keeps source audio, artifacts, versions, and permissions",
+          "visual": "database",
+          "shape": "card"
+        },
+        {
+          "id": "policy",
+          "type": "decision",
+          "label": "Retrieval policy",
+          "caption": "Filters by relevance, access, freshness, and purpose",
+          "visual": "filter",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "request",
+          "to": "agent",
+          "label": "asks",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "agent",
+          "to": "action",
+          "label": "proposes",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "store",
+          "to": "policy",
+          "label": "offers",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "policy",
+          "to": "agent",
+          "label": "grounds",
+          "labelPriority": "essential",
+          "relation": "supervision",
+          "pathStyle": "curve",
+          "bend": -0.2
+        }
+      ],
+      "outputFile": "03-offline-context-retrieval-loop.gif"
+    },
+    {
+      "title": "Raw Speech Narrows Into Allowed Actions",
+      "section": "context-action-hourglass",
+      "format": "wide",
+      "layout": "hourglass",
+      "headline": "Interpretations should pass through one governed context contract before an agent can act",
+      "nodes": [
+        {
+          "id": "audio",
+          "type": "input",
+          "label": "Source audio",
+          "caption": "The durable conversation remains available for review",
+          "visual": "waveform",
+          "shape": "card"
+        },
+        {
+          "id": "artifacts",
+          "type": "input",
+          "label": "Derived artifacts",
+          "caption": "Transcript, speakers, topics, tasks, and confidence",
+          "visual": "layers",
+          "shape": "card"
+        },
+        {
+          "id": "contract",
+          "type": "decision",
+          "label": "Context contract",
+          "caption": "Joins provenance, permission, freshness, and versions",
+          "visual": "schema",
+          "shape": "card"
+        },
+        {
+          "id": "draft",
+          "type": "result",
+          "label": "Reversible draft",
+          "caption": "A low-risk proposal cites the supporting evidence",
+          "visual": "document",
+          "shape": "card"
+        },
+        {
+          "id": "commit",
+          "type": "result",
+          "label": "Authorized action",
+          "caption": "A reviewed decision changes the product workflow",
+          "visual": "workflow",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "audio",
+          "to": "contract",
+          "label": "grounds",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "artifacts",
+          "to": "contract",
+          "label": "informs",
+          "labelPriority": "essential",
+          "relation": "evidence"
+        },
+        {
+          "from": "contract",
+          "to": "draft",
+          "label": "permits",
+          "labelPriority": "essential",
+          "relation": "constraint"
+        },
+        {
+          "from": "contract",
+          "to": "commit",
+          "label": "governs",
+          "labelPriority": "essential",
+          "relation": "constraint"
+        }
+      ],
+      "outputFile": "04-context-action-hourglass.gif"
     }
   ]
 }

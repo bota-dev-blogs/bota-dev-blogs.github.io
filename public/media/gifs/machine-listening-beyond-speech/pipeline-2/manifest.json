@@ -7,12 +7,14 @@
   "outputs": {
     "storyboard": "storyboard.json",
     "gifs": [
-      "01-article-summary.gif",
-      "02-open-world-evaluation.gif"
+      "02-open-world-evaluation.gif",
+      "03-parallel-audio-jobs.gif",
+      "04-edge-cloud-sensing-path.gif"
     ]
   },
   "pages": [
-    "01-article-summary.gif",
-    "02-open-world-evaluation.gif"
+    "02-open-world-evaluation.gif",
+    "03-parallel-audio-jobs.gif",
+    "04-edge-cloud-sensing-path.gif"
   ]
 }

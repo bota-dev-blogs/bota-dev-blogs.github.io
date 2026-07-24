@@ -4,7 +4,7 @@ slug: "ai-wearable-developer-platform-ble-wifi-apis"
 description: "How AI wearable platforms handle BLE pairing, mobile SDKs, Wi-Fi provisioning, direct uploads, device APIs, webhooks, and offline-first recovery."
 authors: ["Editorial Team"]
 date: "2026-07-09"
-modifiedDate: "2026-07-23"
+modifiedDate: "2026-07-24"
 readTime: "17 min read"
 contentType: "research-digest"
 tags:
@@ -23,24 +23,36 @@ keywords:
   - "presigned upload URL"
   - "AI agent audio context"
 cover:
-  src: "/media/ai-wearable-developer-platform-ble-wifi-apis/featured.png"
+  src: "/media/featured/ai-wearable-developer-platform-ble-wifi-apis/featured.png"
   alt: "Developer architecture map connecting an AI wearable through BLE, Wi-Fi, mobile SDKs, APIs, and agent context"
   width: 1600
   height: 900
   fit: "cover"
 media:
-  - title: "AI wearable developer platform"
+  - title: "One Recording, Three Radios"
+    src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-1/02-connection-policy.gif"
+    type: "image"
+    note: "Transport may change, but recording identity and recovery rules must remain stable."
+  - title: "Offline Audio Becomes Agent Context"
+    src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-1/04-context-lifecycle.gif"
+    type: "image"
+    note: "The useful product object is governed context, not an isolated audio file."
+  - title: "One Wearable, Five Software Boundaries"
     src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-2/01-article-summary.gif"
     type: "image"
-    note: "A map of the device, mobile SDK, product backend, context platform, and AI agent workflow."
-  - title: "Multi-link connection policy"
+    note: "The platform hides radio, storage, and speech complexity behind SDKs, APIs, and events"
+  - title: "Connectivity Is A Policy, Not A Single Pipe"
     src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-2/02-connection-policy.gif"
     type: "image"
-    note: "A state map for BLE relay, direct Wi-Fi or cellular upload, heartbeat ownership, and recovery."
-  - title: "Secure recording upload lifecycle"
-    src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-2/03-upload-lifecycle.gif"
+    note: "BLE relay, direct Wi-Fi, and cellular should share one recording identity and one recovery model"
+  - title: "One Recording Can Run Several Speech Jobs"
+    src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-2/06-parallel-speech-jobs.gif"
     type: "image"
-    note: "A device-to-cloud lifecycle using scoped device credentials, presigned storage uploads, completion events, and webhooks."
+    note: "Parallel processors should publish independent artifacts before the platform assembles governed context"
+  - title: "Better Artifacts Should Preserve Their History"
+    src: "/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-2/08-versioned-refinement-spiral.gif"
+    type: "image"
+    note: "Speech artifacts can improve over time without silently replacing the evidence used by earlier actions"
 ---
 
 ## The Developer Platform Begins Where The Microphone Ends
@@ -151,6 +163,8 @@ Streaming reduces time to durability and can enable live transcription or monito
 The two modes should converge on the same recording identity. If streaming stops at minute twelve and batch sync resumes after the meeting, the server should reconcile the missing range rather than create a second recording.
 
 This is a recurring design principle: **transport paths may change, but the recording must remain one logical object**.
+
+![One recording across three radios](/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-1/02-connection-policy.gif)
 
 ## Heartbeats Should Have One Owner
 
@@ -271,6 +285,8 @@ A useful state machine might include:
 
 The API should expose versions because speech processing can be rerun. A corrected transcript should not silently overwrite the evidence used by an earlier summary. Downstream products need to know which artifact version produced each action.
 
+![Versioned speech artifact refinement](/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-2/08-versioned-refinement-spiral.gif)
+
 ## Webhooks Complete The Developer Experience
 
 The product backend should not poll every recording forever. It should receive lifecycle events such as:
@@ -303,9 +319,13 @@ Once audio is durable, the platform can create:
 - Embeddings and retrieval indexes.
 - Evidence links from every derived claim to source time ranges.
 
+![Parallel speech processing jobs](/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-2/06-parallel-speech-jobs.gif)
+
 Transport state and semantic state should remain separate. A recording can be fully uploaded but still processing. A transcript can be ready while speaker attribution remains provisional. A summary can be invalidated after a transcript correction.
 
 AI agents should consume versioned context events, not infer readiness from the existence of an audio file.
+
+![Offline audio context lifecycle](/media/gifs/ai-wearable-developer-platform-ble-wifi-apis/pipeline-1/04-context-lifecycle.gif)
 
 ## The B2B2C Integration Boundary
 

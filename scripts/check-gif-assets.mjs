@@ -23,8 +23,18 @@ function readJson(filePath, errors) {
   catch (error) { fail(`${path.relative(rootDir, filePath)} is not valid JSON: ${error.message}`, errors); return null; }
 }
 
-function isSafeRelativeOutput(fileName) {
-  return typeof fileName === "string" && fileName.length > 0 && !path.isAbsolute(fileName) && !fileName.split(/[\\/]/).includes("..");
+function slug(value) {
+  return String(value || "article").toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]+/g, "-").replace(/^-|-$/g, "").slice(0, 48) || "article";
+}
+
+function isSafeGifBasename(fileName) {
+  return typeof fileName === "string" && path.basename(fileName) === fileName && /^[A-Za-z0-9][A-Za-z0-9._-]*\.gif$/.test(fileName);
+}
+
+function storyboardOutputName(pipelineDirName, page, pageIndex, pageCount) {
+  if (page.outputFile) return page.outputFile;
+  if (pipelineDirName === "pipeline-1") return `${String(pageIndex + 1).padStart(2, "0")}-${page.fileSlug || slug(page.section)}.gif`;
+  return pageCount === 1 ? "01-article-summary.gif" : `${String(pageIndex + 1).padStart(2, "0")}-${slug(page.section)}.gif`;
 }
 
 function checkIconValue(value, location, errors) {
@@ -52,11 +62,16 @@ function checkSharedIconCoverage(errors) {
 
 function checkStoryboard(pipelineDirName, pipelineDir, errors) {
   const filePath = path.join(pipelineDir, "storyboard.json");
-  if (!fs.existsSync(filePath)) { fail(`${path.relative(rootDir, pipelineDir)} is missing storyboard.json`, errors); return; }
+  if (!fs.existsSync(filePath)) { fail(`${path.relative(rootDir, pipelineDir)} is missing storyboard.json`, errors); return null; }
   const storyboard = readJson(filePath, errors);
-  if (!storyboard) return;
+  if (!storyboard) return null;
   const relativePath = path.relative(rootDir, filePath);
+  const outputFiles = new Set();
   for (const [pageIndex, page] of (storyboard.pages || []).entries()) {
+    const outputFile = storyboardOutputName(pipelineDirName, page, pageIndex, storyboard.pages.length);
+    if (!isSafeGifBasename(outputFile)) fail(`${relativePath} page ${pageIndex + 1} outputFile must be a safe basename ending in .gif`, errors);
+    if (outputFiles.has(outputFile)) fail(`${relativePath} page ${pageIndex + 1} duplicates outputFile "${outputFile}"`, errors);
+    outputFiles.add(outputFile);
     if (pipelineDirName === "pipeline-1") {
       if (!pipeline1Layouts.has(page.layout)) fail(`${relativePath} page ${pageIndex + 1} must select a supported pipeline-1 layout`, errors);
       if (!Array.isArray(page.cards) || page.cards.length < 1 || page.cards.length > 4) fail(`${relativePath} page ${pageIndex + 1} must contain 1-4 cards`, errors);
@@ -73,14 +88,17 @@ function checkStoryboard(pipelineDirName, pipelineDir, errors) {
       for (const [nodeIndex, node] of (page.nodes || []).entries()) checkIconValue(node.visual, `${relativePath} page ${pageIndex + 1}, node ${nodeIndex + 1}`, errors);
     }
   }
+  return storyboard;
 }
 
-function checkGifList(pipelineDirName, pipelineDir, manifest, errors) {
+function checkGifList(pipelineDirName, pipelineDir, manifest, storyboard, errors) {
   const listed = Array.isArray(manifest.outputs?.gifs) ? manifest.outputs.gifs : Array.isArray(manifest.pages) ? manifest.pages : [];
   if (!listed.length) fail(`${path.relative(rootDir, path.join(pipelineDir, "manifest.json"))} must list at least one GIF`, errors);
+  const expected = (storyboard?.pages || []).map((page, pageIndex, pages) => storyboardOutputName(pipelineDirName, page, pageIndex, pages.length));
+  if (JSON.stringify(listed) !== JSON.stringify(expected)) fail(`${path.relative(rootDir, path.join(pipelineDir, "manifest.json"))} GIF list must match storyboard page outputFile values in order`, errors);
   const listedSet = new Set(listed);
   for (const fileName of listed) {
-    if (!isSafeRelativeOutput(fileName)) fail(`${pipelineDirName} output path "${fileName}" must be a safe relative path`, errors);
+    if (!isSafeGifBasename(fileName)) fail(`${pipelineDirName} output path "${fileName}" must be a safe GIF basename`, errors);
     else if (!fs.existsSync(path.join(pipelineDir, fileName))) fail(`${path.relative(rootDir, pipelineDir)} is missing listed output ${fileName}`, errors);
   }
   for (const fileName of fs.readdirSync(pipelineDir).filter((name) => name.endsWith(".gif"))) {
@@ -100,8 +118,8 @@ function checkPipelineDir(assetSlug, pipelineDirName, pipelineDir, errors) {
     const filePath = path.join(pipelineDir, fileName);
     if (fs.statSync(filePath).isDirectory()) fail(`${path.relative(rootDir, filePath)} should not be committed inside a published pipeline folder`, errors);
   }
-  checkStoryboard(pipelineDirName, pipelineDir, errors);
-  checkGifList(pipelineDirName, pipelineDir, manifest, errors);
+  const storyboard = checkStoryboard(pipelineDirName, pipelineDir, errors);
+  checkGifList(pipelineDirName, pipelineDir, manifest, storyboard, errors);
 }
 
 function checkBlogGifReferences(errors) {

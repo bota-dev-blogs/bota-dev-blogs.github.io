@@ -8,11 +8,15 @@
     "storyboard": "storyboard.json",
     "gifs": [
       "01-article-summary.gif",
-      "02-context-contract.gif"
+      "02-context-contract.gif",
+      "03-offline-context-retrieval-loop.gif",
+      "04-context-action-hourglass.gif"
     ]
   },
   "pages": [
     "01-article-summary.gif",
-    "02-context-contract.gif"
+    "02-context-contract.gif",
+    "03-offline-context-retrieval-loop.gif",
+    "04-context-action-hourglass.gif"
   ]
 }

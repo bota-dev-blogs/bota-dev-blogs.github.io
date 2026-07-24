@@ -8,11 +8,15 @@
     "storyboard": "storyboard.json",
     "gifs": [
       "01-article-summary.gif",
-      "02-local-release-gate.gif"
+      "02-local-release-gate.gif",
+      "03-selective-adaptation-bridge.gif",
+      "04-community-adaptation-loop.gif"
     ]
   },
   "pages": [
     "01-article-summary.gif",
-    "02-local-release-gate.gif"
+    "02-local-release-gate.gif",
+    "03-selective-adaptation-bridge.gif",
+    "04-community-adaptation-loop.gif"
   ]
 }

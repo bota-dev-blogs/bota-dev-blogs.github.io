@@ -6,10 +6,10 @@
   "outputs": {
     "storyboard": "storyboard.json",
     "gifs": [
-      "01-what-is-otter-ai.gif"
+      "03-meeting-quality-factors.gif"
     ]
   },
   "pages": [
-    "01-what-is-otter-ai.gif"
+    "03-meeting-quality-factors.gif"
   ]
 }

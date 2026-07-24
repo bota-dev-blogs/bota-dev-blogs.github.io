@@ -123,7 +123,184 @@
           "edgeGroup": "decision",
           "pathStyle": "straight"
         }
-      ]
+      ],
+      "outputFile": "01-article-summary.gif"
+    },
+    {
+      "title": "A Voice Session Cycles Through Events",
+      "section": "qwen-session-lifecycle",
+      "format": "wide",
+      "layout": "cycle",
+      "headline": "Real-time interaction repeatedly streams audio, detects a turn, emits a response, and handles interruption",
+      "nodes": [
+        {
+          "id": "connect",
+          "type": "input",
+          "label": "Session connect",
+          "caption": "Configure voice, turn mode, tools, and context",
+          "visual": "websocket",
+          "shape": "card"
+        },
+        {
+          "id": "input",
+          "type": "process",
+          "label": "Audio input",
+          "caption": "Append microphone chunks to the live buffer",
+          "visual": "microphone",
+          "shape": "card"
+        },
+        {
+          "id": "turn",
+          "type": "decision",
+          "label": "Turn decision",
+          "caption": "Smart turn or manual commit decides when to answer",
+          "visual": "gate",
+          "shape": "card"
+        },
+        {
+          "id": "response",
+          "type": "process",
+          "label": "Streaming response",
+          "caption": "Text, speech, and tool arguments arrive as events",
+          "visual": "stream",
+          "shape": "card"
+        },
+        {
+          "id": "interrupt",
+          "type": "result",
+          "label": "Interrupt or update",
+          "caption": "Cancel playback and revise conversation context",
+          "visual": "interruption",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "connect",
+          "to": "input",
+          "label": "opens",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "input",
+          "to": "turn",
+          "label": "buffers",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "turn",
+          "to": "response",
+          "label": "commits",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "response",
+          "to": "interrupt",
+          "label": "plays",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "interrupt",
+          "to": "input",
+          "label": "continues",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "pathStyle": "curve",
+          "bend": 0.22
+        }
+      ],
+      "outputFile": "02-qwen-session-lifecycle.gif"
+    },
+    {
+      "title": "Choose The Model From The Product Artifact",
+      "section": "qwen-model-fit",
+      "format": "wide",
+      "layout": "decision-tree",
+      "headline": "Qwen-Audio Realtime fits live interaction, while transcript and analysis products may need different centers",
+      "nodes": [
+        {
+          "id": "goal",
+          "type": "input",
+          "label": "Primary product goal",
+          "caption": "Decide whether timing, text, or audio analysis matters most",
+          "visual": "target",
+          "shape": "illustration"
+        },
+        {
+          "id": "transcript",
+          "type": "result",
+          "label": "Durable transcript",
+          "caption": "Choose ASR for captions, search, audit, and editing",
+          "visual": "asr",
+          "shape": "card"
+        },
+        {
+          "id": "analysis",
+          "type": "result",
+          "label": "Audio analysis",
+          "caption": "Choose a LALM for events, QA, and long recordings",
+          "visual": "reasoning",
+          "shape": "card"
+        },
+        {
+          "id": "live",
+          "type": "result",
+          "label": "Live interaction",
+          "caption": "Choose real-time speech for turn-taking and spoken output",
+          "visual": "omni",
+          "shape": "card"
+        },
+        {
+          "id": "control",
+          "type": "decision",
+          "label": "Application control",
+          "caption": "Add tool policy and logs to every action-capable path",
+          "visual": "guardrail",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "goal",
+          "to": "transcript",
+          "label": "text",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "goal",
+          "to": "analysis",
+          "label": "understand",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "goal",
+          "to": "live",
+          "label": "interact",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "live",
+          "to": "control",
+          "label": "govern",
+          "labelPriority": "essential",
+          "relation": "constraint"
+        },
+        {
+          "from": "analysis",
+          "to": "control",
+          "label": "review",
+          "labelPriority": "essential",
+          "relation": "constraint"
+        }
+      ],
+      "outputFile": "03-qwen-model-fit.gif"
     }
   ]
 }

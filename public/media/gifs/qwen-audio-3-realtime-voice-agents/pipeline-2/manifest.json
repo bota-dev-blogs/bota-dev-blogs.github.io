@@ -7,10 +7,14 @@
   "outputs": {
     "storyboard": "storyboard.json",
     "gifs": [
-      "01-article-summary.gif"
+      "01-article-summary.gif",
+      "02-qwen-session-lifecycle.gif",
+      "03-qwen-model-fit.gif"
     ]
   },
   "pages": [
-    "01-article-summary.gif"
+    "01-article-summary.gif",
+    "02-qwen-session-lifecycle.gif",
+    "03-qwen-model-fit.gif"
   ]
 }

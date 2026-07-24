@@ -6,10 +6,12 @@
   "outputs": {
     "storyboard": "storyboard.json",
     "gifs": [
-      "01-design-questions.gif"
+      "01-design-questions.gif",
+      "03-speech-architecture-choice.gif"
     ]
   },
   "pages": [
-    "01-design-questions.gif"
+    "01-design-questions.gif",
+    "03-speech-architecture-choice.gif"
   ]
 }

@@ -168,126 +168,168 @@
           "color": "orange",
           "labelAlign": "right"
         }
-      ]
+      ],
+      "outputFile": "01-article-summary.gif"
     },
     {
-      "title": "The Revenue Stack Has Five Layers",
-      "section": "business-model",
+      "title": "One Platform Serves Distinct Workflow Owners",
+      "section": "vertical-workflows",
       "format": "wide",
-      "layout": "layered-stack",
-      "headline": "Device access opens the account, but recurring value comes from software, usage, operations, and control",
+      "layout": "diverging",
+      "headline": "The same capture layer creates value only after each product maps speech into its own domain object",
       "nodes": [
         {
-          "id": "hardware",
-          "type": "input",
-          "label": "Device access",
-          "caption": "Purchase, lease, bundle, or subsidized endpoint",
-          "visual": "edge-device",
-          "shape": "illustration"
-        },
-        {
           "id": "platform",
-          "type": "process",
-          "label": "Platform access",
-          "caption": "SDKs, APIs, tenants, credentials, events, and support",
-          "visual": "sdk",
-          "shape": "card"
-        },
-        {
-          "id": "usage",
-          "type": "process",
-          "label": "Processing usage",
-          "caption": "Audio minutes, ASR, diarization, summaries, storage, and transfer",
-          "visual": "layers",
-          "shape": "card"
-        },
-        {
-          "id": "operations",
-          "type": "evidence",
-          "label": "Fleet operations",
-          "caption": "Inventory, provisioning, shipping, replacement, returns, and firmware",
-          "visual": "fleet",
+          "type": "input",
+          "label": "Capture platform",
+          "caption": "Managed devices, APIs, speech processing, and policy",
+          "visual": "api",
           "shape": "illustration"
         },
         {
-          "id": "enterprise",
-          "type": "constraint",
-          "label": "Enterprise controls",
-          "caption": "Retention, regional deployment, SSO, audit, private infrastructure, and branding",
-          "visual": "shield",
+          "id": "sales",
+          "type": "result",
+          "label": "Sales workflow",
+          "caption": "Objections, competitors, follow-ups, and opportunity history",
+          "visual": "workflow",
           "shape": "card"
         },
         {
-          "id": "contract",
+          "id": "clinical",
           "type": "result",
-          "label": "Predictable account value",
-          "caption": "A managed path from active device to successful workflow outcome",
-          "visual": "workflow",
+          "label": "Clinical workflow",
+          "caption": "Draft notes, instructions, coding inputs, and review",
+          "visual": "document",
+          "shape": "card"
+        },
+        {
+          "id": "legal",
+          "type": "result",
+          "label": "Legal and research",
+          "caption": "Source-backed matter notes and diligence evidence",
+          "visual": "audit",
+          "shape": "card"
+        },
+        {
+          "id": "field",
+          "type": "result",
+          "label": "Field operations",
+          "caption": "Issues, observations, work orders, and safety actions",
+          "visual": "gear",
           "shape": "card"
         }
       ],
       "edges": [
         {
-          "from": "hardware",
-          "to": "platform",
-          "label": "activate",
-          "labelPriority": "optional",
-          "relation": "flow",
-          "edgeGroup": "revenue",
-          "pathStyle": "curve",
-          "bend": -0.16
-        },
-        {
-          "from": "hardware",
-          "to": "usage",
-          "label": "record",
-          "labelPriority": "optional",
-          "relation": "flow",
-          "edgeGroup": "revenue",
-          "pathStyle": "curve",
-          "bend": 0.16
+          "from": "platform",
+          "to": "sales",
+          "label": "embed",
+          "labelPriority": "essential",
+          "relation": "flow"
         },
         {
           "from": "platform",
-          "to": "operations",
-          "label": "operate",
-          "labelPriority": "essential",
-          "relation": "flow",
-          "edgeGroup": "service",
-          "pathStyle": "curve",
-          "bend": 0.13
-        },
-        {
-          "from": "usage",
-          "to": "operations",
-          "label": "scale",
-          "labelPriority": "optional",
-          "relation": "evidence",
-          "edgeGroup": "service",
-          "pathStyle": "curve",
-          "bend": -0.13
-        },
-        {
-          "from": "operations",
-          "to": "enterprise",
+          "to": "clinical",
           "label": "govern",
           "labelPriority": "essential",
-          "relation": "constraint",
-          "edgeGroup": "account",
-          "pathStyle": "curve",
-          "bend": -0.12
+          "relation": "flow"
         },
         {
-          "from": "enterprise",
-          "to": "contract",
-          "label": "retain",
+          "from": "platform",
+          "to": "legal",
+          "label": "evidence",
           "labelPriority": "essential",
-          "relation": "constraint",
-          "edgeGroup": "account",
-          "pathStyle": "curve",
-          "bend": 0.14
+          "relation": "evidence"
+        },
+        {
+          "from": "platform",
+          "to": "field",
+          "label": "dispatch",
+          "labelPriority": "essential",
+          "relation": "flow"
         }
-      ]
+      ],
+      "outputFile": "03-vertical-workflows.gif"
+    },
+    {
+      "title": "Buy The Infrastructure, Keep The Workflow",
+      "section": "build-buy-boundary",
+      "format": "wide",
+      "layout": "bridge",
+      "headline": "A software company should outsource physical capture when its differentiation lives in domain workflow",
+      "nodes": [
+        {
+          "id": "domain",
+          "type": "input",
+          "label": "Domain product",
+          "caption": "Owns users, permissions, objects, and final experience",
+          "visual": "schema",
+          "shape": "card"
+        },
+        {
+          "id": "integration",
+          "type": "process",
+          "label": "SDK and API",
+          "caption": "Embeds provisioning, recording state, and event delivery",
+          "visual": "sdk",
+          "shape": "card"
+        },
+        {
+          "id": "fleet",
+          "type": "process",
+          "label": "Managed fleet",
+          "caption": "Operates devices, logistics, support, and firmware",
+          "visual": "fleet",
+          "shape": "card"
+        },
+        {
+          "id": "context",
+          "type": "process",
+          "label": "Versioned context",
+          "caption": "Returns portable audio, transcripts, and provenance",
+          "visual": "context",
+          "shape": "card"
+        },
+        {
+          "id": "value",
+          "type": "result",
+          "label": "Workflow outcome",
+          "caption": "Lets the buyer compete on its vertical product",
+          "visual": "target",
+          "shape": "illustration"
+        }
+      ],
+      "edges": [
+        {
+          "from": "domain",
+          "to": "integration",
+          "label": "feeds",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "integration",
+          "to": "fleet",
+          "label": "refines",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "fleet",
+          "to": "context",
+          "label": "gates",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "context",
+          "to": "value",
+          "label": "publishes",
+          "labelPriority": "essential",
+          "relation": "flow"
+        }
+      ],
+      "outputFile": "04-build-buy-boundary.gif"
     }
   ]
 }

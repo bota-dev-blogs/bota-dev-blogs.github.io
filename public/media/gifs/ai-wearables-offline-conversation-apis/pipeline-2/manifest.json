@@ -8,11 +8,13 @@
     "storyboard": "storyboard.json",
     "gifs": [
       "01-article-summary.gif",
-      "02-business-model.gif"
+      "03-vertical-workflows.gif",
+      "04-build-buy-boundary.gif"
     ]
   },
   "pages": [
     "01-article-summary.gif",
-    "02-business-model.gif"
+    "03-vertical-workflows.gif",
+    "04-build-buy-boundary.gif"
   ]
 }

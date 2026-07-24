@@ -94,7 +94,8 @@
           "edgeGroup": "history",
           "pathStyle": "straight"
         }
-      ]
+      ],
+      "outputFile": "01-article-summary.gif"
     },
     {
       "title": "Operating Point",
@@ -195,99 +196,8 @@
           "edgeGroup": "context",
           "pathStyle": "straight"
         }
-      ]
-    },
-    {
-      "title": "Research Frontier",
-      "section": "research-frontier",
-      "pageLabel": "3",
-      "format": "wide",
-      "layout": "converging",
-      "headline": "The frontier adds new words, new speakers, and softer gates",
-      "nodes": [
-        {
-          "id": "zero",
-          "type": "process",
-          "label": "Zero-shot KWS",
-          "caption": "Match new phrases without phrase-specific retraining",
-          "visual": "model",
-          "shape": "card"
-        },
-        {
-          "id": "personal",
-          "type": "process",
-          "label": "Personalization",
-          "caption": "Use phonemes, prosody, and speaker information",
-          "visual": "voiceprint",
-          "shape": "card"
-        },
-        {
-          "id": "distill",
-          "type": "method",
-          "label": "Distillation",
-          "caption": "Compress teacher behavior into edge students",
-          "visual": "merge",
-          "shape": "illustration"
-        },
-        {
-          "id": "dds",
-          "type": "decision",
-          "label": "DDSD",
-          "caption": "Decide whether speech is addressed to the device",
-          "visual": "gate",
-          "shape": "card"
-        },
-        {
-          "id": "turn",
-          "type": "decision",
-          "label": "Semantic VAD",
-          "caption": "Estimate whether it is the assistant's turn",
-          "visual": "ear",
-          "shape": "card"
-        }
       ],
-      "edges": [
-        {
-          "from": "zero",
-          "to": "distill",
-          "label": "scale",
-          "labelPriority": "optional",
-          "relation": "flow",
-          "edgeGroup": "edge",
-          "pathStyle": "curve",
-          "bend": 0.15
-        },
-        {
-          "from": "personal",
-          "to": "distill",
-          "label": "adapt",
-          "labelPriority": "optional",
-          "relation": "flow",
-          "edgeGroup": "edge",
-          "pathStyle": "curve",
-          "bend": -0.15
-        },
-        {
-          "from": "distill",
-          "to": "dds",
-          "label": "deploy",
-          "labelPriority": "optional",
-          "relation": "flow",
-          "edgeGroup": "edge",
-          "pathStyle": "curve",
-          "bend": -0.1
-        },
-        {
-          "from": "distill",
-          "to": "turn",
-          "label": "deploy",
-          "labelPriority": "optional",
-          "relation": "flow",
-          "edgeGroup": "edge",
-          "pathStyle": "curve",
-          "bend": 0.1
-        }
-      ]
+      "outputFile": "02-operating-point.gif"
     },
     {
       "title": "Wake Strategy Checklist",
@@ -387,7 +297,8 @@
           "pathStyle": "curve",
           "bend": 0.32
         }
-      ]
+      ],
+      "outputFile": "04-design-checklist.gif"
     }
   ]
 }

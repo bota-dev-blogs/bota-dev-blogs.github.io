@@ -34,7 +34,41 @@
           "icon": "gate"
         }
       ],
-      "fileSlug": "design-questions"
+      "fileSlug": "design-questions",
+      "outputFile": "01-design-questions.gif"
+    },
+    {
+      "title": "Choose A Center Of Gravity",
+      "section": "speech-architecture-choice",
+      "fileSlug": "speech-architecture-choice",
+      "layout": "compare",
+      "composition": "comparison",
+      "introStyle": "badge",
+      "titleTreatment": "none",
+      "kicker": "The right stack begins with the artifact and risk the product must control.",
+      "cards": [
+        {
+          "title": "ASR first",
+          "body": "Use when exact text, timestamps, search, and audit dominate.",
+          "icon": "asr"
+        },
+        {
+          "title": "Audio model",
+          "body": "Use when events, sound, long recordings, and audio QA dominate.",
+          "icon": "reasoning"
+        },
+        {
+          "title": "Real-time speech",
+          "body": "Use when turn-taking, interruption, and spoken output define value.",
+          "icon": "omni"
+        },
+        {
+          "title": "Hybrid control",
+          "body": "Keep explicit evidence and authority around action-capable models.",
+          "icon": "layers"
+        }
+      ],
+      "outputFile": "03-speech-architecture-choice.gif"
     }
   ]
 }

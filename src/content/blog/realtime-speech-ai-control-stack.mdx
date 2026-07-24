@@ -4,7 +4,7 @@ slug: "realtime-speech-ai-control-stack"
 description: "How ASR, audio-language models, real-time speech, live translation, and control planes fit into a production voice-agent stack."
 authors: ["Editorial Team"]
 date: "2026-07-23"
-modifiedDate: "2026-07-23"
+modifiedDate: "2026-07-24"
 readTime: "13 min read"
 contentType: "research-digest"
 tags:
@@ -29,24 +29,36 @@ keywords:
   - "Audio Flamingo Next"
   - "MOSS-Audio-8B-Instruct"
 cover:
-  src: "/media/realtime-speech-ai-control-stack/featured.png"
+  src: "/media/featured/realtime-speech-ai-control-stack/featured.png"
   alt: "Research map of ASR, audio language models, real-time speech, and voice-agent control"
   width: 1600
   height: 900
   fit: "cover"
 media:
-  - title: "Real-time speech AI stack"
-    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-2/01-article-summary.gif"
-    type: "image"
-    note: "Animated map of recognition, audio reasoning, real-time response, and policy control."
-  - title: "Model family map"
-    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-2/02-model-family-map.gif"
-    type: "image"
-    note: "How ASR, audio-text LALMs, live translation, and speech-to-speech systems differ."
-  - title: "Design questions for voice agents"
+  - title: "Voice Agent Design Questions"
     src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-1/01-design-questions.gif"
     type: "image"
-    note: "Four product questions before choosing an end-to-end voice model."
+    note: "Choose the control boundary before choosing the model"
+  - title: "Choose A Center Of Gravity"
+    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-1/03-speech-architecture-choice.gif"
+    type: "image"
+    note: "The right stack begins with the artifact and risk the product must control."
+  - title: "Realtime Speech Control Stack"
+    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-2/01-article-summary.gif"
+    type: "image"
+    note: "Speech products need recognition, audio reasoning, timing, and authority"
+  - title: "Model Family Map"
+    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-2/02-model-family-map.gif"
+    type: "image"
+    note: "The same audio input can support very different product contracts"
+  - title: "Tool-Using Speech Needs A Control Loop"
+    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-2/03-voice-agent-control-loop.gif"
+    type: "image"
+    note: "Model interpretation becomes external authority only after policy, confirmation, and audit"
+  - title: "A Hybrid Stack Preserves Observability"
+    src: "/media/gifs/realtime-speech-ai-control-stack/pipeline-2/04-hybrid-speech-observability.gif"
+    type: "image"
+    note: "Speech participation and tool authority can evolve independently while sharing one event trace"
 ---
 
 ## The Short Answer
@@ -187,6 +199,8 @@ The tradeoff is observability. A modular pipeline exposes intermediate artifacts
 
 A real-time voice agent is not only a listener and a speaker. It can act.
 
+![Tool-Using Speech Needs A Control Loop](/media/gifs/realtime-speech-ai-control-stack/pipeline-2/03-voice-agent-control-loop.gif)
+
 It may schedule a meeting, send a message, update a CRM, change a device setting, summarize a call, buy a ticket, modify a workflow, or route a support case. At that point, the model's interpretation is no longer just language. It becomes authority.
 
 This is where many demos are misleading. A demo can let a model speak fluently. A product needs to decide whether the model is allowed to do anything.
@@ -205,6 +219,8 @@ Alibaba Cloud's Qwen-Audio real-time guide makes this API shape concrete: real-t
 
 The architecture choice should follow the product's primary risk.
 
+![Choose A Center Of Gravity](/media/gifs/realtime-speech-ai-control-stack/pipeline-1/03-speech-architecture-choice.gif)
+
 | Product Goal | Better Starting Point | Reason |
 | --- | --- | --- |
 | Captions, transcripts, search, compliance | ASR-first | The durable artifact is text with timing and reviewability |
@@ -217,6 +233,8 @@ The practical answer is: **ASR remains essential for many voice agents, but it s
 ## Evaluation Should Match The Stack
 
 If a benchmark collapses the whole system into one score, it hides failure modes.
+
+![A Hybrid Stack Preserves Observability](/media/gifs/realtime-speech-ai-control-stack/pipeline-2/04-hybrid-speech-observability.gif)
 
 ASR should be evaluated on [word error rate](https://en.wikipedia.org/wiki/Word_error_rate), timestamp drift, hotword accuracy, endpointing, accents, noise, multilingual behavior, and [speaker diarization](https://en.wikipedia.org/wiki/Speaker_diarisation).
 
