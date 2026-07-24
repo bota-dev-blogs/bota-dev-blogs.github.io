@@ -306,13 +306,13 @@ public/media/gifs/<asset-slug>/pipeline-<n>/manifest.json
 ```
 
 For research digests or survey posts, pipeline 2 can contain multiple
-storyboard pages and publish several research maps, such as:
+storyboard pages and normally generates the best 2-3 complementary research
+map candidates, such as:
 
 ```text
 01-article-summary.gif
 02-operating-point.gif
 03-research-frontier.gif
-04-design-checklist.gif
 ```
 
 GIF rules:
@@ -320,8 +320,9 @@ GIF rules:
 - Generate original visual explanations.
 - Do not convert paper figures into GIFs.
 - Do not trace paper figures too closely.
-- Use pipeline 1 for compact section explainers without arrows.
-- Use pipeline 2 for a method, architecture, data flow, graphical abstract, research landscape, comparison map, or practical checklist. Dense survey posts often benefit from 2-5 pipeline-2 visuals distributed through the article.
+- Use pipeline 1 for one best-fit compact explainer candidate without arrows. Do not generate one Pipeline 1 GIF per section.
+- Use pipeline 2 for a method, architecture, data flow, graphical abstract, research landscape, comparison map, or practical checklist. Normal posts should generate the best 2-3 complementary Pipeline 2 candidates; exceed three only for a canary, renderer development, or an explicit user request.
+- Reference only the user-approved GIF subset from the article. Unselected candidates may remain in the pipeline folder when the storyboard and manifest still list them.
 - Do not let generated GIF artwork display internal editorial labels such as "takeaway". Use reader-facing labels such as "key idea", "design rule", "checklist", or the actual concept being explained.
 - Use the shared icon vocabulary in `AI/shared/semantic-icons.cjs`. Prefer concrete AI/audio/mobile/edge/computing icons such as ASR, TTS, microphone, waveform, phone, edge device, chip, GPU, server, router, dataset, embedding, model, gate, filter, and latency before generic idea/agent/schema icons. Keep fallback icons concrete and narrow; fallback should not select person, bot, idea, agent, schema, graph, or chat bubbles.
 - Give every published Pipeline 1 card and Pipeline 2 node an explicit canonical `icon` or `visual`; `npm run gif:check` rejects missing or unknown icons.

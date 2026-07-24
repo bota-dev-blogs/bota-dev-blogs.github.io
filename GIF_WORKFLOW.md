@@ -11,19 +11,22 @@ public/media/gifs/<asset-slug>/pipeline-1/
 public/media/gifs/<asset-slug>/pipeline-2/
 ```
 
-Create only folders that contain real outputs. Every published pipeline folder
+Create only folders that contain real outputs. Every retained candidate folder
 contains `storyboard.json`, `manifest.json`, and the GIFs listed in the manifest.
 
 ## Choose A Pipeline
 
 Pipeline 1 creates compact, arrow-free tile-board explainers. Use it for section
 summaries, comparisons, checklists, evidence boards, failure focus, and practical
-concepts. It supports 20 layouts with 1-4 cards per page.
+concepts. It supports 24 layouts with 1-4 cards per page. A normal article gets
+one best-fit Pipeline 1 candidate, not one GIF per section.
 
 Pipeline 2 is the renamed former pipeline 3. Use it for article-wide graphical
 abstracts, systems maps, AI/audio architectures, process diagrams, timelines,
 parallel tracks, convergence/divergence, decisions, and research landscapes. It
-supports fixed and semantic layouts with 2-6 nodes per page.
+supports 28 fixed and semantic layouts with 2-6 nodes per page. A normal article
+gets the best 2-3 complementary Pipeline 2 candidates. More than three is
+reserved for canary testing, renderer development, or an explicit request.
 
 The old PDF/diagram/Playwright pipeline was removed.
 
@@ -35,6 +38,29 @@ The old PDF/diagram/Playwright pipeline was removed.
 4. Save it under the publishable pipeline folder.
 5. Render it with the root command.
 6. Run the asset checker and site build.
+
+## Candidate Curation
+
+- Treat renderer outputs as candidates. Reference only the user-approved subset from MDX.
+- It is valid for a post to use only one of several generated Pipeline 2 GIFs, or to omit the Pipeline 1 candidate.
+- Keep unselected candidates when they remain in both `storyboard.json` and `manifest.json`. Do not delete them merely because MDX does not reference them.
+- When the user identifies good and bad GIFs, preserve accepted files, regenerate only affected candidates, and update the article references to the selected set.
+
+## Storyboard-First Revisions
+
+- For an existing GIF, edit its current `storyboard.json` rather than recreating intermediate content from the article or another model.
+- Change only the affected page and preserve `section`, `fileSlug`, page order, and filenames unless a rename is intentional.
+- Treat the GIF binary and `manifest.json` as derived outputs. The renderer reads the edited storyboard, rewrites the GIF, and regenerates the manifest; normally edit neither by hand.
+- Use `--page <n>` for a one-page change. The renderer preserves the full storyboard and untouched GIFs. Use a full render for shared renderer changes, page reordering, or edits spanning several pages.
+- When another text intermediate is introduced by a future pipeline, apply the same rule: edit the existing structured source and rerun deterministic rendering instead of rebuilding the entire asset chain.
+
+## Pipeline Evolution
+
+- Reassess layouts, semantic icons, motion, spacing, and text fitting during every GIF task.
+- Improve shared renderer code when a problem or opportunity is reusable; avoid article-specific branches and hardcoded content.
+- Add a layout when the existing spatial grammars cannot express a recurring relationship cleanly. Update its registry, geometry, motion, skill references, contract, and canary coverage together.
+- Add or revise a canonical icon when existing glyphs are semantically weak. Implement it in `AI/shared/semantic-icons.cjs` with aliases, colors, and animation so both pipelines benefit.
+- Run `npm run gif:check`, `npm run gif:doctor`, and `SITE_URL=https://bota.dev npm run build` after pipeline changes.
 
 ```bash
 npm run gif -- 1 --input public/media/gifs/<slug>/pipeline-1/storyboard.json

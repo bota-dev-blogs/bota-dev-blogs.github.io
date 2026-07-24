@@ -5,6 +5,11 @@ storyboard v2 JSON as graphical abstracts, systems maps, comparisons, research
 landscapes, and process diagrams. The removed legacy diagram pipeline is not
 part of this repository anymore.
 
+For a normal blog article, select the best 2-3 complementary layouts and
+generate 2-3 Pipeline 2 candidate GIFs. The article may reference only the
+approved subset. More pages are reserved for canary testing or an explicit
+user request; do not generate one diagram per article section.
+
 This pipeline does not call an LLM API and has no `.env`. Ask Codex, Claude
 Code, or OpenCode to follow `SKILL.md` and write:
 

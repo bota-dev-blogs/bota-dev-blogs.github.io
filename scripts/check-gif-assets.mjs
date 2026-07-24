@@ -4,21 +4,16 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const { ICON_NAMES, FALLBACK_ICON_NAMES, CANVAS_ICON_MOTION, VISUAL_COLORS } = require("../AI/shared/semantic-icons.cjs");
+const { LAYOUTS: pipeline1LayoutList } = require("../AI/ai-gif-pipeline-1/comic_pipeline.js");
+const { LAYOUTS: pipeline2LayoutList, EDGE_END_SHAPES: pipeline2EndShapeList } = require("../AI/ai-gif-pipeline-2/comic_pipeline.js");
 const rootDir = process.cwd();
 const gifsDir = path.join(rootDir, "public", "media", "gifs");
 const blogDir = path.join(rootDir, "src", "content", "blog");
 const allowedPipelineDirs = new Set(["pipeline-1", "pipeline-2"]);
 const allowedIconNames = new Set(ICON_NAMES);
-const pipeline1Layouts = new Set([
-  "row", "timeline", "spotlight", "stacked", "grid", "mosaic", "compare", "lanes", "checklist",
-  "flow-board", "bento", "split-focus", "staircase", "bands", "triptych", "dashboard", "orbit",
-  "matrix", "system-board", "failure-focus"
-]);
-const pipeline2Layouts = new Set([
-  "linear-flow", "staged-flow", "branching", "before-after", "cycle", "hub-spoke", "cause-effect",
-  "timeline", "semantic-map", "converging", "diverging", "parallel-lanes", "swimlanes", "matrix",
-  "funnel", "layered-stack", "bridge", "decision-tree", "constellation"
-]);
+const pipeline1Layouts = new Set(pipeline1LayoutList);
+const pipeline2Layouts = new Set(pipeline2LayoutList);
+const pipeline2EndShapes = new Set(pipeline2EndShapeList);
 const sharedIconsPath = path.join(rootDir, "AI", "shared", "semantic-icons.cjs");
 
 function fail(message, errors) { errors.push(message); }
@@ -71,7 +66,10 @@ function checkStoryboard(pipelineDirName, pipelineDir, errors) {
       if (!Array.isArray(page.nodes) || page.nodes.length < 2 || page.nodes.length > 6) fail(`${relativePath} page ${pageIndex + 1} must contain 2-6 nodes`, errors);
       if (page.layout === "semantic-map" && (page.nodes || []).some((node) => !node.position)) fail(`${relativePath} page ${pageIndex + 1} semantic-map nodes require normalized positions`, errors);
       const ids = new Set((page.nodes || []).map((node) => node.id));
-      for (const edge of page.edges || []) if (!ids.has(edge.from) || !ids.has(edge.to)) fail(`${relativePath} page ${pageIndex + 1} edge references an unknown node`, errors);
+      for (const edge of page.edges || []) {
+        if (!ids.has(edge.from) || !ids.has(edge.to)) fail(`${relativePath} page ${pageIndex + 1} edge references an unknown node`, errors);
+        if (edge.endShape && !pipeline2EndShapes.has(edge.endShape)) fail(`${relativePath} page ${pageIndex + 1} edge uses unsupported endShape "${edge.endShape}"`, errors);
+      }
       for (const [nodeIndex, node] of (page.nodes || []).entries()) checkIconValue(node.visual, `${relativePath} page ${pageIndex + 1}, node ${nodeIndex + 1}`, errors);
     }
   }

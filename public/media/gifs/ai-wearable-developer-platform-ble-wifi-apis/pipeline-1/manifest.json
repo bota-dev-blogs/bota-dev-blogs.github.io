@@ -1,0 +1,21 @@
+{
+  "pipeline": "ai-gif-pipeline-1",
+  "source": "storyboard.json",
+  "assetSlug": "ai-wearable-developer-platform-ble-wifi-apis",
+  "title": "AI Wearable Developer Platform",
+  "outputs": {
+    "storyboard": "storyboard.json",
+    "gifs": [
+      "01-platform-layers.gif",
+      "02-connection-policy.gif",
+      "03-upload-trust.gif",
+      "04-context-lifecycle.gif"
+    ]
+  },
+  "pages": [
+    "01-platform-layers.gif",
+    "02-connection-policy.gif",
+    "03-upload-trust.gif",
+    "04-context-lifecycle.gif"
+  ]
+}

@@ -18,7 +18,7 @@
           "id": "device",
           "type": "input",
           "label": "AI wearable",
-          "caption": "Microphone, button, local storage, battery, firmware, and device identity",
+          "caption": "Microphone, storage, battery, firmware, and device identity",
           "visual": "wearable",
           "shape": "illustration",
           "position": {
@@ -30,7 +30,7 @@
           "id": "sdk",
           "type": "process",
           "label": "Mobile SDK",
-          "caption": "BLE pairing, reconnect, batch sync, streaming sync, and device health",
+          "caption": "Pair, reconnect, stream, sync, and report device health",
           "visual": "sdk",
           "shape": "card",
           "position": {
@@ -42,7 +42,7 @@
           "id": "backend",
           "type": "process",
           "label": "Product backend",
-          "caption": "Users, tenants, permissions, device binding, and workflow objects",
+          "caption": "Users, tenants, permissions, and device binding",
           "visual": "server",
           "shape": "card",
           "position": {
@@ -54,7 +54,7 @@
           "id": "platform",
           "type": "process",
           "label": "Developer platform",
-          "caption": "Recording APIs, storage, speech processing, fleet state, and webhooks",
+          "caption": "Recording APIs, storage, speech processing, and webhooks",
           "visual": "api",
           "shape": "illustration",
           "position": {
@@ -66,7 +66,7 @@
           "id": "context",
           "type": "evidence",
           "label": "Versioned context",
-          "caption": "Transcript, speakers, timestamps, summary, provenance, and confidence",
+          "caption": "Transcript, speakers, timestamps, provenance, and confidence",
           "visual": "context",
           "shape": "card",
           "position": {
@@ -78,7 +78,7 @@
           "id": "agent",
           "type": "result",
           "label": "Product agent",
-          "caption": "Retrieve, draft, confirm, commit, or abstain inside the customer workflow",
+          "caption": "Retrieve, draft, confirm, commit, or abstain",
           "visual": "agent",
           "shape": "card",
           "position": {
@@ -176,14 +176,14 @@
       "title": "Connectivity Is A Policy, Not A Single Pipe",
       "section": "connection-policy",
       "format": "wide",
-      "layout": "parallel-lanes",
+      "layout": "relay-board",
       "headline": "BLE relay, direct Wi-Fi, and cellular should share one recording identity and one recovery model",
       "nodes": [
         {
           "id": "record",
           "type": "input",
           "label": "Local recording",
-          "caption": "Audio continues when the phone or network is unavailable",
+          "caption": "Recording continues without phone or network",
           "visual": "microphone",
           "shape": "illustration"
         },
@@ -191,7 +191,7 @@
           "id": "ble",
           "type": "process",
           "label": "BLE relay",
-          "caption": "Phone provides control, sync, network, and heartbeat forwarding",
+          "caption": "Phone relays control, sync, network, and heartbeat",
           "visual": "bluetooth",
           "shape": "card"
         },
@@ -199,7 +199,7 @@
           "id": "wifi",
           "type": "process",
           "label": "Direct Wi-Fi",
-          "caption": "Device uploads without the phone after secure provisioning",
+          "caption": "Provisioned device uploads without the phone",
           "visual": "wifi",
           "shape": "card"
         },
@@ -207,7 +207,7 @@
           "id": "cellular",
           "type": "process",
           "label": "Direct cellular",
-          "caption": "Independent route for field coverage, cost, and power trade-offs",
+          "caption": "Independent coverage with power and cost trade-offs",
           "visual": "cellular",
           "shape": "illustration"
         },
@@ -215,7 +215,7 @@
           "id": "heartbeat",
           "type": "decision",
           "label": "Heartbeat owner",
-          "caption": "One active route reports liveness to avoid duplicate radio wake-ups",
+          "caption": "One active route owns liveness reporting",
           "visual": "heartbeat",
           "shape": "card"
         },
@@ -223,7 +223,7 @@
           "id": "recovery",
           "type": "result",
           "label": "One recording",
-          "caption": "Sequence numbers, retries, checksums, and idempotent reconciliation",
+          "caption": "Retries and checksums reconcile one recording",
           "visual": "merge",
           "shape": "card"
         }
@@ -302,7 +302,7 @@
           "id": "audio",
           "type": "input",
           "label": "Audio chunks",
-          "caption": "Sequenced bytes with recording ID, timestamps, and checksums",
+          "caption": "Sequenced bytes with timestamps and checksums",
           "visual": "waveform",
           "shape": "illustration"
         },
@@ -310,7 +310,7 @@
           "id": "create",
           "type": "process",
           "label": "Recording API",
-          "caption": "Create one logical object with a scoped device credential",
+          "caption": "Create one object with scoped device credentials",
           "visual": "api",
           "shape": "card"
         },
@@ -318,7 +318,7 @@
           "id": "storage",
           "type": "process",
           "label": "Presigned storage",
-          "caption": "Upload large audio without exposing broad storage credentials",
+          "caption": "Upload audio without broad storage credentials",
           "visual": "storage",
           "shape": "card"
         },
@@ -326,7 +326,7 @@
           "id": "complete",
           "type": "evidence",
           "label": "Validate and complete",
-          "caption": "Check bytes, parts, format, checksum, and final device timestamp",
+          "caption": "Verify parts, format, checksum, and timestamp",
           "visual": "check",
           "shape": "illustration"
         },
@@ -334,7 +334,7 @@
           "id": "events",
           "type": "process",
           "label": "Webhook events",
-          "caption": "Publish signed, versioned, retryable lifecycle changes",
+          "caption": "Publish signed, versioned, retryable state changes",
           "visual": "webhook",
           "shape": "card"
         },
@@ -342,7 +342,7 @@
           "id": "context",
           "type": "result",
           "label": "Agent context",
-          "caption": "Transcript, speakers, summary, provenance, and correction state",
+          "caption": "Transcript, speakers, summary, provenance, and corrections",
           "visual": "context",
           "shape": "card"
         }
@@ -407,6 +407,494 @@
           "edgeGroup": "processing",
           "pathStyle": "curve",
           "bend": 0.14
+        }
+      ]
+    },
+    {
+      "title": "Contracts Guide Every Device Transition",
+      "section": "sdk-contract-rail",
+      "format": "wide",
+      "layout": "schema-rail",
+      "headline": "A stable SDK contract turns radio state and recording state into a predictable product lifecycle",
+      "nodes": [
+        {
+          "id": "device-contract",
+          "type": "context",
+          "label": "Device contract",
+          "caption": "Identity, firmware, battery, and storage rules",
+          "visual": "sdk",
+          "shape": "pill"
+        },
+        {
+          "id": "recording-schema",
+          "type": "context",
+          "label": "Record schema",
+          "caption": "IDs, sequences, checksums, and versions",
+          "visual": "schema",
+          "shape": "pill"
+        },
+        {
+          "id": "ble-session",
+          "type": "process",
+          "label": "BLE session",
+          "caption": "Pair, reconnect, command, and observe device health",
+          "visual": "bluetooth",
+          "shape": "pill"
+        },
+        {
+          "id": "sync-queue",
+          "type": "process",
+          "label": "Sync queue",
+          "caption": "Resume chunks without duplicating the recording",
+          "visual": "queue",
+          "shape": "pill"
+        },
+        {
+          "id": "upload-api",
+          "type": "process",
+          "label": "Upload API",
+          "caption": "Authorize durable bytes with narrow device scope",
+          "visual": "upload",
+          "shape": "pill"
+        },
+        {
+          "id": "lifecycle-event",
+          "type": "result",
+          "label": "Lifecycle event",
+          "caption": "Publish signed state changes to the product backend",
+          "visual": "webhook",
+          "shape": "pill"
+        }
+      ],
+      "edges": [
+        {
+          "from": "device-contract",
+          "to": "ble-session",
+          "label": "governs",
+          "labelPriority": "essential",
+          "relation": "supervision",
+          "endShape": "circle",
+          "pathStyle": "curve",
+          "bend": -0.12
+        },
+        {
+          "from": "recording-schema",
+          "to": "sync-queue",
+          "label": "structures",
+          "labelPriority": "essential",
+          "relation": "evidence",
+          "endShape": "diamond",
+          "pathStyle": "curve",
+          "bend": 0.12
+        },
+        {
+          "from": "ble-session",
+          "to": "sync-queue",
+          "label": "buffers",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "endShape": "arrow"
+        },
+        {
+          "from": "sync-queue",
+          "to": "upload-api",
+          "label": "resumes",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "endShape": "chevron"
+        },
+        {
+          "from": "upload-api",
+          "to": "lifecycle-event",
+          "label": "publishes",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "endShape": "arrow"
+        },
+        {
+          "from": "recording-schema",
+          "to": "lifecycle-event",
+          "label": "constrains",
+          "labelPriority": "optional",
+          "relation": "constraint",
+          "endShape": "bar",
+          "pathStyle": "curve",
+          "bend": -0.22
+        }
+      ]
+    },
+    {
+      "title": "Useful Context Returns to the Product Agent",
+      "section": "context-retrieval-loop",
+      "format": "wide",
+      "layout": "retrieval-loop",
+      "headline": "The request path stays simple while versioned memory and policy feed the agent at decision time",
+      "nodes": [
+        {
+          "id": "capture",
+          "type": "input",
+          "label": "Offline capture",
+          "caption": "A wearable records the conversation with durable identity",
+          "visual": "wearable",
+          "shape": "illustration"
+        },
+        {
+          "id": "product-agent",
+          "type": "process",
+          "label": "Product agent",
+          "caption": "Plans an action inside the customer workflow",
+          "visual": "agent",
+          "shape": "card"
+        },
+        {
+          "id": "workflow-action",
+          "type": "result",
+          "label": "Workflow action",
+          "caption": "Draft, confirm, commit, or abstain with provenance",
+          "visual": "workflow",
+          "shape": "illustration"
+        },
+        {
+          "id": "context-store",
+          "type": "context",
+          "label": "Context store",
+          "caption": "Keeps transcript versions, speakers, corrections, and permissions",
+          "visual": "database",
+          "shape": "card"
+        },
+        {
+          "id": "retrieval-policy",
+          "type": "decision",
+          "label": "Retrieval policy",
+          "caption": "Selects relevant evidence within time and access boundaries",
+          "visual": "retrieval",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "capture",
+          "to": "product-agent",
+          "label": "grounds",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "endShape": "arrow"
+        },
+        {
+          "from": "product-agent",
+          "to": "workflow-action",
+          "label": "proposes",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "endShape": "chevron"
+        },
+        {
+          "from": "workflow-action",
+          "to": "context-store",
+          "label": "records",
+          "labelPriority": "optional",
+          "relation": "flow",
+          "pathStyle": "curve",
+          "bend": 0.2
+        },
+        {
+          "from": "context-store",
+          "to": "retrieval-policy",
+          "label": "offers",
+          "labelPriority": "essential",
+          "relation": "evidence",
+          "endShape": "diamond"
+        },
+        {
+          "from": "retrieval-policy",
+          "to": "product-agent",
+          "label": "returns",
+          "labelPriority": "essential",
+          "relation": "supervision",
+          "endShape": "circle",
+          "pathStyle": "curve",
+          "bend": -0.18
+        }
+      ]
+    },
+    {
+      "title": "One Recording Can Run Several Speech Jobs",
+      "section": "parallel-speech-jobs",
+      "format": "wide",
+      "layout": "scatter-gather",
+      "headline": "Parallel processors should publish independent artifacts before the platform assembles governed context",
+      "nodes": [
+        {
+          "id": "recording",
+          "type": "input",
+          "label": "Durable recording",
+          "caption": "One audio object with timestamps and transport provenance",
+          "visual": "waveform",
+          "shape": "illustration"
+        },
+        {
+          "id": "transcription",
+          "type": "process",
+          "label": "Transcription",
+          "caption": "Words, timing, confidence, and language",
+          "visual": "asr",
+          "shape": "pill"
+        },
+        {
+          "id": "speakers",
+          "type": "process",
+          "label": "Speaker analysis",
+          "caption": "Turns, identities, and overlap boundaries",
+          "visual": "diarization",
+          "shape": "pill"
+        },
+        {
+          "id": "quality",
+          "type": "evidence",
+          "label": "Quality signals",
+          "caption": "Noise, clipping, gaps, and capture health",
+          "visual": "telemetry",
+          "shape": "pill"
+        },
+        {
+          "id": "structure",
+          "type": "process",
+          "label": "Structured fields",
+          "caption": "Decisions, entities, tasks, and workflow publishing details",
+          "visual": "schema",
+          "shape": "pill"
+        },
+        {
+          "id": "governed-context",
+          "type": "result",
+          "label": "Governed context",
+          "caption": "Versioned artifacts with provenance and correction state",
+          "visual": "context",
+          "shape": "illustration"
+        }
+      ],
+      "edges": [
+        {
+          "from": "recording",
+          "to": "transcription",
+          "label": "decodes",
+          "labelPriority": "optional",
+          "relation": "flow"
+        },
+        {
+          "from": "recording",
+          "to": "speakers",
+          "label": "segments",
+          "labelPriority": "optional",
+          "relation": "flow"
+        },
+        {
+          "from": "recording",
+          "to": "quality",
+          "label": "measures",
+          "labelPriority": "optional",
+          "relation": "flow"
+        },
+        {
+          "from": "recording",
+          "to": "structure",
+          "label": "extracts",
+          "labelPriority": "optional",
+          "relation": "flow"
+        },
+        {
+          "from": "transcription",
+          "to": "governed-context",
+          "label": "text",
+          "labelPriority": "optional",
+          "relation": "evidence"
+        },
+        {
+          "from": "speakers",
+          "to": "governed-context",
+          "label": "turns",
+          "labelPriority": "optional",
+          "relation": "evidence"
+        },
+        {
+          "from": "quality",
+          "to": "governed-context",
+          "label": "confidence",
+          "labelPriority": "essential",
+          "relation": "evidence",
+          "endShape": "diamond"
+        },
+        {
+          "from": "structure",
+          "to": "governed-context",
+          "label": "fields",
+          "labelPriority": "optional",
+          "relation": "evidence"
+        }
+      ]
+    },
+    {
+      "title": "Many Link Failures Need One Recovery Contract",
+      "section": "recovery-hourglass",
+      "format": "wide",
+      "layout": "hourglass",
+      "headline": "BLE loss and network loss should narrow through one idempotent reconciliation model",
+      "nodes": [
+        {
+          "id": "ble-gap",
+          "type": "input",
+          "label": "BLE gap",
+          "caption": "The phone leaves or background execution stops",
+          "visual": "bluetooth",
+          "shape": "card"
+        },
+        {
+          "id": "network-gap",
+          "type": "input",
+          "label": "Network gap",
+          "caption": "Wi-Fi or cellular disappears during upload",
+          "visual": "network",
+          "shape": "card"
+        },
+        {
+          "id": "recovery-contract",
+          "type": "decision",
+          "label": "Recovery contract",
+          "caption": "Resume offsets, retries, checksums, and idempotency",
+          "visual": "retry",
+          "shape": "card"
+        },
+        {
+          "id": "one-recording",
+          "type": "result",
+          "label": "One recording",
+          "caption": "All routes reconcile into one durable object",
+          "visual": "version",
+          "shape": "card"
+        },
+        {
+          "id": "usable-context",
+          "type": "result",
+          "label": "Usable context",
+          "caption": "Downstream artifacts remain complete and traceable",
+          "visual": "context",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "ble-gap",
+          "to": "recovery-contract",
+          "label": "resume",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "endShape": "bar"
+        },
+        {
+          "from": "network-gap",
+          "to": "recovery-contract",
+          "label": "retry",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "endShape": "bar"
+        },
+        {
+          "from": "recovery-contract",
+          "to": "one-recording",
+          "label": "reconciles",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "endShape": "arrow"
+        },
+        {
+          "from": "recovery-contract",
+          "to": "usable-context",
+          "label": "protects",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "endShape": "chevron"
+        }
+      ]
+    },
+    {
+      "title": "Better Artifacts Should Preserve Their History",
+      "section": "versioned-refinement-spiral",
+      "format": "wide",
+      "layout": "spiral",
+      "headline": "Speech artifacts can improve over time without silently replacing the evidence used by earlier actions",
+      "nodes": [
+        {
+          "id": "local-audio",
+          "type": "input",
+          "label": "Local audio",
+          "caption": "The durable source remains available for reprocessing",
+          "visual": "waveform",
+          "shape": "card"
+        },
+        {
+          "id": "transcript-v1",
+          "type": "process",
+          "label": "Transcript v1",
+          "caption": "Initial words, speakers, timing, and confidence",
+          "visual": "asr",
+          "shape": "card"
+        },
+        {
+          "id": "corrected-text",
+          "type": "evidence",
+          "label": "Corrected text",
+          "caption": "Human edits preserve provenance and changed fields",
+          "visual": "document",
+          "shape": "card"
+        },
+        {
+          "id": "recomputed-summary",
+          "type": "process",
+          "label": "New summary",
+          "caption": "Names the source artifact versions",
+          "visual": "reasoning",
+          "shape": "card"
+        },
+        {
+          "id": "versioned-context",
+          "type": "result",
+          "label": "Versioned context",
+          "caption": "Agents can explain which evidence supported each action",
+          "visual": "version",
+          "shape": "card"
+        }
+      ],
+      "edges": [
+        {
+          "from": "local-audio",
+          "to": "transcript-v1",
+          "label": "transcribe",
+          "labelPriority": "essential",
+          "relation": "flow"
+        },
+        {
+          "from": "transcript-v1",
+          "to": "corrected-text",
+          "label": "correct",
+          "labelPriority": "essential",
+          "relation": "evidence",
+          "endShape": "diamond"
+        },
+        {
+          "from": "corrected-text",
+          "to": "recomputed-summary",
+          "label": "recompute",
+          "labelPriority": "essential",
+          "relation": "flow",
+          "endShape": "arrow"
+        },
+        {
+          "from": "recomputed-summary",
+          "to": "versioned-context",
+          "label": "publish",
+          "labelPriority": "essential",
+          "relation": "constraint",
+          "endShape": "bar"
         }
       ]
     }

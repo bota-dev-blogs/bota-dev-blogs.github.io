@@ -30,6 +30,11 @@
 Required per page: `title`, `section`, and 1-4 `cards`. Every card requires
 `title`, `body`, and a valid shared `icon`.
 
+Candidate contract: a normal blog storyboard contains exactly one page and
+therefore produces exactly one Pipeline 1 candidate GIF. The article may omit
+that candidate after curation. Multiple pages are allowed only for renderer
+canaries, layout development, or an explicit user request.
+
 Allowed `composition` values: `flow`, `comparison`, `checklist`, `system-map`,
 `failure-map`, `evidence-map`, `compact-grid`, `spotlight`. Composition is
 semantic metadata and helps choose defaults; explicit `layout` controls the

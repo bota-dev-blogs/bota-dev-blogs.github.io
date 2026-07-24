@@ -125,7 +125,10 @@ Before rendering, ask the active coding agent to read
 intermediate `storyboard.json`. The renderers are deterministic and do not call
 an LLM API or read pipeline `.env` files. Pipeline 1 creates compact, arrow-free
 tile-board explainers; pipeline 2 creates article-wide research maps,
-architectures, comparisons, and graphical abstracts. Use `--page <n>` when
+architectures, comparisons, and graphical abstracts. For a normal article,
+generate one best-fit Pipeline 1 candidate and the best 2-3 complementary
+Pipeline 2 candidates; larger storyboards are for canaries or explicit
+requests. The article may reference only the approved subset. Use `--page <n>` when
 rerendering a selected storyboard page. Stale GIFs not listed by the latest
 manifest are removed automatically.
 
@@ -135,7 +138,7 @@ icons preferred over generic idea or agent symbols. Published cards and nodes
 must carry an explicit canonical `icon` or `visual`; `npm run gif:check`
 validates the contract.
 
-Generated GIF artwork should use reader-facing labels, not internal editorial labels. In particular, never render the word "takeaway" in a GIF; use "key idea", "design rule", "checklist", "summary", or the actual concept name.
+Generated GIF artwork should use reader-facing labels, not internal editorial labels. In particular, never render the word "takeaway" in a GIF; use "key idea", "design rule", "checklist", or the actual concept name.
 
 See [GIF_WORKFLOW.md](GIF_WORKFLOW.md) for the full workflow.
 

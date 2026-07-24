@@ -22,7 +22,13 @@
 | `matrix` | criteria, evidence, or paired dimensions | 2-4 |
 | `system-board` | one control point with surrounding signals | 2-4 |
 | `failure-focus` | one failure mode with causes or mitigations | 2-4 |
+| `radial` | one central primitive with supporting routes or actors | 3-4 |
+| `route-map` | an ordered journey with turns, recovery, or handoffs | 3-4 |
+| `signal-board` | a continuous signal becoming several artifacts | 3-4 |
+| `console` | one primary system with live status or supporting controls | 2-4 |
 
 Do not select a layout randomly. Match visual hierarchy to the source argument,
-and avoid using the same layout for adjacent GIFs unless the relationship is
-genuinely the same.
+and avoid using the same visual silhouette for adjacent GIFs unless the
+relationship is genuinely the same. The renderer gives each layout its own
+rail, scan, orbit, status, or hierarchy grammar; the storyboard should supply
+the semantic content, not pixel coordinates.

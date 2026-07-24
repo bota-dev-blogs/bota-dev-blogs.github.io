@@ -12,7 +12,7 @@ const ACCENTS = ['#259d8f', '#557bd8', '#ad67a7', '#e99b1c', '#69a34f', '#d85f91
 const LAYOUTS = [
   'row', 'timeline', 'spotlight', 'stacked', 'grid', 'mosaic', 'compare', 'lanes', 'checklist',
   'flow-board', 'bento', 'split-focus', 'staircase', 'bands', 'triptych', 'dashboard', 'orbit',
-  'matrix', 'system-board', 'failure-focus'
+  'matrix', 'system-board', 'failure-focus', 'radial', 'route-map', 'signal-board', 'console'
 ];
 const COMPOSITIONS = ['flow', 'comparison', 'checklist', 'system-map', 'failure-map', 'evidence-map', 'compact-grid', 'spotlight'];
 const INTRO_STYLES = ['guide', 'badge', 'ribbon', 'split', 'quiet'];
@@ -462,7 +462,7 @@ function drawCard(ctx, card, x, y, w, h, index, t, options = {}) {
   const accent = ACCENTS[index % ACCENTS.length];
   const palette = PALETTE[index % PALETTE.length];
   const iconName = resolveIconName(card.icon, `${card.title || ''} ${card.body || ''}`, index);
-  const pulse = 1 + (options.pulse ?? 0.014) * Math.sin(t * Math.PI * 2 + index * .8);
+  const pulse = 1 + (options.pulse ?? 0.022) * Math.sin(t * Math.PI * 2 + index * .8);
   ctx.save();
   ctx.translate(x + w / 2, y + h / 2);
   ctx.scale(pulse, pulse);
@@ -477,6 +477,14 @@ function drawCard(ctx, card, x, y, w, h, index, t, options = {}) {
   ctx.strokeStyle = accent;
   ctx.lineWidth = 2.4;
   ctx.stroke();
+
+  const markerPulse = .5 + .5 * Math.sin(t * Math.PI * 2 + index * .9);
+  ctx.fillStyle = accent;
+  ctx.globalAlpha = .32 + markerPulse * .58;
+  ctx.beginPath();
+  ctx.arc(x + w - 24, y + 24, 3.5 + markerPulse * 1.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
 
   ctx.fillStyle = accent;
   ctx.font = `800 12px ${FONT_STACK}`;
@@ -538,7 +546,7 @@ function drawMiniCard(ctx, card, x, y, w, h, index, t, options = {}) {
   const accent = options.accent || ACCENTS[index % ACCENTS.length];
   const palette = options.fill || PALETTE[index % PALETTE.length];
   const iconName = resolveIconName(card.icon, `${card.title || ''} ${card.body || ''}`, index);
-  const pulse = 1 + (options.pulse ?? 0.012) * Math.sin(t * Math.PI * 2 + index * .75);
+  const pulse = 1 + (options.pulse ?? 0.018) * Math.sin(t * Math.PI * 2 + index * .75);
   ctx.save();
   ctx.translate(x + w / 2, y + h / 2);
   ctx.scale(pulse, pulse);
@@ -553,6 +561,14 @@ function drawMiniCard(ctx, card, x, y, w, h, index, t, options = {}) {
   ctx.strokeStyle = accent;
   ctx.lineWidth = 2.2;
   ctx.stroke();
+
+  const markerPulse = .5 + .5 * Math.sin(t * Math.PI * 2 + index * .9);
+  ctx.fillStyle = accent;
+  ctx.globalAlpha = .32 + markerPulse * .58;
+  ctx.beginPath();
+  ctx.arc(x + w - 20, y + 20, 3.5 + markerPulse * 1.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
 
   const tile = options.small ? 46 : 56;
   const tileX = x + 18;
@@ -625,6 +641,92 @@ function drawSoftRail(ctx, points, color) {
   ctx.restore();
 }
 
+function polylinePointAt(points, progress) {
+  if (!points.length) return [0, 0];
+  if (points.length === 1) return points[0];
+  const lengths = points.slice(1).map((point, index) => Math.hypot(point[0] - points[index][0], point[1] - points[index][1]));
+  const total = lengths.reduce((sum, length) => sum + length, 0) || 1;
+  let target = ((progress % 1) + 1) % 1 * total;
+  for (let index = 0; index < lengths.length; index += 1) {
+    if (target <= lengths[index]) {
+      const ratio = target / (lengths[index] || 1);
+      return [
+        points[index][0] + (points[index + 1][0] - points[index][0]) * ratio,
+        points[index][1] + (points[index + 1][1] - points[index][1]) * ratio
+      ];
+    }
+    target -= lengths[index];
+  }
+  return points[points.length - 1];
+}
+
+function drawAnimatedRail(ctx, points, t, color, options = {}) {
+  if (points.length < 2) return;
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = options.alpha ?? .22;
+  ctx.lineWidth = options.width ?? 4;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  if (options.dash) {
+    ctx.setLineDash(options.dash);
+    ctx.lineDashOffset = -t * 34;
+  }
+  ctx.beginPath();
+  points.forEach(([x, y], index) => index ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+  ctx.stroke();
+  ctx.setLineDash([]);
+  const first = polylinePointAt(points, t * (options.speed ?? .55) + (options.phase ?? 0));
+  const second = polylinePointAt(points, t * (options.speed ?? .55) + (options.phase ?? 0) + .5);
+  [first, second].forEach(([x, y], index) => {
+    ctx.globalAlpha = .32 + .28 * (.5 + .5 * Math.sin(t * Math.PI * 2 + index));
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, options.dotRadius ?? 5, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.restore();
+}
+
+function drawPulseRing(ctx, x, y, radius, color, t, phase = 0) {
+  const pulse = .5 + .5 * Math.sin(t * Math.PI * 2 + phase);
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = .08 + pulse * .16;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(x, y, radius + pulse * 10, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.globalAlpha = .28 + pulse * .42;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(x, y, 4 + pulse * 3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawScanLine(ctx, x, y, w, h, t, color, vertical = false) {
+  const progress = (.5 + .5 * Math.sin(t * Math.PI * 2)) * .86 + .07;
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = .16;
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 10]);
+  ctx.beginPath();
+  if (vertical) {
+    const scanX = x + w * progress;
+    ctx.moveTo(scanX, y);
+    ctx.lineTo(scanX, y + h);
+  } else {
+    const scanY = y + h * progress;
+    ctx.moveTo(x, scanY);
+    ctx.lineTo(x + w, scanY);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
 function drawFlowComposition(ctx, cards, top, t, design) {
   const count = cards.length;
   const accent = ACCENTS[(design.seed >> 5) % ACCENTS.length];
@@ -640,7 +742,7 @@ function drawFlowComposition(ctx, cards, top, t, design) {
       stroke: 'rgba(80,83,101,.08)',
       height: y0 - (Math.max(top - 12, 212)) + cardH + 68
     });
-    drawSoftRail(ctx, xs.map((x) => [x + cardW / 2, y0 + 18]), accent);
+    drawAnimatedRail(ctx, xs.map((x) => [x + cardW / 2, y0 + 18]), t, accent, { alpha: .2, width: 5, dotRadius: 5 });
     cards.forEach((card, i) => drawMiniCard(ctx, card, xs[i], y0 + 38, cardW, cardH, i, t, { pulse: 0.011 }));
     return;
   }
@@ -685,6 +787,7 @@ function drawFlowComposition(ctx, cards, top, t, design) {
   ctx.lineTo(railX, y0 + count * rowH + (count - 1) * gap - 22);
   ctx.stroke();
   ctx.restore();
+  drawAnimatedRail(ctx, [[railX, y0 + 22], [railX, y0 + count * rowH + (count - 1) * gap - 22]], t, accent, { alpha: .18, width: 5, dotRadius: 5, speed: .42 });
 
   cards.forEach((card, i) => {
     const y = y0 + i * (rowH + gap);
@@ -738,6 +841,8 @@ function drawComparisonComposition(ctx, cards, top, t, design) {
   });
   ctx.restore();
 
+  drawAnimatedRail(ctx, [[500, y + pairH / 2 - 82], [500, y + pairH / 2 + 82]], t, accent, { alpha: .2, width: 4, dotRadius: 4, speed: .65 });
+
   drawMiniCard(ctx, cards[0], BOARD_LEFT, y, 402, pairH, 0, t);
   drawMiniCard(ctx, cards[1], 534, y, 402, pairH, 1, t);
   if (cards[2]) {
@@ -769,6 +874,7 @@ function drawChecklistComposition(ctx, cards, top, t, design) {
   ctx.lineTo(103, y0 + cards.length * rowH + (cards.length - 1) * gap - 18);
   ctx.stroke();
   ctx.restore();
+  drawAnimatedRail(ctx, [[103, y0 + 18], [103, y0 + cards.length * rowH + (cards.length - 1) * gap - 18]], t, accent, { alpha: .18, width: 5, dotRadius: 5, speed: .38 });
   cards.forEach((card, i) => {
     const y = y0 + i * (rowH + gap);
     ctx.save();
@@ -833,6 +939,15 @@ function drawSystemMapComposition(ctx, cards, top, t, design) {
     ctx.fill();
   });
   ctx.restore();
+  drawPulseRing(ctx, hubX + hubW / 2, hubY + hubH / 2, 92, accent, t);
+  targets.slice(0, cards.length).forEach(([x, yy, w, h], index) => {
+    drawAnimatedRail(ctx, [[hubX + hubW / 2, hubY + hubH / 2], [x + w / 2, yy + h / 2]], t, accent, {
+      alpha: .12,
+      width: 3,
+      dotRadius: 4,
+      phase: index / Math.max(1, cards.length)
+    });
+  });
   cards.forEach((card, i) => {
     const [x, yy, w, h] = targets[i] || [BOARD_LEFT, y + 34 + i * 156, 872, 136];
     drawMiniCard(ctx, card, x, yy, w, h, i, t, { sideIcon: w > 360, small: true, pulse: 0.012 });
@@ -862,6 +977,7 @@ function drawFailureMapComposition(ctx, cards, top, t, design) {
   ctx.lineWidth = 2.6;
   ctx.stroke();
   ctx.restore();
+  drawPulseRing(ctx, 500, y + problemH / 2, 142, '#df2f35', t, .5);
   drawMiniCard(ctx, problem, 356, y + 34, 288, problemH - 58, problemIndex, t, { fill: '#fbf0f7', accent: '#df2f35', number: false, small: true });
   support.slice(0, 2).forEach((card, i) => {
     const x = i === 0 ? 78 : 540;
@@ -978,6 +1094,7 @@ function drawTimelineLayout(ctx, cards, top, t) {
     ctx.arc(W / 2, yLow + h / 2, 5, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
+    drawAnimatedRail(ctx, [[xs[0] + w + gap, yLow + h / 2], [xs[2] - gap, yLow + h / 2]], t, ACCENTS[1], { alpha: .18, width: 4, dotRadius: 5, speed: .55 });
     cards.forEach((card, i) => drawCard(ctx, card, xs[i], ys[i], w, h, i, t, { pulse: 0.014 }));
     return;
   }
@@ -1002,6 +1119,7 @@ function drawTimelineLayout(ctx, cards, top, t) {
     ctx.fill();
   });
   ctx.restore();
+  drawAnimatedRail(ctx, xs.slice(0, cards.length).map((x) => [x + w / 2, railY]), t, ACCENTS[1], { alpha: .18, width: 4, dotRadius: 5, speed: .46 });
   cards.forEach((card, i) => drawCard(ctx, card, xs[i], ys[i], w, h, i, t, { pulse: 0.016 }));
 }
 
@@ -1058,6 +1176,7 @@ function drawLanesLayout(ctx, cards, top, t) {
     ctx.globalAlpha = .55;
     ctx.fill();
     ctx.restore();
+    drawScanLine(ctx, x, y, cardW, rows * cardH + (rows - 1) * gap, t + i * .2, ACCENTS[(i + 1) % ACCENTS.length], true);
   });
   cards.forEach((card, i) => {
     const col = i % cols;
@@ -1078,6 +1197,7 @@ function drawBentoLayout(ctx, cards, top, t) {
   const height = Math.min(548, BOARD_BOTTOM - y);
   if (cards.length === 3) {
     const topH = height * .52;
+    drawScanLine(ctx, 104, y, 792, height, t, ACCENTS[1], true);
     drawCard(ctx, cards[0], 104, y, 792, topH, 0, t, { sideIcon: true, pulse: 0.016 });
     drawMiniCard(ctx, cards[1], 104, y + topH + gap, 388, height - topH - gap, 1, t, { small: true });
     drawMiniCard(ctx, cards[2], 508, y + topH + gap, 388, height - topH - gap, 2, t, { small: true });
@@ -1085,6 +1205,7 @@ function drawBentoLayout(ctx, cards, top, t) {
   }
   const leftW = 506;
   const rightW = 350;
+  drawScanLine(ctx, BOARD_LEFT + leftW + gap, y, rightW, height, t, ACCENTS[1], false);
   drawCard(ctx, cards[0], BOARD_LEFT, y, leftW, height, 0, t, { pulse: 0.016 });
   const rightX = BOARD_LEFT + leftW + gap;
   const smallH = (height - gap * 2) / 3;
@@ -1118,6 +1239,8 @@ function drawStaircaseLayout(ctx, cards, top, t) {
   const y = top + 18;
   const gap = 14;
   const cardH = Math.min(132, (BOARD_BOTTOM - y - gap * (cards.length - 1)) / cards.length);
+  const route = cards.map((_, i) => [76 + i * 42 + (840 - i * 70) / 2, y + i * (cardH + gap) + cardH / 2]);
+  drawAnimatedRail(ctx, route, t, ACCENTS[1], { alpha: .18, width: 4, dotRadius: 5, speed: .5 });
   cards.forEach((card, i) => {
     const x = 76 + i * 42;
     const w = 840 - i * 70;
@@ -1133,6 +1256,7 @@ function drawBandsLayout(ctx, cards, top, t) {
   const y = top + 18;
   const gap = 10;
   const bandH = Math.min(132, (BOARD_BOTTOM - y - gap * (cards.length - 1)) / cards.length);
+  drawScanLine(ctx, BOARD_LEFT, y, BOARD_RIGHT - BOARD_LEFT, cards.length * bandH + (cards.length - 1) * gap, t, ACCENTS[0], false);
   cards.forEach((card, i) => {
     const inset = i % 2 ? 104 : 66;
     drawMiniCard(ctx, card, inset, y + i * (bandH + gap), 1000 - inset * 2, bandH, i, t, {
@@ -1193,6 +1317,8 @@ function drawOrbitLayout(ctx, cards, top, t) {
   ctx.stroke();
   ctx.setLineDash([]);
   ctx.restore();
+  const orbitAngle = -Math.PI / 2 + t * Math.PI * 2;
+  drawPulseRing(ctx, 500 + Math.cos(orbitAngle) * 350, centerY + Math.sin(orbitAngle) * 208, 20, ACCENTS[1], t, 1.1);
   const positions = cards.length === 3
     ? [[360, y], [110, y + height - 214], [610, y + height - 214]]
     : [[88, y], [562, y], [88, y + height - 214], [562, y + height - 214]];
@@ -1210,10 +1336,106 @@ function drawMatrixLayout(ctx, cards, top, t) {
   const rows = Math.ceil(cards.length / cols);
   const w = (872 - gap) / 2;
   const h = Math.min(258, (BOARD_BOTTOM - y - gap * (rows - 1)) / rows);
+  drawScanLine(ctx, BOARD_LEFT, y, 872, rows * h + (rows - 1) * gap, t, ACCENTS[1], true);
   cards.forEach((card, i) => drawMiniCard(ctx, card, BOARD_LEFT + (i % cols) * (w + gap), y + Math.floor(i / cols) * (h + gap), w, h, i, t, {
     sideIcon: true,
     pulse: 0.013
   }));
+}
+
+function drawRadialLayout(ctx, cards, top, t) {
+  if (cards.length < 3) return drawSpotlightLayout(ctx, cards, top, t);
+  drawBoardSurface(ctx, top, 149, { fill: 'rgba(255,255,255,.20)' });
+  const y = top + 18;
+  const height = Math.min(548, BOARD_BOTTOM - y);
+  const center = [500, y + height / 2];
+  const support = cards.length === 3
+    ? [[82, y + 36, 300, 178], [618, y + 36, 300, 178]]
+    : [[72, y + 18, 286, 168], [642, y + 18, 286, 168], [357, y + height - 160, 286, 150]];
+  support.forEach(([x, yy, w, h], index) => {
+    drawAnimatedRail(ctx, [center, [x + w / 2, yy + h / 2]], t, ACCENTS[index % ACCENTS.length], {
+      alpha: .17,
+      width: 4,
+      dotRadius: 5,
+      phase: index / Math.max(1, support.length)
+    });
+  });
+  drawPulseRing(ctx, center[0], center[1], 126, ACCENTS[1], t);
+  drawMiniCard(ctx, cards[0], 318, center[1] - 98, 364, 196, 0, t, { sideIcon: true, pulse: .024 });
+  cards.slice(1).forEach((card, index) => {
+    const [x, yy, w, h] = support[index];
+    drawMiniCard(ctx, card, x, yy, w, h, index + 1, t, { small: true, pulse: .018 });
+  });
+}
+
+function drawRouteMapLayout(ctx, cards, top, t) {
+  if (cards.length < 3) return drawFlowComposition(ctx, cards, top, t, { seed: 157 });
+  drawBoardSurface(ctx, top, 157, { fill: 'rgba(255,255,255,.24)' });
+  const y = top + 20;
+  const gap = 12;
+  const cardH = Math.min(132, (BOARD_BOTTOM - y - gap * (cards.length - 1)) / cards.length);
+  const positions = cards.map((_, index) => {
+    const x = index % 2 ? 520 : 92;
+    return [x, y + index * (cardH + gap), 388, cardH];
+  });
+  const route = positions.map(([x, yy, w, h]) => [x + w / 2, yy + h / 2]);
+  drawAnimatedRail(ctx, route, t, ACCENTS[0], { alpha: .22, width: 5, dotRadius: 6, dash: [7, 10], speed: .48 });
+  positions.forEach(([x, yy, w, h], index) => {
+    drawMiniCard(ctx, cards[index], x, yy, w, h, index, t, { sideIcon: true, small: true, pulse: .019 });
+  });
+}
+
+function drawSignalBoardLayout(ctx, cards, top, t) {
+  if (cards.length < 3) return drawTimelineLayout(ctx, cards, top, t);
+  drawBoardSurface(ctx, top, 163, { fill: 'rgba(255,255,255,.18)' });
+  const y = top + 18;
+  const height = Math.min(548, BOARD_BOTTOM - y);
+  const railY = y + height / 2;
+  const rail = Array.from({ length: 17 }, (_, index) => {
+    const progress = index / 16;
+    const envelope = Math.sin(progress * Math.PI);
+    return [86 + progress * 828, railY + Math.sin(progress * Math.PI * 8) * 30 * envelope];
+  });
+  drawAnimatedRail(ctx, rail, t, ACCENTS[5], { alpha: .26, width: 4, dotRadius: 6, speed: .7 });
+  const cardW = cards.length === 3 ? 250 : 210;
+  const xs = cards.length === 3 ? [92, 375, 658] : [70, 290, 510, 730];
+  const cardH = 190;
+  cards.forEach((card, index) => {
+    const cardY = index % 2 ? railY + 38 : railY - cardH - 38;
+    const anchorX = xs[index] + cardW / 2;
+    ctx.save();
+    ctx.strokeStyle = ACCENTS[index % ACCENTS.length];
+    ctx.globalAlpha = .18;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(anchorX, index % 2 ? railY + 18 : railY - 18);
+    ctx.lineTo(anchorX, index % 2 ? cardY : cardY + cardH);
+    ctx.stroke();
+    ctx.restore();
+    drawMiniCard(ctx, card, xs[index], cardY, cardW, cardH, index, t, { small: true, pulse: .02 });
+  });
+}
+
+function drawConsoleLayout(ctx, cards, top, t) {
+  if (cards.length < 2) return drawSpotlightLayout(ctx, cards, top, t);
+  drawBoardSurface(ctx, top, 173, { fill: 'rgba(255,255,255,.22)' });
+  const y = top + 18;
+  const height = Math.min(548, BOARD_BOTTOM - y);
+  const gap = 14;
+  const heroW = 532;
+  drawCard(ctx, cards[0], BOARD_LEFT, y, heroW, height, 0, t, { pulse: .025 });
+  const rightX = BOARD_LEFT + heroW + gap;
+  const rightW = BOARD_RIGHT - rightX;
+  const rows = cards.length - 1;
+  const rowH = (height - gap * (rows - 1)) / rows;
+  drawScanLine(ctx, rightX, y, rightW, height, t, ACCENTS[1], false);
+  cards.slice(1).forEach((card, index) => {
+    drawMiniCard(ctx, card, rightX, y + index * (rowH + gap), rightW, rowH, index + 1, t, {
+      sideIcon: true,
+      small: true,
+      pulse: .018
+    });
+  });
 }
 
 function drawCards(ctx, page, design, top, t) {
@@ -1233,7 +1455,11 @@ function drawCards(ctx, page, design, top, t) {
     triptych: drawTriptychLayout,
     dashboard: drawDashboardLayout,
     orbit: drawOrbitLayout,
-    matrix: drawMatrixLayout
+    matrix: drawMatrixLayout,
+    radial: drawRadialLayout,
+    'route-map': drawRouteMapLayout,
+    'signal-board': drawSignalBoardLayout,
+    console: drawConsoleLayout
   };
   if (layout === 'compare') return drawComparisonComposition(ctx, page.cards, top, t, design);
   if (layout === 'checklist') return drawChecklistComposition(ctx, page.cards, top, t, design);
@@ -1273,18 +1499,25 @@ function cleanStaleGifs(outDir, outputs) {
   }
 }
 
+function outputName(page, index) {
+  return `${String(index + 1).padStart(2, '0')}-${page.fileSlug || slug(page.section)}.gif`;
+}
+
 function main() {
   const args=parseArgs(process.argv.slice(2));if(args.help||!args.input){usage();process.exit(args.help?0:1);}
   const input=args.input, outDir=path.resolve(args.outDir);const abs=path.resolve(input);const raw=fs.readFileSync(abs,'utf8');
   if(path.extname(abs).toLowerCase()!=='.json')throw new Error('Pipeline 1 requires an agent-authored storyboard.json input.');
   const storyboard=sanitizeStoryboardText(JSON.parse(raw));validateStoryboard(storyboard);
+  const pageIndexes=storyboard.pages.map((_,index)=>index);
   if (args.page !== undefined) {
     if (!Number.isInteger(args.page) || args.page < 1 || args.page > storyboard.pages.length) throw new Error(`--page must be between 1 and ${storyboard.pages.length}`);
-    storyboard.pages = [storyboard.pages[args.page - 1]];
+    pageIndexes.splice(0,pageIndexes.length,args.page-1);
   }
   fs.mkdirSync(outDir,{recursive:true});fs.writeFileSync(path.join(outDir,'storyboard.json'),JSON.stringify(storyboard,null,2));
-  const outputs=[];storyboard.pages.forEach((page,i)=>{const name=`${String(i+1).padStart(2,'0')}-${page.fileSlug || slug(page.section)}.gif`;renderGif(page,i,storyboard.pages.length,path.join(outDir,name));outputs.push(name);console.log(`Rendered ${name}`);});
-  cleanStaleGifs(outDir, outputs);
+  const expectedOutputs=storyboard.pages.map(outputName);
+  pageIndexes.forEach(i=>{const page=storyboard.pages[i],name=expectedOutputs[i];renderGif(page,i,storyboard.pages.length,path.join(outDir,name));console.log(`Rendered ${name}`);});
+  if(args.page===undefined)cleanStaleGifs(outDir,expectedOutputs);
+  const outputs=args.page===undefined?expectedOutputs:expectedOutputs.filter(name=>fs.existsSync(path.join(outDir,name)));
   fs.writeFileSync(path.join(outDir,'manifest.json'),JSON.stringify({
     pipeline:'ai-gif-pipeline-1',
     source:path.basename(abs),
@@ -1295,7 +1528,9 @@ function main() {
       gifs:outputs
     },
     pages:outputs
-  },null,2));console.log(`Done: ${outputs.length} GIF(s) in ${outDir}`);
+  },null,2));console.log(`Done: rendered ${pageIndexes.length} GIF(s); manifest tracks ${outputs.length} GIF(s) in ${outDir}`);
 }
 
-main();
+if (require.main === module) main();
+
+module.exports = { LAYOUTS };
